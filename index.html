@@ -2801,6 +2801,9 @@ footer::before{
             <span class="ec-stars-big" id="ec-stars-big">0⭐</span>
             <div class="ec-stars-sub" id="ec-stars-sub">목성 탐험 별 획득!</div>
           </div>
+          <!-- AI 맞춤 분석 박스 -->
+          <div id="ec-ai-analysis" style="display:none;margin:18px 0;background:linear-gradient(135deg,rgba(0,229,255,.07),rgba(168,85,247,.07));border:1px solid rgba(0,229,255,.25);border-radius:18px;padding:20px 22px;"></div>
+
           <button class="ec-launch-btn" onclick="document.getElementById('ec-result-wrap').classList.remove('show')">
             ✦ 수집 계속하기
           </button>
@@ -3718,16 +3721,36 @@ async function sendIvMessage(){
     }
   };
 
-  // 타이핑 딜레이 시뮬레이션 (1.2~2초)
-  await new Promise(r => setTimeout(r, 1200 + Math.random() * 800));
+  // ── 실제 Claude API 호출 ──
+  const personaSystemPrompts = {
+    professor: `당신은 ${ivMajor || '관심 학과'} 전공 교수님입니다. 학과 커리큘럼, 연구 방향, 대학원 진학, 진로 전망에 대해 전문적이고 따뜻하게 안내해주세요. 존댓말을 사용하고 구체적인 예시를 들어 설명해주세요. 답변은 3~5문장으로 간결하게 해주세요.`,
+    senior: `당신은 ${ivMajor || '관심 학과'} 대학원생 선배입니다. 대학원 생활, 연구, 논문, 지도교수 선택에 대해 솔직하고 경험 기반으로 이야기해주세요. 존댓말을 사용하고 이모지를 1~2개 넣어 친근하게 답변해주세요. 답변은 3~5문장으로 해주세요.`,
+    undergrad: `당신은 ${ivMajor || '관심 학과'} 학부 재학생 선배입니다. 수업, 과제, 학과 생활, 동아리, 취업 준비에 대해 솔직하고 친근하게 말해주세요. 반말체로 친구처럼 이야기하고 이모지를 2~3개 넣어주세요. 답변은 3~5문장으로 해주세요.`,
+    worker: `당신은 ${ivMajor || '관심 학과'} 출신 현직자입니다. 실무 경험, 연봉, 커리어, 필요한 스킬에 대해 현실적이고 솔직하게 이야기해주세요. 존댓말을 사용하고 이모지를 1~2개 넣어주세요. 답변은 3~5문장으로 해주세요.`,
+    researcher: `당신은 ${ivMajor || '관심 학과'} 분야 연구원입니다. 최신 연구 동향, 연구원 커리어, 논문, 해외 연구 경험에 대해 전문적이고 흥미롭게 설명해주세요. 존댓말을 사용하고 이모지를 1~2개 넣어주세요. 답변은 3~5문장으로 해주세요.`,
+    counselor: `당신은 진로 담당 선생님입니다. ${ivMajor || '관심 학과'}를 희망하는 중고등학생에게 입시 전략, 학생부 관리, 선택과목, 비교과 활동에 대해 따뜻하고 구체적으로 안내해주세요. 존댓말을 사용하고 이모지를 1~2개 넣어주세요. 답변은 3~5문장으로 해주세요.`
+  };
 
-  const qaMap = QA_MAP[ivPersona] || QA_MAP['professor'];
-  // 질문 텍스트로 매핑 우선 시도, 없으면 순번으로 fallback
-  let reply = qaMap[text];
-  if(!reply){
-    const answers = Object.values(qaMap);
-    const turnCount = ivHistory.filter(m => m.role === 'assistant').length;
-    reply = answers[turnCount % answers.length];
+  const systemPrompt = personaSystemPrompts[ivPersona] || personaSystemPrompts.professor;
+  const messages = ivHistory.map(m => ({ role: m.role, content: m.content }));
+  messages.push({ role: 'user', content: text });
+
+  let reply = '';
+  try {
+    const resp = await fetch('/.netlify/functions/claude', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system: systemPrompt,
+        messages: messages
+      })
+    });
+    const data = await resp.json();
+    reply = data.content?.[0]?.text || '죄송해요, 잠시 후 다시 시도해주세요.';
+  } catch(e) {
+    reply = '네트워크 오류가 발생했어요. 잠시 후 다시 시도해주세요. 🙏';
   }
 
   removeTyping(typingId);
@@ -4607,6 +4630,56 @@ function launchAnalysis(){
 
   document.getElementById('ec-result-wrap').classList.add('show');
   document.getElementById('ec-result-wrap').scrollIntoView({behavior:'smooth', block:'nearest'});
+
+  // ── AI 맞춤 분석 메시지 추가 ──
+  (async () => {
+    const aiMsgEl = document.getElementById('ec-ai-analysis');
+    if(!aiMsgEl) return;
+    aiMsgEl.style.display = 'block';
+    aiMsgEl.innerHTML = `<div style="display:flex;align-items:center;gap:10px;color:rgba(240,244,255,0.5);font-size:14px;"><span style="animation:floatY 1s ease-in-out infinite;">🤖</span> AI가 당신의 DNA를 분석하고 있어요...</div>`;
+
+    const dnaDesc = DNA_TYPES.map(t => `${t.emoji}${t.label}: ${dnaScore[t.id]||0}점`).join(', ');
+    const collected = [...absorbedOrbs].map(k => {
+      const idx = parseInt(k.slice(1));
+      if(k.startsWith('a')) return ACTIVITY_ORBS[idx]?.label;
+      if(k.startsWith('f')) return FIELD_ORBS[idx]?.label;
+      return null;
+    }).filter(Boolean).join(', ');
+
+    try {
+      const resp = await fetch('/.netlify/functions/claude', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 1000,
+          messages: [{
+            role: 'user',
+            content: `당신은 진로 상담 전문가입니다. 중학생의 전공 적합성 분석 결과를 바탕으로 맞춤 피드백을 3~4문장으로 작성해주세요.
+
+DNA 점수: ${dnaDesc}
+주요 유형: ${constellation.type}
+선택한 활동/관심사: ${collected || '다양한 분야'}
+추천 전공 후보: ${constellation.majors.join(', ')}
+
+따뜻하고 격려하는 톤으로, 학생이 왜 이 유형인지, 어떤 전공이 왜 잘 맞는지, 앞으로 어떤 활동을 해볼 수 있는지 구체적으로 알려주세요. 이모지를 2~3개 포함해주세요. 절대 JSON 형식으로 쓰지 마세요.`
+          }]
+        })
+      });
+      const data = await resp.json();
+      const msg = data.content?.[0]?.text || '분석 결과를 불러오지 못했어요.';
+      aiMsgEl.innerHTML = `
+        <div style="display:flex;align-items:flex-start;gap:12px;">
+          <div style="font-size:1.8rem;flex-shrink:0;">🤖</div>
+          <div>
+            <div style="font-size:13px;letter-spacing:2px;color:#00e5ff;font-weight:600;margin-bottom:8px;">AI 맞춤 분석</div>
+            <div style="font-size:14px;color:rgba(240,244,255,0.85);line-height:1.85;">${msg.replace(/\n/g,'<br>')}</div>
+          </div>
+        </div>`;
+    } catch(e) {
+      aiMsgEl.style.display = 'none';
+    }
+  })();
 }
 
 // 초기화 실행
@@ -4802,10 +4875,9 @@ function buildNepCardHTML(name, i, medals){
         </div>
         <div class="nep-mcard-toggle">▲</div>
       </div>
-      <div class="nep-mcard-body">
-        <div style="font-size:14px;color:rgba(240,244,255,.6);line-height:1.8;padding:8px 0;">
-          🧬 DNA 별자리 분석에서 추천된 학과예요.<br>
-          아래 로드맵에 이 학과를 직접 탐색해보세요!
+      <div class="nep-mcard-body" id="nep-mcard-body-${i}">
+        <div style="font-size:14px;color:rgba(240,244,255,.5);line-height:1.8;padding:8px 0;text-align:center;">
+          <span style="animation:floatY 1s ease-in-out infinite;display:inline-block;">🤖</span> AI가 학과 정보를 불러오는 중...
         </div>
       </div>
     </div>`;
@@ -4860,6 +4932,58 @@ function initNepMajorCards(){
   }
 
   el.innerHTML = majors.map((name,i) => buildNepCardHTML(name, i, medals)).join('');
+
+  // AI로 각 학과 카드 내용 채우기
+  majors.forEach((name, i) => {
+    (async () => {
+      const bodyEl = document.getElementById('nep-mcard-body-'+i);
+      if(!bodyEl) return;
+      const dnaInfo = window._aptData ? Object.entries(window._aptData.dnaScore||{}).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([k,v])=>k+':'+v).join(', ') : '';
+      try {
+        const resp = await fetch('/.netlify/functions/claude', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            model: 'claude-sonnet-4-20250514',
+            max_tokens: 1000,
+            messages: [{
+              role: 'user',
+              content: `중학생을 위한 ${name} 학과 소개를 JSON 형식으로만 작성해주세요. 다른 텍스트 없이 JSON만 출력하세요.
+${dnaInfo ? '학생 DNA 점수: '+dnaInfo : ''}
+
+형식:
+{"overview":"학과 소개 2문장 (이 학과에서 무엇을 배우는지, 중학생이 이해할 수 있게 친근하게)","aptitude":"이런 학생에게 딱! 1문장 (어떤 성향에 맞는지)","jobs":["직업1","직업2","직업3","직업4"],"subjects":["고교선택과목1","과목2","과목3"],"midActs":["중학교 추천활동 1","활동2","활동3"]}`
+            }]
+          })
+        });
+        const data = await resp.json();
+        const text = (data.content?.[0]?.text||'').replace(/```json|```/g,'').trim();
+        const info = JSON.parse(text);
+        bodyEl.innerHTML = `
+          <div style="font-size:14px;color:rgba(240,244,255,.82);line-height:1.85;padding:4px 0 10px;">${info.overview}</div>
+          <div style="font-size:13px;background:rgba(0,229,255,.07);border:1px solid rgba(0,229,255,.18);border-radius:10px;padding:10px 14px;margin-bottom:10px;color:#a5f3fc;">✨ ${info.aptitude}</div>
+          <div style="margin-bottom:8px;">
+            <div style="font-size:12px;letter-spacing:2px;color:rgba(240,244,255,.45);margin-bottom:6px;">관련 직업</div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px;">${(info.jobs||[]).map(j=>`<span style="font-size:12px;padding:4px 10px;border-radius:999px;background:rgba(168,85,247,.12);border:1px solid rgba(168,85,247,.25);color:#c084fc;">${j}</span>`).join('')}</div>
+          </div>
+          <div style="margin-bottom:8px;">
+            <div style="font-size:12px;letter-spacing:2px;color:rgba(240,244,255,.45);margin-bottom:6px;">고교 선택과목</div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px;">${(info.subjects||[]).map(s=>`<span style="font-size:12px;padding:4px 10px;border-radius:999px;background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.22);color:#fbbf24;">${s}</span>`).join('')}</div>
+          </div>
+          <div>
+            <div style="font-size:12px;letter-spacing:2px;color:rgba(240,244,255,.45);margin-bottom:6px;">중학교 추천 활동</div>
+            <div style="display:flex;flex-direction:column;gap:5px;">${(info.midActs||[]).map(a=>`<div style="font-size:13px;color:rgba(240,244,255,.7);padding-left:12px;position:relative;">• ${a}</div>`).join('')}</div>
+          </div>`;
+      } catch(e) {
+        const db = NEP_MAJOR_DB[name];
+        if(db) {
+          bodyEl.innerHTML = `<div style="font-size:14px;color:rgba(240,244,255,.8);line-height:1.8;">${db.desc}</div>`;
+        } else {
+          bodyEl.innerHTML = `<div style="font-size:14px;color:rgba(240,244,255,.6);">학과 정보를 불러오지 못했어요. 아래 로드맵을 직접 작성해보세요!</div>`;
+        }
+      }
+    })();
+  });
 }
 
 function toggleNepCard(i){
@@ -4876,13 +5000,46 @@ function submitNepRoadmap(){
   const comp = document.getElementById('nep-complete');
   comp.style.display='block';
   document.getElementById('nep-complete-title').textContent = (major||'전공')+' 로드맵 완성! '+'⭐'.repeat(stars);
-  document.getElementById('nep-complete-sub').textContent = filled+'/5 항목 완성! 나만의 전공 여정을 그려냈어요 🔵';
+  document.getElementById('nep-complete-sub').textContent = filled+'/5 항목 완성! AI가 나만의 로드맵을 분석하고 있어요... 🔵';
   document.getElementById('nep-stars-big').textContent = '+'+stars+'⭐';
 
   gzStars.s4 = stars;
   const badge = document.getElementById('stage4-badge');
   if(badge) badge.textContent = '⭐ '+stars+' / 10';
   updateStarBar();
+
+  // AI 로드맵 피드백
+  (async () => {
+    const subEl = document.getElementById('nep-complete-sub');
+    const stages = ['중학교','고등학교','대학교','졸업 후'];
+    const roadmapText = tls.map((t,i) => t ? `${stages[i]}: ${t}` : '').filter(Boolean).join('\n');
+    if(!roadmapText && !major) return;
+    try {
+      const resp = await fetch('/.netlify/functions/claude', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 1000,
+          messages: [{
+            role: 'user',
+            content: `중학생이 작성한 전공 로드맵에 대해 따뜻하고 구체적인 응원 피드백을 3~4문장으로 작성해주세요.
+
+선택 학과: ${major || '미입력'}
+로드맵:
+${roadmapText || '(작성 없음)'}
+
+잘 작성된 부분을 칭찬하고, 1~2가지 추가로 해볼 수 있는 구체적인 활동을 제안해주세요. 이모지를 2~3개 포함하고, 중학생이 읽기 쉽게 작성해주세요.`
+          }]
+        })
+      });
+      const data = await resp.json();
+      const msg = data.content?.[0]?.text || filled+'/5 항목 완성! 나만의 전공 여정을 그려냈어요 🔵';
+      if(subEl) subEl.textContent = msg;
+    } catch(e) {
+      if(subEl) subEl.textContent = filled+'/5 항목 완성! 나만의 전공 여정을 그려냈어요 🔵';
+    }
+  })();
 }
 
 // stage4 열릴 때 초기화 (toggleStage 훅)
@@ -4928,7 +5085,7 @@ function submitNepRoadmap(){
         🔭 주제탐구를 시작해볼까?
       </h2>
       <p style="font-size:15px;color:rgba(240,244,255,.65);line-height:1.9;max-width:520px;margin:0 auto;">
-        희망 학과와 관심 주제를 입력하면<br>AI가 기간별·단계별 탐구 과정을 설계해줄 거예요 ✨
+        탐구 질문을 입력하면<br>AI가 첨부파일처럼 단계별 탐구 계획서를 설계해줄 거예요 ✨
       </p>
     </div>
 
@@ -4981,10 +5138,11 @@ function submitNepRoadmap(){
         </div>
       </div>
 
-      <!-- 관심 주제 -->
+      <!-- 탐구 질문 -->
       <div style="margin-bottom:28px;">
-        <label style="display:block;font-size:14px;letter-spacing:3px;color:rgba(240,244,255,.62);font-weight:600;margin-bottom:10px;">💡 관심 주제</label>
-        <textarea id="rq-topic" placeholder="예) AI가 의료 진단에 미치는 영향, 기후변화와 해양 생태계, SNS가 청소년 정체성에 미치는 영향…" rows="3"
+        <label style="display:block;font-size:14px;letter-spacing:3px;color:rgba(240,244,255,.62);font-weight:600;margin-bottom:6px;">❓ 탐구 질문</label>
+        <div style="font-size:13px;color:rgba(240,244,255,.4);margin-bottom:10px;">탐구하고 싶은 것을 질문 형태로 써보세요. 구체적인 질문일수록 AI 설계가 정확해져요!</div>
+        <textarea id="rq-topic" placeholder="예) 자율주행 기술이 발달하면 10년 후 파일럿 직업은 어떻게 변화할까?&#10;예) SNS 사용 시간이 청소년의 자존감에 미치는 영향은 무엇인가?&#10;예) 식물의 성장 속도는 음악 장르에 따라 어떻게 달라지는가?" rows="4"
           style="width:100%;background:rgba(251,191,36,.04);border:1.5px solid rgba(251,191,36,.28);border-radius:14px;padding:16px 18px;color:#f0f4ff;font-family:'Pretendard','Noto Sans KR',sans-serif;font-size:15px;outline:none;resize:none;line-height:1.7;transition:.25s;"
           onfocus="this.style.borderColor='rgba(251,191,36,.7)';this.style.background='rgba(251,191,36,.07)'"
           onblur="this.style.borderColor='rgba(251,191,36,.28)';this.style.background='rgba(251,191,36,.04)'"
@@ -5028,7 +5186,7 @@ function submitNepRoadmap(){
         <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#34d399,#a855f7,#60a5fa);"></div>
         <div style="display:flex;align-items:flex-start;gap:20px;flex-wrap:wrap;">
           <div style="flex:1;min-width:200px;">
-            <div style="font-size:14px;letter-spacing:3px;color:#34d399;font-weight:700;margin-bottom:8px;">탐구 주제</div>
+            <div style="font-size:14px;letter-spacing:3px;color:#34d399;font-weight:700;margin-bottom:8px;">탐구 질문</div>
             <div id="rq-ov-topic" style="font-size:1.15rem;font-weight:800;color:#f0f4ff;letter-spacing:-.3px;line-height:1.4;"></div>
           </div>
           <div style="display:flex;gap:16px;flex-wrap:wrap;flex-shrink:0;">
@@ -5482,7 +5640,7 @@ function startResearch(){
   var types = getSelectedRqTypes();
 
   if(!major){ alert('희망 학과를 입력해주세요! 🎓'); return; }
-  if(!topic){ alert('관심 주제를 입력해주세요! 💡'); return; }
+  if(!topic){ alert('탐구 질문을 입력해주세요! ❓'); return; }
 
   var earnedStars = rqEvalStars(major, topic, types, parseInt(weeks));
   rqRenderStars(earnedStars);
@@ -5506,9 +5664,62 @@ function startResearch(){
   var msgEl = document.getElementById('rq-loading-msg');
   var iv = setInterval(function(){ mi=(mi+1)%msgs.length; if(msgEl) msgEl.textContent=msgs[mi]; }, 900);
 
-  setTimeout(function(){
+  // 실제 Claude API로 탐구 로드맵 생성
+  (async function(){
+    var phases;
+    try {
+      var periodLabels2 = {'1':'1주일','2':'2주일','4':'한 달','12':'3개월'};
+      var resp = await fetch('/.netlify/functions/claude', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 2000,
+          messages: [{
+            role: 'user',
+            content: `당신은 중고등학생의 주제탐구 계획서를 설계해주는 전문 선생님입니다.
+아래 정보를 바탕으로 학생이 실제로 실행할 수 있는 탐구 계획서를 설계해주세요.
+반드시 JSON 형식만 출력하고 다른 텍스트는 절대 쓰지 마세요.
+
+탐구 질문: ${topic}
+희망 학과: ${major}
+탐구 기간: ${periodLabels2[weeks]||weeks+'주'}
+탐구 방식: ${types.join(', ') || '자유'}
+
+설계 기준:
+- 중고등학생이 학교 과제나 자유탐구로 직접 실행 가능한 수준
+- 탐구 질문에 정확히 맞춘 구체적인 계획
+- 각 단계는 탐구 주제, 목표, 방법, 산출물이 명확해야 함
+- 실험·관찰·설문·인터뷰·데이터 수집 등 학생이 실제로 할 수 있는 활동 포함
+- 기간에 맞게 3~4단계로 구성 (1주일이면 3단계, 3개월이면 4단계)
+- 각 단계마다 과제 3~4개, 각 과제에 실제 도움말 포함
+
+JSON 형식 (이 형식 그대로):
+[
+  {
+    "icon":"📚",
+    "name":"단계명 (6자 이내)",
+    "weeks":"기간 (예: 1~2일, 1주차, 2~3주)",
+    "goal":"이 단계에서 달성할 목표 1~2문장",
+    "output":"이 단계의 결과물 (예: 문헌조사 정리표, 설문지 초안, 그래프 3개)",
+    "tasks":[
+      {"week":"며칠차/주차","text":"구체적으로 무엇을 어떻게 할지 (예: 네이버 학술정보·구글 스칼라에서 관련 논문 3편 찾아 요약 정리)","tip":"실제 도움말 (예: 검색어는 영어로도 해보세요)"},
+      {"week":"며칠차/주차","text":"활동2","tip":"도움말2"},
+      {"week":"며칠차/주차","text":"활동3","tip":"도움말3"}
+    ]
+  }
+]`
+          }]
+        })
+      });
+      var data = await resp.json();
+      var text = (data.content?.[0]?.text||'').replace(/```json|```/g,'').trim();
+      phases = JSON.parse(text);
+    } catch(e) {
+      phases = generateResearchPlan(major, topic, weeks, types);
+    }
+
     clearInterval(iv);
-    var phases = generateResearchPlan(major, topic, weeks, types);
     document.getElementById('rq-ov-steps').textContent = phases.length + '단계';
 
     var tl = document.getElementById('rq-timeline');
@@ -5543,7 +5754,7 @@ function startResearch(){
     tl.style.display = 'block';
     document.getElementById('rq-bottom-btns').style.display = 'block';
     setTimeout(function(){ document.getElementById('rq-overview').scrollIntoView({behavior:'smooth',block:'start'}); }, 200);
-  }, 1800);
+  })();
 }
 
 /* ── 6. window 등록 & 이벤트 바인딩 ── */
