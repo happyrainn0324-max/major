@@ -1,0 +1,24 @@
+# netlify.toml
+# ─────────────────────────────────────────────
+# Netlify 배포 설정 파일
+# 이 파일은 프로젝트 루트에 있어야 합니다.
+# ─────────────────────────────────────────────
+
+[build]
+  # Functions 폴더 위치
+  functions = "netlify/functions"
+
+  # 정적 파일 배포 폴더 (index.html 있는 곳)
+  publish = "."
+
+[functions]
+  # 외부 패키지 없이 Node 내장 모듈만 사용하므로 esbuild 불필요
+  node_bundler = "zisi"
+
+# ── 보안 헤더 (선택 사항이지만 권장) ──
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
