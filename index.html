@@ -5693,16 +5693,7 @@ window.qlGenerate = async function(){
   }
 };
 
-// ─ startResearch override: STEP 2→3 화살표 표시 ─
-(function(){
-  var origStart = window.startResearch;
-  window.startResearch = function(){
-    // STEP 2→3 화살표 노출
-    var arrow2 = document.getElementById('rq-arrow-2');
-    if(arrow2) arrow2.style.opacity = '1';
-    if(origStart) origStart();
-  };
-})();
+// ─ startResearch override 제거: startResearch 함수 내부에서 직접 처리 ─
 
 // ─ resetResearch override: STEP 2 다시 잠금 ─
 (function(){
@@ -6254,6 +6245,10 @@ function startResearch(){
   rqRenderStars(earnedStars);
   rqShowStarToast(earnedStars);
 
+  // STEP 2→3 화살표 노출
+  var arrow2 = document.getElementById('rq-arrow-2');
+  if(arrow2) arrow2.style.opacity = '1';
+
   document.getElementById('rq-setup-card').style.display = 'none';
   document.getElementById('rq-result-wrap').style.display = 'block';
   document.getElementById('rq-loading').style.display = 'block';
@@ -6276,9 +6271,9 @@ function startResearch(){
   (async function(){
     var plan;
     try {
-      var resp = await fetch('/.netlify/functions/claude', {
+      var resp = await fetch('https://api.anthropic.com/v1/messages', {
         method:'POST',
-        headers:{'Content-Type':'application/json'},
+        headers:{'Content-Type':'application/json','x-api-key':'','anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
         body: JSON.stringify({
           model:'claude-sonnet-4-20250514',
           max_tokens:3000,
@@ -6450,18 +6445,23 @@ window.resetResearch  = resetResearch;
 window.toggleRqPhase  = toggleRqPhase;
 window.toggleRqTask   = toggleRqTask;
 
-// 탐구 방식 칩 클릭
-document.addEventListener('click', function(e){
-  var chip = e.target.closest && e.target.closest('.rq-chip');
-  if(chip) chip.classList.toggle('rq-chip-on');
-}, true);
-
-// 버튼 직접 바인딩
-document.addEventListener('DOMContentLoaded', function(){
-  var btn = document.getElementById('rq-start-btn');
-  if(btn) btn.onclick = function(e){ e.preventDefault(); startResearch(); };
-});
-if(document.readyState !== 'loading'){
+// 탐구 방식 칩 클릭 - 직접 onclick 바인딩으로 교체 (capture 충돌 방지)
+function bindRqChips(){
+  document.querySelectorAll('.rq-chip').forEach(function(chip){
+    chip.onclick = function(e){
+      e.stopPropagation();
+      chip.classList.toggle('rq-chip-on');
+    };
+  });
+}
+if(document.readyState === 'loading'){
+  document.addEventListener('DOMContentLoaded', function(){
+    bindRqChips();
+    var btn = document.getElementById('rq-start-btn');
+    if(btn) btn.onclick = function(e){ e.preventDefault(); startResearch(); };
+  });
+} else {
+  bindRqChips();
   var btn = document.getElementById('rq-start-btn');
   if(btn) btn.onclick = function(e){ e.preventDefault(); startResearch(); };
 }
