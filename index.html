@@ -488,8 +488,8 @@ header h1 .accent{
   position:absolute;top:0;left:0;right:0;height:2px;
 }
 .m-blue::before{background:linear-gradient(90deg,var(--blue),var(--cyan));}
-.m-purple::before{background:linear-gradient(90deg,var(--purple),var(--pink));}
-.m-yellow::before{background:linear-gradient(90deg,var(--yellow),var(--green));}
+.m-purple::before{background:linear-gradient(90deg,var(--blue),var(--cyan));}
+.m-yellow::before{background:linear-gradient(90deg,var(--blue),var(--cyan));}
 
 .m-card::after{
   content:'';
@@ -498,8 +498,8 @@ header h1 .accent{
   opacity:.05;transition:.35s;
 }
 .m-blue::after{background:var(--blue);}
-.m-purple::after{background:var(--purple);}
-.m-yellow::after{background:var(--yellow);}
+.m-purple::after{background:var(--blue);}
+.m-yellow::after{background:var(--blue);}
 
 .m-card:hover{transform:translateY(-8px);border-color:rgba(255,255,255,.18);}
 .m-card:hover::after{opacity:.12;transform:scale(1.3);}
@@ -814,8 +814,8 @@ header h1 .accent{
   padding:18px 22px;
   border-left:4px solid #1a6cf5;
 }
-.rp-major-card:nth-child(2){border-left-color:#a855f7;}
-.rp-major-card:nth-child(3){border-left-color:#ec4899;}
+.rp-major-card:nth-child(2){border-left-color:#1a6cf5;}
+.rp-major-card:nth-child(3){border-left-color:#1a6cf5;}
 .rp-major-name{font-size:1.2rem;font-weight:800;color:#111;margin-bottom:4px;}
 .rp-major-type{font-size:14px;font-weight:600;color:#6b7280;letter-spacing:1px;margin-bottom:8px;}
 .rp-major-overview{font-size:14px;color:#374151;line-height:1.75;}
@@ -1347,18 +1347,18 @@ footer::before{
   box-sizing:border-box;
 }
 .ob-card:nth-child(2){
-  border-color:rgba(168,85,247,.3);
-  box-shadow:0 0 40px rgba(168,85,247,.1),0 20px 60px rgba(0,0,0,.5);
+  border-color:rgba(0,229,255,.25);
+  box-shadow:0 0 40px rgba(0,229,255,.1),0 20px 60px rgba(0,0,0,.5);
 }
 .ob-card:nth-child(2)::before{
-  background:radial-gradient(circle,rgba(168,85,247,.12),transparent 70%);
+  background:radial-gradient(circle,rgba(0,229,255,.1),transparent 70%);
 }
 .ob-card:nth-child(3){
-  border-color:rgba(236,72,153,.3);
-  box-shadow:0 0 40px rgba(236,72,153,.1),0 20px 60px rgba(0,0,0,.5);
+  border-color:rgba(0,229,255,.25);
+  box-shadow:0 0 40px rgba(0,229,255,.1),0 20px 60px rgba(0,0,0,.5);
 }
 .ob-card:nth-child(3)::before{
-  background:radial-gradient(circle,rgba(236,72,153,.12),transparent 70%);
+  background:radial-gradient(circle,rgba(0,229,255,.1),transparent 70%);
 }
 .ob-card::before{
   content:'';position:absolute;top:-60px;right:-60px;
@@ -1376,11 +1376,11 @@ footer::before{
   border-radius:10px;padding:10px 14px;margin-bottom:10px;
 }
 .ob-card:nth-child(1) .ob-card-major-wrap{background:rgba(0,229,255,.08);border:1px solid rgba(0,229,255,.15);}
-.ob-card:nth-child(2) .ob-card-major-wrap{background:rgba(168,85,247,.08);border:1px solid rgba(168,85,247,.15);}
-.ob-card:nth-child(3) .ob-card-major-wrap{background:rgba(236,72,153,.08);border:1px solid rgba(236,72,153,.15);}
+.ob-card:nth-child(2) .ob-card-major-wrap{background:rgba(0,229,255,.08);border:1px solid rgba(0,229,255,.15);}
+.ob-card:nth-child(3) .ob-card-major-wrap{background:rgba(0,229,255,.08);border:1px solid rgba(0,229,255,.15);}
 .ob-card-major-label{font-size:14px;letter-spacing:2px;color:var(--cyan);margin-bottom:4px;}
-.ob-card:nth-child(2) .ob-card-major-label{color:var(--purple);}
-.ob-card:nth-child(3) .ob-card-major-label{color:var(--pink);}
+.ob-card:nth-child(2) .ob-card-major-label{color:var(--cyan);}
+.ob-card:nth-child(3) .ob-card-major-label{color:var(--cyan);}
 .ob-card-major-val{font-size:14px;font-weight:700;color:#fff;}
 .ob-card-type{font-size:14px;color:rgba(255,255,255,.4);margin-bottom:16px;}
 .ob-card-footer{
@@ -1582,17 +1582,19 @@ footer::before{
   .hero-orb{display:none;}
   header h1{font-size:clamp(3.4rem,12vw,5.5rem);letter-spacing:-2px;}
   .tag-pill{font-size:12px;letter-spacing:2px;padding:9px 20px;margin-bottom:32px;}
-  .hero-sub .sub-line1,.hero-sub .sub-line2{font-size:clamp(1.6rem,6vw,2.6rem);letter-spacing:2px;}
+  .hero-sub .sub-line1,.hero-sub .sub-line2{font-size:clamp(2.1rem,7.5vw,3.2rem);letter-spacing:2px;}
   .hero-cta{font-size:16px;padding:16px 36px;width:100%;justify-content:center;}
   .hero-cta-ghost{display:none;}
   .hero-stats{flex-direction:column;width:100%;}
   .hero-stat{padding:14px 24px;flex-direction:row;justify-content:space-between;width:100%;}
   .hero-stat+.hero-stat::before{top:0;left:16px;right:16px;width:auto;height:1px;background:rgba(255,255,255,.09);}
   .hero-cta-group{margin-top:36px;}
+  .star-badge{display:block !important;}
 }
 @media(max-width:480px){
-  .star-badge{display:none;}
-  header h1{font-size:clamp(2.2rem,10vw,3rem);}
+  .star-badge{display:block !important;}
+  header h1{font-size:clamp(2.8rem,11vw,4rem);}
+  .hero-sub .sub-line1,.hero-sub .sub-line2{font-size:clamp(2.3rem,8.5vw,3rem);letter-spacing:2px;}
 }
 
 /* 2. 포스터 섹션 */
@@ -3149,12 +3151,13 @@ footer::before{
 
       <!-- 추천 질문 칩 -->
       <div id="iv-chips-wrap" style="margin-top:14px;display:flex;flex-wrap:wrap;gap:8px;"></div>
+      <div id="iv-chips-hint" style="display:none;margin-top:6px;font-size:12px;color:rgba(240,244,255,.38);font-family:'Pretendard','Noto Sans KR',sans-serif;">위 추천 질문을 탭하거나 아래에 직접 입력하세요</div>
 
       <!-- 입력창 -->
-      <div style="display:flex;gap:10px;margin-top:14px;align-items:flex-end;">
+      <div style="display:flex;gap:8px;margin-top:12px;align-items:center;">
         <div style="flex:1;position:relative;">
           <textarea id="iv-user-input"
-            placeholder="질문을 직접 입력하거나 위 추천 질문을 눌러봐요 💬"
+            placeholder="전공에 관한 질문을 직접 입력하세요"
             rows="1"
             style="width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:18px;padding:16px 20px;color:#f0f4ff;font-family:'Pretendard','Noto Sans KR',sans-serif;font-size:15px;outline:none;resize:none;line-height:1.6;transition:.25s;max-height:140px;overflow-y:auto;"
             onfocus="this.style.borderColor='rgba(0,229,255,.45)';this.style.background='rgba(0,229,255,.04)'"
@@ -3168,6 +3171,13 @@ footer::before{
           onmouseover="this.style.transform='scale(1.08)'"
           onmouseout="this.style.transform=''"
         >➤</button>
+      </div>
+      <style>
+        @media(max-width:768px){
+          #iv-send-btn{width:34px!important;height:34px!important;font-size:13px!important;box-shadow:0 3px 12px rgba(0,229,255,.3)!important;}
+          #iv-chips-hint{display:block!important;}
+        }
+      </style>
       </div>
 
       <!-- 새 인터뷰 버튼 -->
@@ -3291,29 +3301,54 @@ footer::before{
 }
 
 /* 페르소나별 고유 테두리 */
-.iv-persona-card[data-persona="professor"]{border-color:rgba(96,165,250,.35);background:rgba(96,165,250,.04);}
-.iv-persona-card[data-persona="professor"]:hover{border-color:rgba(96,165,250,.7);background:rgba(96,165,250,.09);box-shadow:0 6px 24px rgba(96,165,250,.15);}
-.iv-persona-card[data-persona="senior"]{border-color:rgba(168,85,247,.35);background:rgba(168,85,247,.04);}
-.iv-persona-card[data-persona="senior"]:hover{border-color:rgba(168,85,247,.7);background:rgba(168,85,247,.09);box-shadow:0 6px 24px rgba(168,85,247,.15);}
-.iv-persona-card[data-persona="undergrad"]{border-color:rgba(236,72,153,.35);background:rgba(236,72,153,.04);}
-.iv-persona-card[data-persona="undergrad"]:hover{border-color:rgba(236,72,153,.7);background:rgba(236,72,153,.09);box-shadow:0 6px 24px rgba(236,72,153,.15);}
-.iv-persona-card[data-persona="worker"]{border-color:rgba(251,191,36,.35);background:rgba(251,191,36,.04);}
-.iv-persona-card[data-persona="worker"]:hover{border-color:rgba(251,191,36,.7);background:rgba(251,191,36,.09);box-shadow:0 6px 24px rgba(251,191,36,.15);}
-.iv-persona-card[data-persona="researcher"]{border-color:rgba(34,211,238,.35);background:rgba(34,211,238,.04);}
-.iv-persona-card[data-persona="researcher"]:hover{border-color:rgba(34,211,238,.7);background:rgba(34,211,238,.09);box-shadow:0 6px 24px rgba(34,211,238,.15);}
-.iv-persona-card[data-persona="counselor"]{border-color:rgba(249,115,22,.35);background:rgba(249,115,22,.04);}
-.iv-persona-card[data-persona="counselor"]:hover{border-color:rgba(249,115,22,.7);background:rgba(249,115,22,.09);box-shadow:0 6px 24px rgba(249,115,22,.15);}
-
-/* selected 상태도 각 색상 유지 */
-.iv-persona-card[data-persona="professor"].selected{border-color:rgba(96,165,250,.9);box-shadow:0 0 28px rgba(96,165,250,.25);background:rgba(96,165,250,.12);}
-.iv-persona-card[data-persona="senior"].selected{border-color:rgba(168,85,247,.9);box-shadow:0 0 28px rgba(168,85,247,.25);background:rgba(168,85,247,.12);}
-.iv-persona-card[data-persona="undergrad"].selected{border-color:rgba(236,72,153,.9);box-shadow:0 0 28px rgba(236,72,153,.25);background:rgba(236,72,153,.12);}
-.iv-persona-card[data-persona="worker"].selected{border-color:rgba(251,191,36,.9);box-shadow:0 0 28px rgba(251,191,36,.25);background:rgba(251,191,36,.12);}
-.iv-persona-card[data-persona="researcher"].selected{border-color:rgba(34,211,238,.9);box-shadow:0 0 28px rgba(34,211,238,.25);background:rgba(34,211,238,.12);}
-.iv-persona-card[data-persona="counselor"].selected{border-color:rgba(249,115,22,.9);box-shadow:0 0 28px rgba(249,115,22,.25);background:rgba(249,115,22,.12);}
+/* 페르소나 카드 테두리 통일 (단일 청록 계열) */
+.iv-persona-card[data-persona="professor"],
+.iv-persona-card[data-persona="senior"],
+.iv-persona-card[data-persona="undergrad"],
+.iv-persona-card[data-persona="worker"],
+.iv-persona-card[data-persona="researcher"],
+.iv-persona-card[data-persona="counselor"]{
+  border-color:rgba(0,229,255,.2);
+  background:rgba(0,229,255,.03);
+}
+.iv-persona-card[data-persona="professor"]:hover,
+.iv-persona-card[data-persona="senior"]:hover,
+.iv-persona-card[data-persona="undergrad"]:hover,
+.iv-persona-card[data-persona="worker"]:hover,
+.iv-persona-card[data-persona="researcher"]:hover,
+.iv-persona-card[data-persona="counselor"]:hover{
+  border-color:rgba(0,229,255,.55);
+  background:rgba(0,229,255,.07);
+  box-shadow:0 6px 24px rgba(0,229,255,.12);
+}
+/* selected 상태 통일 */
+.iv-persona-card[data-persona="professor"].selected,
+.iv-persona-card[data-persona="senior"].selected,
+.iv-persona-card[data-persona="undergrad"].selected,
+.iv-persona-card[data-persona="worker"].selected,
+.iv-persona-card[data-persona="researcher"].selected,
+.iv-persona-card[data-persona="counselor"].selected{
+  border-color:rgba(0,229,255,.85);
+  box-shadow:0 0 28px rgba(0,229,255,.22);
+  background:rgba(0,229,255,.1);
+}
 .iv-persona-icon{font-size:2rem;margin-bottom:8px;line-height:1;}
 .iv-persona-name{font-size:14px;font-weight:700;color:#f0f4ff;margin-bottom:4px;}
 .iv-persona-desc{font-size:13px;color:rgba(240,244,255,.58);line-height:1.5;}
+
+@media(max-width:480px){
+  .iv-persona-card{padding:10px 6px !important;border-radius:12px !important;}
+  .iv-persona-icon{font-size:1.35rem !important;margin-bottom:4px !important;}
+  .iv-persona-name{font-size:11.5px !important;margin-bottom:2px !important;}
+  .iv-persona-desc{font-size:10.5px !important;line-height:1.35 !important;}
+  #iv-persona-grid{gap:7px !important;}
+}
+@media(max-width:380px){
+  .iv-persona-card{padding:8px 4px !important;}
+  .iv-persona-icon{font-size:1.2rem !important;}
+  .iv-persona-name{font-size:10.5px !important;}
+  .iv-persona-desc{font-size:9.5px !important;}
+}
 
 /* 채팅 메시지 */
 .iv-msg{animation:ivMsgIn .35s ease both;}
@@ -3653,7 +3688,9 @@ function startInterview(){
 function renderChips(){
   const chips = IV_CHIPS_BY_PERSONA[ivPersona] || [];
   const wrap = document.getElementById('iv-chips-wrap');
-  wrap.innerHTML = chips.map(q => `<span class="iv-chip" onclick="useChip(this,'${q.replace(/'/g,"\\'")}')">💬 ${q}</span>`).join('');
+  const isMobile = window.innerWidth <= 768;
+  const displayChips = isMobile ? chips.slice(0, 3) : chips;
+  wrap.innerHTML = displayChips.map(q => `<span class="iv-chip" onclick="useChip(this,'${q.replace(/'/g,"\\'")}')">💬 ${q}</span>`).join('');
 }
 
 function useChip(el, q){
@@ -5155,9 +5192,9 @@ ${roadmapText || '(작성 없음)'}
         <div>
           <label style="display:block;font-size:14px;letter-spacing:3px;color:rgba(240,244,255,.62);font-weight:600;margin-bottom:10px;">📅 탐구 기간</label>
           <select id="rq-period"
-            style="width:100%;background:rgba(168,85,247,.04);border:1.5px solid rgba(168,85,247,.28);border-radius:14px;padding:14px 18px;color:#f0f4ff;font-family:'Pretendard','Noto Sans KR',sans-serif;font-size:15px;outline:none;transition:.25s;cursor:pointer;appearance:none;-webkit-appearance:none;"
-            onfocus="this.style.borderColor='rgba(168,85,247,.7)'"
-            onblur="this.style.borderColor='rgba(168,85,247,.28)'"
+            style="width:100%;background:rgba(52,211,153,.04);border:1.5px solid rgba(52,211,153,.28);border-radius:14px;padding:14px 18px;color:#f0f4ff;font-family:'Pretendard','Noto Sans KR',sans-serif;font-size:15px;outline:none;transition:.25s;cursor:pointer;appearance:none;-webkit-appearance:none;"
+            onfocus="this.style.borderColor='rgba(52,211,153,.7)'"
+            onblur="this.style.borderColor='rgba(52,211,153,.28)'"
           >
             <option value="1" selected style="background:#0d1528;">1주일</option>
             <option value="2" style="background:#0d1528;">2주일</option>
@@ -5168,69 +5205,59 @@ ${roadmapText || '(작성 없음)'}
       </div>
 
       <!-- 탐구 질문 -->
-      <div style="margin-bottom:28px;">
+      <div style="margin-bottom:32px;">
         <label style="display:block;font-size:14px;letter-spacing:3px;color:rgba(240,244,255,.62);font-weight:600;margin-bottom:6px;">❓ 탐구 질문</label>
         <div style="font-size:13px;color:rgba(240,244,255,.4);margin-bottom:10px;">탐구하고 싶은 것을 질문 형태로 써보세요. 구체적인 질문일수록 AI 설계가 정확해져요!</div>
         <textarea id="rq-topic" placeholder="예) 자율주행 기술이 발달하면 10년 후 파일럿 직업은 어떻게 변화할까?&#10;예) SNS 사용 시간이 청소년의 자존감에 미치는 영향은 무엇인가?&#10;예) 식물의 성장 속도는 음악 장르에 따라 어떻게 달라지는가?" rows="4"
-          style="width:100%;background:rgba(251,191,36,.04);border:1.5px solid rgba(251,191,36,.28);border-radius:14px;padding:16px 18px;color:#f0f4ff;font-family:'Pretendard','Noto Sans KR',sans-serif;font-size:15px;outline:none;resize:none;line-height:1.7;transition:.25s;"
-          onfocus="this.style.borderColor='rgba(251,191,36,.7)';this.style.background='rgba(251,191,36,.07)'"
-          onblur="this.style.borderColor='rgba(251,191,36,.28)';this.style.background='rgba(251,191,36,.04)'"
+          style="width:100%;background:rgba(52,211,153,.04);border:1.5px solid rgba(52,211,153,.28);border-radius:14px;padding:16px 18px;color:#f0f4ff;font-family:'Pretendard','Noto Sans KR',sans-serif;font-size:15px;outline:none;resize:none;line-height:1.7;transition:.25s;"
+          onfocus="this.style.borderColor='rgba(52,211,153,.7)';this.style.background='rgba(52,211,153,.07)'"
+          onblur="this.style.borderColor='rgba(52,211,153,.28)';this.style.background='rgba(52,211,153,.04)'"
         ></textarea>
-      </div>
-
-      <!-- 탐구 방식 칩 -->
-      <div style="margin-bottom:32px;">
-        <label style="display:block;font-size:14px;letter-spacing:3px;color:rgba(240,244,255,.62);font-weight:600;margin-bottom:12px;">🧪 탐구 방식 (복수 선택 가능)</label>
-        <div style="display:flex;flex-wrap:wrap;gap:9px;" id="rq-type-chips">
-          <span class="rq-chip" data-val="문헌조사">📚 문헌조사</span>
-          <span class="rq-chip" data-val="실험/관찰">🧫 실험·관찰</span>
-          <span class="rq-chip" data-val="설문조사">📋 설문조사</span>
-          <span class="rq-chip" data-val="인터뷰">🎤 인터뷰</span>
-          <span class="rq-chip" data-val="데이터분석">📊 데이터분석</span>
-          <span class="rq-chip" data-val="현장방문">🏫 현장방문</span>
-          <span class="rq-chip" data-val="독서토론">📖 독서·토론</span>
-          <span class="rq-chip" data-val="비교분석">⚖️ 비교분석</span>
-          <span class="rq-chip" data-val="사례연구">🔍 사례연구</span>
-          <span class="rq-chip" data-val="시뮬레이션">💻 시뮬레이션</span>
-          <span class="rq-chip" data-val="제작/메이킹">🔧 제작·메이킹</span>
-          <span class="rq-chip" data-val="통계분석">📐 통계분석</span>
-        </div>
       </div>
 
       <!-- 시작 버튼 -->
       <div style="text-align:center;">
         <button id="rq-start-btn" onclick="window.startResearch()"
-          style="padding:18px 64px;border-radius:999px;background:linear-gradient(135deg,#00e5ff,#1a6cf5,#a855f7);color:#fff;font-size:17px;font-weight:700;border:none;cursor:pointer;box-shadow:0 8px 32px rgba(0,229,255,.3);transition:.3s;font-family:'Pretendard','Noto Sans KR',sans-serif;letter-spacing:.3px;"
-          onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 16px 48px rgba(0,229,255,.45)'"
-          onmouseout="this.style.transform='';this.style.boxShadow='0 8px 32px rgba(0,229,255,.3)'"
-        >🔭 주제탐구 설계하기</button>
+          style="padding:18px 64px;border-radius:999px;background:linear-gradient(135deg,#34d399,#059669,#1a6cf5);color:#fff;font-size:17px;font-weight:700;border:none;cursor:pointer;box-shadow:0 8px 32px rgba(52,211,153,.35);transition:.3s;font-family:'Pretendard','Noto Sans KR',sans-serif;letter-spacing:.3px;"
+          onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 16px 48px rgba(52,211,153,.5)'"
+          onmouseout="this.style.transform='';this.style.boxShadow='0 8px 32px rgba(52,211,153,.35)'"
+        >🔭 탐구 계획서 생성하기</button>
       </div>
     </div>
 
     <!-- 결과 영역 -->
     <div id="rq-result-wrap" style="display:none;">
 
-      <!-- 탐구 개요 카드 -->
-      <div id="rq-overview" style="background:linear-gradient(135deg,rgba(52,211,153,.08),rgba(168,85,247,.06));border:1px solid rgba(52,211,153,.25);border-radius:24px;padding:28px 32px;margin-bottom:28px;position:relative;overflow:hidden;">
-        <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#34d399,#a855f7,#60a5fa);"></div>
-        <div style="display:flex;align-items:flex-start;gap:20px;flex-wrap:wrap;">
-          <div style="flex:1;min-width:200px;">
-            <div style="font-size:14px;letter-spacing:3px;color:#34d399;font-weight:700;margin-bottom:8px;">탐구 질문</div>
-            <div id="rq-ov-topic" style="font-size:1.15rem;font-weight:800;color:#f0f4ff;letter-spacing:-.3px;line-height:1.4;"></div>
+      <!-- PDF 스타일 탐구 계획서 헤더 -->
+      <div id="rq-overview" style="background:rgba(255,255,255,.03);border:1.5px solid rgba(52,211,153,.3);border-radius:24px;padding:32px 36px;margin-bottom:24px;position:relative;overflow:hidden;">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#34d399,#1a6cf5);"></div>
+        <!-- 학교·제목 -->
+        <div style="text-align:center;margin-bottom:24px;">
+          <div style="font-size:13px;color:rgba(240,244,255,.5);letter-spacing:2px;margin-bottom:8px;">🏫 인천공항중학교 · 질문하는 학교</div>
+          <div style="font-size:1.5rem;font-weight:900;color:#f0f4ff;letter-spacing:-.5px;">나의 탐구 계획서</div>
+        </div>
+        <!-- 탐구 질문 박스 -->
+        <div style="background:rgba(52,211,153,.07);border:1px solid rgba(52,211,153,.25);border-radius:14px;padding:18px 22px;margin-bottom:20px;text-align:center;">
+          <div style="font-size:13px;color:#34d399;letter-spacing:2px;font-weight:700;margin-bottom:6px;">🔍 탐구 질문</div>
+          <div id="rq-ov-topic" style="font-size:1.05rem;font-weight:700;color:#f0f4ff;line-height:1.55;"></div>
+        </div>
+        <!-- 메타 정보 3칸 -->
+        <div style="display:flex;gap:12px;flex-wrap:wrap;">
+          <div style="flex:1;min-width:100px;text-align:center;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:12px 10px;">
+            <div style="font-size:1.2rem;font-weight:800;color:#34d399;" id="rq-ov-weeks"></div>
+            <div style="font-size:12px;color:rgba(240,244,255,.45);margin-top:2px;">총 기간</div>
           </div>
-          <div style="display:flex;gap:16px;flex-wrap:wrap;flex-shrink:0;">
-            <div style="text-align:center;background:rgba(52,211,153,.1);border:1px solid rgba(52,211,153,.25);border-radius:14px;padding:14px 20px;">
-              <div style="font-size:1.6rem;font-weight:800;color:#34d399;" id="rq-ov-weeks"></div>
-              <div style="font-size:14px;color:rgba(240,244,255,.55);margin-top:3px;">총 기간</div>
-            </div>
-            <div style="text-align:center;background:rgba(168,85,247,.1);border:1px solid rgba(168,85,247,.25);border-radius:14px;padding:14px 20px;">
-              <div style="font-size:1.6rem;font-weight:800;color:#c084fc;" id="rq-ov-steps"></div>
-              <div style="font-size:14px;color:rgba(240,244,255,.55);margin-top:3px;">탐구 단계</div>
-            </div>
-            <div style="text-align:center;background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.22);border-radius:14px;padding:14px 20px;">
-              <div style="font-size:1.6rem;font-weight:800;color:#fbbf24;" id="rq-ov-major"></div>
-              <div style="font-size:14px;color:rgba(240,244,255,.55);margin-top:3px;">희망 학과</div>
-            </div>
+          <div style="flex:1;min-width:100px;text-align:center;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:12px 10px;">
+            <div style="font-size:1.2rem;font-weight:800;color:#34d399;" id="rq-ov-steps"></div>
+            <div style="font-size:12px;color:rgba(240,244,255,.45);margin-top:2px;">탐구 단계</div>
+          </div>
+          <div style="flex:1;min-width:100px;text-align:center;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:12px 10px;">
+            <div style="font-size:1.1rem;font-weight:800;color:#34d399;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" id="rq-ov-major"></div>
+            <div style="font-size:12px;color:rgba(240,244,255,.45);margin-top:2px;">희망 학과</div>
+          </div>
+          <div style="flex:1;min-width:100px;text-align:center;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:12px 10px;">
+            <div style="font-size:1.1rem;font-weight:800;color:#34d399;" id="rq-ov-date"></div>
+            <div style="font-size:12px;color:rgba(240,244,255,.45);margin-top:2px;">작성일</div>
           </div>
         </div>
       </div>
@@ -5253,7 +5280,7 @@ ${roadmapText || '(작성 없음)'}
         <button onclick="window.resetResearch()" style="padding:14px 32px;border-radius:999px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.04);color:rgba(240,244,255,.6);font-size:15px;font-weight:500;cursor:pointer;font-family:'Pretendard','Noto Sans KR',sans-serif;transition:.2s;"
           onmouseover="this.style.borderColor='rgba(52,211,153,.4)';this.style.color='#34d399'"
           onmouseout="this.style.borderColor='rgba(255,255,255,.14)';this.style.color='rgba(240,244,255,.6)'"
-        >🔄 새 탐구 설계하기</button>
+        >🔄 새 탐구 계획서 만들기</button>
       </div>
 
     </div>
@@ -5534,107 +5561,91 @@ function rqShowStarToast(n){
   setTimeout(function(){ toast.remove(); }, 3000);
 }
 
-/* ── 2. 색상 팔레트 ── */
+/* ── 2. 색상 팔레트 (단일 청록-파랑 계열로 통일) ── */
 var RQ_COLORS = [
-  {bg:'linear-gradient(135deg,#ef4444,#f97316)',border:'rgba(239,68,68,.35)',c:'#f97316'},
-  {bg:'linear-gradient(135deg,#f59e0b,#fbbf24)',border:'rgba(245,158,11,.35)',c:'#fbbf24'},
-  {bg:'linear-gradient(135deg,#34d399,#059669)',border:'rgba(52,211,153,.35)',c:'#34d399'},
-  {bg:'linear-gradient(135deg,#6366f1,#a855f7)',border:'rgba(99,102,241,.35)',c:'#a855f7'},
-  {bg:'linear-gradient(135deg,#00e5ff,#1a6cf5)',border:'rgba(0,229,255,.35)',c:'#00e5ff'},
-  {bg:'linear-gradient(135deg,#ec4899,#a855f7)',border:'rgba(236,72,153,.35)',c:'#ec4899'},
+  {bg:'linear-gradient(135deg,#34d399,#059669)',border:'rgba(52,211,153,.3)',c:'#34d399'},
+  {bg:'linear-gradient(135deg,#1a6cf5,#2563eb)',border:'rgba(26,108,245,.3)',c:'#60a5fa'},
+  {bg:'linear-gradient(135deg,#059669,#34d399)',border:'rgba(52,211,153,.28)',c:'#6ee7b7'},
+  {bg:'linear-gradient(135deg,#2563eb,#1a6cf5)',border:'rgba(37,99,235,.28)',c:'#93c5fd'},
 ];
 
-/* ── 3. 탐구 계획 생성 ── */
-function generateResearchPlan(major, topic, weeks, types){
+/* ── 3. 탐구 계획 생성 (fallback) ── */
+function generateResearchPlan(major, topic, weeks){
   var wk = parseInt(weeks);
-  var typeStr = types.length ? types.join('·') : '문헌조사';
-  var t0 = types[0]||'문헌조사', t1 = types[1]||'추가 자료 수집', t2 = types[2]||'교차 검증';
 
   if(wk <= 1) return [
-    {name:'주제 탐색 & 자료 수집',weeks:'1~3일',icon:'📚',goal:'핵심 개념 파악 및 관련 자료 집중 수집',tasks:[
+    {name:'자료 수집',weeks:'1~3일',icon:'📚',goal:'핵심 개념 파악 및 관련 자료 집중 수집',
+     method:'문헌조사',
+     tasks:[
       {week:'1일차',text:'"'+topic+'" 관련 논문·기사 5개 이상 검색 및 요약',tip:'구글 스칼라, 네이버 학술정보 활용'},
-      {week:'1~2일차',text:major+' 연계 키워드 마인드맵 작성',tip:'핵심어 3개 → 세부 개념으로 확장'},
-      {week:'2일차',text:typeStr+' 방식으로 1차 자료 빠르게 수집',tip:'깊이보다 넓이 우선, 속도가 생명'},
-      {week:'3일차',text:'수집 자료 분류 및 탐구 방향 확정',tip:'선생님께 중간 확인 받기'},
+      {week:'2일차',text:major+' 연계 키워드 마인드맵 작성 및 탐구 방향 확정',tip:'핵심 키워드 3개로 좁혀보기'},
+      {week:'3일차',text:'수집 자료 분류 정리 및 선생님 중간 확인',tip:'방향 점검이 가장 중요한 시점'},
     ],output:'📋 자료 수집 노트 + 탐구 방향 메모'},
-    {name:'분석 & 정리',weeks:'4~5일',icon:'🔬',goal:'자료 분석 및 핵심 결론 도출',tasks:[
-      {week:'4일차',text:'수집 자료 심층 분석 및 패턴 발견',tip:'공통점·차이점·시사점 중심으로'},
-      {week:'4일차',text:major+' 진학과의 연계성 정리',tip:'내 관심사와 학과를 연결하는 서술'},
-      {week:'5일차',text:'탐구 결론 초안 작성',tip:"'결과 → 해석 → 시사점' 흐름"},
-      {week:'5일차',text:'한계점 및 더 알고 싶은 점 기록',tip:'후속 탐구 씨앗이 돼요'},
+    {name:'분석 & 정리',weeks:'4~5일',icon:'🔬',goal:'자료 분석 및 핵심 결론 도출',
+     method:'비교분석·사례연구',
+     tasks:[
+      {week:'4일차',text:'수집 자료 심층 분석 — 공통점·차이점·시사점 중심 정리',tip:"'왜 그럴까?'를 계속 질문하기"},
+      {week:'5일차',text:major+' 진학 연계성 서술 및 탐구 결론 초안 작성',tip:'한계점도 솔직하게 기록'},
     ],output:'📝 A4 1~2매 탐구 정리 노트'},
-    {name:'보고서 완성 & 공유',weeks:'6~7일',icon:'🎤',goal:'간단한 보고서 완성 및 발표',tasks:[
-      {week:'6일차',text:'탐구 보고서 완성 (A4 1~2매)',tip:'서론·본론·결론 간결하게'},
-      {week:'7일차',text:'발표 자료 or 요약 포스터 제작',tip:'핵심 3가지만 담기'},
-      {week:'7일차',text:'탐구 전 과정 회고 한 줄 작성',tip:'학생부 세특 소재로 활용 가능'},
-    ],output:'📄 미니 탐구 보고서 + 발표 요약'},
-  ];
-
-  if(wk <= 2) return [
-    {name:'주제 선정 & 집중 문헌 탐색',weeks:'1~3일',icon:'📚',goal:'탐구 배경 이해 및 탐구 질문 확정',tasks:[
-      {week:'1일차',text:'"'+topic+'" 관련 선행 자료 10개 이상 수집',tip:'RISS·구글 스칼라·뉴스 병행'},
-      {week:'1~2일차',text:major+' 연계 핵심 개념 정리 노트 작성',tip:'모르는 용어는 바로 찾아 기록'},
-      {week:'2일차',text:'탐구 질문(RQ) 2개 후보 → 1개 확정',tip:"'왜?', '어떻게?' 형태 추천"},
-      {week:'3일차',text:'탐구 계획 간단 작성 & 선생님 확인',tip:'방향 잡는 게 이 단계 목표'},
-    ],output:'📄 탐구 계획 메모 + 문헌 목록'},
-    {name:'자료 수집 & 분석',weeks:'4~9일',icon:'🔬',goal:typeStr+'으로 핵심 자료 직접 수집',tasks:[
-      {week:'4~5일차',text:t0+' 1차 실시 및 원자료 정리',tip:'날짜·출처 반드시 기록'},
-      {week:'6~7일차',text:t1+' 추가 실시',tip:'다양한 관점 확보'},
-      {week:'7~8일차',text:'자료 분류 및 패턴 분석',tip:'표·그래프로 시각화'},
-      {week:'9일차',text:'탐구 질문에 대한 답변 초안 도출',tip:'근거 3가지 이상 제시'},
-    ],output:'📊 자료 정리집 + 분석 메모'},
-    {name:'보고서 & 발표 완성',weeks:'10~14일',icon:'🎤',goal:'보고서 완성 및 간단 발표 자료 제작',tasks:[
-      {week:'10~11일차',text:'탐구 보고서 전체 초안 작성',tip:'서론·본론·결론 구조'},
-      {week:'12일차',text:major+' 연계 시사점 및 한계점 추가',tip:'세특 소재로 바로 활용 가능'},
-      {week:'13일차',text:'보고서 교정·완성',tip:'선생님 피드백 1회 필수'},
-      {week:'14일차',text:'발표 자료 제작 & 발표 연습',tip:'5분 내외 핵심만'},
-    ],output:'📝 탐구 보고서 (A4 3~5매) + 발표 자료'},
+    {name:'보고서 완성',weeks:'6~7일',icon:'📄',goal:'탐구 보고서 완성 및 발표 준비',
+     method:'보고서 작성',
+     tasks:[
+      {week:'6일차',text:'탐구 보고서 완성 (서론·본론·결론, A4 1~2매)',tip:'각 항목 2~3문장으로 간결하게'},
+      {week:'7일차',text:'발표 요약 포스터 or 핵심 슬라이드 3장 제작',tip:'세특 소재로 바로 활용 가능'},
+    ],output:'📄 미니 탐구 보고서 + 발표 자료'},
   ];
 
   if(wk <= 4) return [
-    {name:'주제 선정 & 문헌 탐색',weeks:'1~2주',icon:'📚',goal:'탐구 배경 이해 및 핵심 개념 파악',tasks:[
-      {week:'1주차',text:'"'+topic+'" 관련 선행 논문·기사 10개 이상 수집',tip:'구글 스칼라·RISS·KISS 활용'},
-      {week:'1주차',text:major+' 연계 키워드 마인드맵 작성',tip:'핵심어 → 세부 개념으로 확장'},
-      {week:'2주차',text:'탐구 질문(RQ) 3개 초안 작성 후 1개 확정',tip:"'왜?', '어떻게?', '무엇이?' 형태로"},
-      {week:'2주차',text:'탐구 계획서 초안 완성 & 선생님 피드백',tip:'이 시점 피드백이 방향을 결정해요'},
-    ],output:'📄 탐구 계획서 1장 (주제·목적·방법·일정)'},
-    {name:'자료 수집 & 분석·보고서 완성',weeks:'3~4주',icon:'🔬',goal:'데이터 수집 후 결론 도출 및 보고서 작성',tasks:[
-      {week:'3주차',text:typeStr+' 방식으로 1차 자료 수집 진행',tip:'날짜·출처 반드시 기록'},
-      {week:'3주차',text:'수집 자료 분류 및 핵심 내용 요약 정리',tip:'표·그래프 활용 추천'},
-      {week:'4주차',text:'탐구 질문에 대한 답변·결론 도출',tip:'근거 → 해석 → 결론 순서로'},
-      {week:'4주차',text:'탐구 보고서 완성 & 발표 자료 제작',tip:'서론·본론·결론 구조 유지'},
-    ],output:'📊 탐구 보고서 (A4 3~5매) + 발표 자료'},
+    {name:'주제 선정 & 문헌 탐색',weeks:'1~2주',icon:'📚',goal:'탐구 배경 이해 및 핵심 개념 파악',
+     method:'문헌조사·인터넷 자료 수집',
+     tasks:[
+      {week:'1주차',text:'"'+topic+'" 관련 선행 자료 10개 이상 수집 및 요약',tip:'RISS·구글 스칼라·뉴스 병행'},
+      {week:'1주차',text:major+' 연계 핵심 개념 정리 노트 작성',tip:'모르는 용어는 바로 찾아 기록'},
+      {week:'2주차',text:'탐구 질문 1개 확정 & 탐구 계획서 초안 작성',tip:'선생님께 방향 확인 필수'},
+    ],output:'📄 탐구 계획 메모 + 문헌 목록'},
+    {name:'자료 수집 & 분석',weeks:'2~3주',icon:'🔬',goal:'탐구 질문에 답할 수 있는 자료 직접 수집',
+     method:'설문조사·인터뷰·데이터 수집',
+     tasks:[
+      {week:'2~3주차',text:'탐구 방법 실행 — 설문·인터뷰·현장 방문 중 선택하여 진행',tip:'날짜·출처 반드시 기록'},
+      {week:'3주차',text:'수집 자료 분류 및 표·그래프로 시각화',tip:'패턴과 경향성 파악에 집중'},
+      {week:'3주차',text:'탐구 질문에 대한 잠정 답변 초안 도출',tip:'근거 3가지 이상 제시'},
+    ],output:'📊 자료 정리집 + 분석 메모'},
+    {name:'보고서 & 발표 완성',weeks:'4주',icon:'📄',goal:'보고서 완성 및 발표 자료 제작',
+     method:'보고서 작성·발표 준비',
+     tasks:[
+      {week:'4주차',text:'탐구 보고서 전체 작성 (서론·본론·결론, A4 3~5매)',tip:'선생님 피드백 1회 필수'},
+      {week:'4주차',text:major+' 연계 시사점 및 한계점 추가',tip:'세특 소재로 바로 활용 가능'},
+      {week:'4주차',text:'발표 자료 제작 & 5분 발표 연습',tip:'핵심 3가지만 담기'},
+    ],output:'📝 탐구 보고서 (A4 3~5매) + 발표 자료'},
   ];
 
   return [
-    {name:'주제 선정 & 문헌 탐색',weeks:'1~3주',icon:'📚',goal:'탐구 주제 구체화 및 배경 지식 구축',tasks:[
+    {name:'주제 선정 & 문헌 탐색',weeks:'1~3주',icon:'📚',goal:'탐구 주제 구체화 및 배경 지식 구축',
+     method:'문헌조사·논문 검색',
+     tasks:[
       {week:'1주차',text:'"'+topic+'" 관련 국내외 선행 연구 20편 이상 수집',tip:'RISS·구글 스칼라·학술정보원'},
-      {week:'1주차',text:major+' 연계 핵심 개념 정리 및 용어 사전 작성',tip:'모르는 개념은 바로 찾아 기록'},
-      {week:'2주차',text:'탐구 질문(RQ) 3개 후보 → 1개 확정',tip:"'무엇이 ~에 영향을 미치는가' 추천"},
-      {week:'2주차',text:'가설 수립 및 탐구 변수 정의',tip:'독립·종속·통제 변수 명확히'},
-      {week:'3주차',text:'탐구 방법 선정 및 상세 계획서 완성',tip:'선생님 피드백 1회 필수'},
-      {week:'3주차',text:'필요 자원(설문지·재료 등) 준비',tip:'준비 목록 체크리스트 작성'},
+      {week:'2주차',text:'탐구 질문(RQ) 1개 확정 및 가설 수립',tip:"'무엇이 ~에 영향을 미치는가' 형태 추천"},
+      {week:'3주차',text:major+' 연계 핵심 개념 정리 및 탐구 계획서 완성',tip:'선생님 피드백 1회 필수'},
     ],output:'📄 탐구 계획서 (2~3매) + 문헌 정리 노트'},
-    {name:'1차 자료 수집',weeks:'4~6주',icon:'🔬',goal:typeStr+'으로 핵심 데이터 수집',tasks:[
-      {week:'4주차',text:t0+' 1차 실시 및 원자료 기록',tip:'날짜·장소·출처 반드시 표기'},
-      {week:'4~5주차',text:t1+' 병행 실시',tip:'다각도 관점 확보'},
-      {week:'5주차',text:'수집 데이터 1차 정리 및 이상값 검토',tip:'결측값 처리 방법 기록'},
-      {week:'6주차',text:'중간 분석 결과 정리 및 방향 재점검',tip:'가설과 맞지 않으면 수정 OK'},
-      {week:'6주차',text:'교사 중간 피드백 수렴',tip:'이 시점 피드백이 가장 중요'},
+    {name:'자료 수집',weeks:'4~6주',icon:'🔬',goal:'탐구 질문에 답할 핵심 데이터 수집',
+     method:'설문조사·인터뷰·실험·현장방문',
+     tasks:[
+      {week:'4~5주차',text:'탐구 방법 1차 실시 및 원자료 기록 (날짜·출처 반드시 표기)',tip:'결측값 처리 방법도 기록'},
+      {week:'5~6주차',text:'보완 자료 추가 수집 및 중간 점검',tip:'가설과 맞지 않으면 수정 OK'},
+      {week:'6주차',text:'교사 중간 피드백 수렴 및 방향 재점검',tip:'이 시점 피드백이 가장 중요'},
     ],output:'📊 1차 자료집 + 중간 점검 보고서'},
-    {name:'심화 분석 & 결론',weeks:'7~9주',icon:'💡',goal:'보완 자료 수집 및 심층 분석',tasks:[
-      {week:'7주차',text:'1차 분석 부족 부분 보완 자료 추가 수집',tip:'양보다 질 중심'},
-      {week:'7~8주차',text:t2+' 추가 실시',tip:'다양한 방법 혼합 시 신뢰도 ↑'},
-      {week:'8주차',text:'전체 자료 통합 분석 및 패턴 발견',tip:'표·그래프 시각화 필수'},
-      {week:'9주차',text:'탐구 질문에 대한 답변 초안 도출',tip:"'결과 → 해석 → 시사점' 순서"},
-      {week:'9주차',text:major+' 진학 연계 시사점 정리',tip:'세특 작성을 염두에 두고 서술'},
+    {name:'심화 분석 & 결론',weeks:'7~9주',icon:'💡',goal:'전체 자료 통합 분석 및 결론 도출',
+     method:'비교분석·통계분석·시각화',
+     tasks:[
+      {week:'7~8주차',text:'전체 자료 통합 분석 — 표·그래프로 시각화',tip:'패턴·경향성·예외값 집중 분석'},
+      {week:'9주차',text:'탐구 질문에 대한 답변 초안 도출 (결과→해석→시사점)',tip:major+' 진학 연계 시사점 필수'},
     ],output:'📈 통합 분석 자료 + 결론 초안'},
-    {name:'보고서 작성 & 완성',weeks:'10~12주',icon:'✍️',goal:'최종 보고서 및 발표 자료 완성',tasks:[
-      {week:'10주차',text:'보고서 전체 구조 잡기 및 서론 작성',tip:'배경·목적·탐구 질문 명확히'},
-      {week:'10~11주차',text:'본론(연구 방법·결과·분석) 집필',tip:'그래프·표·사진 적극 활용'},
-      {week:'11주차',text:'결론·한계점·후속 연구 방향 작성',tip:'솔직한 한계 서술이 좋은 평가'},
-      {week:'12주차',text:'보고서 교정·교열 및 최종 완성',tip:'선생님 최종 피드백 꼭 받기'},
-      {week:'12주차',text:'발표 자료 제작 및 발표 연습',tip:'7분 내외로 핵심만'},
+    {name:'보고서 작성 & 완성',weeks:'10~12주',icon:'📄',goal:'최종 보고서 및 발표 자료 완성',
+     method:'보고서 작성·발표 준비',
+     tasks:[
+      {week:'10~11주차',text:'보고서 전체 작성 — 서론·본론(연구방법·결과·분석)·결론',tip:'그래프·표·사진 적극 활용'},
+      {week:'11주차',text:'한계점·후속 연구 방향 작성 및 선생님 최종 피드백',tip:'솔직한 한계 서술이 좋은 평가'},
+      {week:'12주차',text:'최종 보고서 완성 및 발표 자료 제작 (7분 내외)',tip:'세특 소재 정리도 함께'},
     ],output:'🎓 최종 탐구 보고서 (A4 8~12매) + 발표 자료'},
   ];
 }
@@ -5666,12 +5677,11 @@ function startResearch(){
   var major = document.getElementById('rq-major').value.trim();
   var topic = document.getElementById('rq-topic').value.trim();
   var weeks = document.getElementById('rq-period').value;
-  var types = getSelectedRqTypes();
 
   if(!major){ alert('희망 학과를 입력해주세요! 🎓'); return; }
   if(!topic){ alert('탐구 질문을 입력해주세요! ❓'); return; }
 
-  var earnedStars = rqEvalStars(major, topic, types, parseInt(weeks));
+  var earnedStars = rqEvalStars(major, topic, [], parseInt(weeks));
   rqRenderStars(earnedStars);
   rqShowStarToast(earnedStars);
 
@@ -5681,24 +5691,27 @@ function startResearch(){
   var periodLabels = {'1':'1주일','2':'2주일','4':'한 달','12':'3개월'};
   document.getElementById('rq-ov-topic').textContent = topic;
   document.getElementById('rq-ov-weeks').textContent = periodLabels[weeks] || weeks+'주';
-  var maj = major.length > 6 ? major.slice(0,6)+'…' : major;
+  var maj = major.length > 7 ? major.slice(0,7)+'…' : major;
   document.getElementById('rq-ov-major').textContent = maj;
+  // 작성일
+  var now = new Date();
+  document.getElementById('rq-ov-date').textContent = now.getFullYear()+'년 '+(now.getMonth()+1)+'월 '+now.getDate()+'일';
 
   document.getElementById('rq-loading').style.display = 'block';
   document.getElementById('rq-timeline').style.display = 'none';
   document.getElementById('rq-bottom-btns').style.display = 'none';
 
-  var msgs = ['AI가 주제를 분석하는 중...','탐구 단계를 설계하는 중...','기간별 로드맵을 구성하는 중...','마무리 검토 중...'];
+  var msgs = ['AI가 탐구 질문을 분석하는 중...','단계별 탐구 방법을 설계하는 중...','구체적인 활동 계획을 작성하는 중...','계획서를 마무리하는 중...'];
   var mi = 0;
   var msgEl = document.getElementById('rq-loading-msg');
   var iv = setInterval(function(){ mi=(mi+1)%msgs.length; if(msgEl) msgEl.textContent=msgs[mi]; }, 900);
 
-  // 실제 Claude API로 탐구 로드맵 생성
+  // Claude API로 탐구 계획서 생성
   (async function(){
     var phases;
     try {
       var periodLabels2 = {'1':'1주일','2':'2주일','4':'한 달','12':'3개월'};
-      var resp = await fetch('/.netlify/functions/claude', {
+      var resp = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -5706,35 +5719,35 @@ function startResearch(){
           max_tokens: 2000,
           messages: [{
             role: 'user',
-            content: `당신은 중고등학생의 주제탐구 계획서를 설계해주는 전문 선생님입니다.
-아래 정보를 바탕으로 학생이 실제로 실행할 수 있는 탐구 계획서를 설계해주세요.
-반드시 JSON 형식만 출력하고 다른 텍스트는 절대 쓰지 마세요.
+            content: `당신은 중고등학생의 탐구 계획서를 설계해주는 전문 선생님입니다.
+아래 탐구 질문과 조건을 보고, 학생이 실제로 실행할 수 있는 단계별 탐구 계획서를 설계해주세요.
 
 탐구 질문: ${topic}
 희망 학과: ${major}
 탐구 기간: ${periodLabels2[weeks]||weeks+'주'}
-탐구 방식: ${types.join(', ') || '자유'}
 
 설계 기준:
 - 중고등학생이 학교 과제나 자유탐구로 직접 실행 가능한 수준
-- 탐구 질문에 정확히 맞춘 구체적인 계획
-- 각 단계는 탐구 주제, 목표, 방법, 산출물이 명확해야 함
-- 실험·관찰·설문·인터뷰·데이터 수집 등 학생이 실제로 할 수 있는 활동 포함
-- 기간에 맞게 3~4단계로 구성 (1주일이면 3단계, 3개월이면 4단계)
-- 각 단계마다 과제 3~4개, 각 과제에 실제 도움말 포함
+- 탐구 질문에 정확히 맞춘 구체적인 탐구 방법 제안 (예: 어떤 사이트에서 어떤 데이터를 수집할지, 설문을 만든다면 어떤 문항인지 등)
+- 각 단계마다 탐구 방법(method)이 다를 수 있음 — 문헌조사, 설문조사, 인터뷰, 데이터분석, 실험, 현장방문 등 탐구 질문에 맞게 선택
+- 기간에 맞게 3~4단계로 구성
+- 각 단계마다 과제 2~3개, 각 과제에 구체적인 실행 방법과 팁 포함
 
-JSON 형식 (이 형식 그대로):
+반드시 JSON 형식만 출력하고 다른 텍스트는 절대 쓰지 마세요:
 [
   {
-    "icon":"📚",
-    "name":"단계명 (6자 이내)",
-    "weeks":"기간 (예: 1~2일, 1주차, 2~3주)",
-    "goal":"이 단계에서 달성할 목표 1~2문장",
-    "output":"이 단계의 결과물 (예: 문헌조사 정리표, 설문지 초안, 그래프 3개)",
-    "tasks":[
-      {"week":"며칠차/주차","text":"구체적으로 무엇을 어떻게 할지 (예: 네이버 학술정보·구글 스칼라에서 관련 논문 3편 찾아 요약 정리)","tip":"실제 도움말 (예: 검색어는 영어로도 해보세요)"},
-      {"week":"며칠차/주차","text":"활동2","tip":"도움말2"},
-      {"week":"며칠차/주차","text":"활동3","tip":"도움말3"}
+    "icon": "📚",
+    "name": "단계명 (5자 이내)",
+    "weeks": "기간 (예: 1~2일, 1주차, 2~3주)",
+    "goal": "이 단계의 목표 1문장",
+    "method": "이 단계에서 사용할 탐구 방법 (예: 문헌조사·뉴스 검색, 채용공고 데이터 수집, 전문가 인터뷰)",
+    "output": "이 단계의 결과물 (예: 파일럿 채용공고 데이터 50건 수집 + 연봉 변화 표)",
+    "tasks": [
+      {
+        "week": "며칠차/주차",
+        "text": "구체적으로 무엇을 어떻게 할지 (예: 대한항공·아시아나 채용공고 사이트에서 최근 5년 파일럿 채용 조건과 연봉 공개 데이터 수집하기)",
+        "tip": "실제 도움말 (예: 잡코리아·사람인·각 항공사 공식 채용 페이지 활용)"
+      }
     ]
   }
 ]`
@@ -5745,7 +5758,7 @@ JSON 형식 (이 형식 그대로):
       var text = (data.content?.[0]?.text||'').replace(/```json|```/g,'').trim();
       phases = JSON.parse(text);
     } catch(e) {
-      phases = generateResearchPlan(major, topic, weeks, types);
+      phases = generateResearchPlan(major, topic, weeks);
     }
 
     clearInterval(iv);
@@ -5763,13 +5776,15 @@ JSON 형식 (이 형식 그대로):
           (t.tip ? '<div class="rq-task-tip">💡 '+t.tip+'</div>' : '') +
           '</div></div>';
       }).join('');
+      var methodBadge = ph.method ? '<div style="display:inline-flex;align-items:center;gap:5px;background:rgba(52,211,153,.08);border:1px solid rgba(52,211,153,.2);border-radius:999px;padding:4px 12px;font-size:12px;color:#34d399;font-weight:600;margin-top:6px;">🧪 '+ph.method+'</div>' : '';
       return '<div class="rq-phase-card open" id="rq-phase-'+i+'" style="border-color:'+col.border+';animation-delay:'+(i*.12)+'s;">' +
         '<div class="rq-phase-header" onclick="window.toggleRqPhase('+i+')">' +
         '<div class="rq-phase-num" style="background:'+col.bg+';box-shadow:0 4px 16px '+col.border+';">'+ph.icon+'</div>' +
         '<div class="rq-phase-info">' +
-        '<div class="rq-phase-period" style="color:'+col.c+';">PHASE '+(i+1)+' · '+ph.weeks+'</div>' +
+        '<div class="rq-phase-period" style="color:'+col.c+';">STEP '+(i+1)+' · '+ph.weeks+'</div>' +
         '<div class="rq-phase-name">'+ph.name+'</div>' +
         '<div class="rq-phase-goal">'+ph.goal+'</div>' +
+        methodBadge +
         '</div>' +
         '<div class="rq-phase-toggle">▼</div>' +
         '</div>' +
@@ -5791,14 +5806,6 @@ window.startResearch  = startResearch;
 window.resetResearch  = resetResearch;
 window.toggleRqPhase  = toggleRqPhase;
 window.toggleRqTask   = toggleRqTask;
-
-// 칩 클릭 이벤트 위임 (캡처 단계, 외부링크 차단 리스너와 분리)
-document.addEventListener('click', function(e){
-  var chip = e.target.closest && e.target.closest('.rq-chip');
-  if(chip){
-    chip.classList.toggle('rq-chip-on');
-  }
-}, true);  // useCapture=true 로 외부링크 차단 핸들러보다 먼저 실행
 
 // 버튼 직접 바인딩
 document.addEventListener('DOMContentLoaded', function(){
