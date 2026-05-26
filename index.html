@@ -1610,10 +1610,20 @@ footer::before{
   .gz-desc{font-size:14px;line-height:1.75;}
   .star-total-bar{flex-direction:column;gap:10px;padding:14px 20px;text-align:center;}
   .star-progress-wrap{max-width:100%;width:100%;}
-  .stage-header{padding:20px 18px;gap:14px;}
-  .stage-stars-badge{display:none;}
-  .stage-name{font-size:1.05rem;}
+  .stage-header{padding:14px 16px;gap:10px;flex-wrap:nowrap;align-items:center;}
+  .stage-planet-emoji{width:38px;height:38px;flex-shrink:0;}
+  .stage-info{flex:1;min-width:0;}
+  .stage-num{font-size:11px;letter-spacing:1.5px;margin-bottom:2px;}
+  .stage-name{font-size:0.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .stage-subtitle{display:none;}
+  .stage-stars-badge{
+    display:flex;
+    padding:5px 10px;
+    font-size:12px;
+    white-space:nowrap;
+    flex-shrink:0;
+  }
+  .stage-toggle-btn{width:30px;height:30px;font-size:14px;flex-shrink:0;}
   .stage-body{padding:20px 16px;}
   .planet-display{flex-direction:column;align-items:center;text-align:center;padding:18px;gap:16px;}
   .planet-img-wrap{width:100px;height:100px;}
@@ -2130,6 +2140,12 @@ footer::before{
 }
 .ec-phase-label::before,.ec-phase-label::after{content:'';flex:1;height:1.5px;background:rgba(255,255,255,.18);}
 
+/* 오브 무지개 색상 팔레트 */
+@keyframes orbFloatGently{
+  0%,100%{transform:translateY(0px);}
+  50%{transform:translateY(-4px);}
+}
+
 .orb-grid{
   display:grid;
   grid-template-columns:repeat(5,1fr);
@@ -2139,28 +2155,38 @@ footer::before{
 @media(max-width:540px){.orb-grid{grid-template-columns:repeat(4,1fr);}}
 @media(max-width:380px){.orb-grid{grid-template-columns:repeat(3,1fr);}}
 
+/* 무지개 테두리 색상 — index mod 6 */
+.energy-orb:nth-child(6n+1){ --orb-c:#60a5fa; } /* 파랑 */
+.energy-orb:nth-child(6n+2){ --orb-c:#a78bfa; } /* 보라 */
+.energy-orb:nth-child(6n+3){ --orb-c:#f87171; } /* 빨강 */
+.energy-orb:nth-child(6n+4){ --orb-c:#34d399; } /* 초록 */
+.energy-orb:nth-child(6n+5){ --orb-c:#fbbf24; } /* 노랑 */
+.energy-orb:nth-child(6n+0){ --orb-c:#f472b6; } /* 분홍 */
+
 .energy-orb{
   aspect-ratio:1;
-  border-radius:14px;
-  border:2px solid rgba(255,255,255,.12);
+  border-radius:12px;
+  border:1.5px solid var(--orb-c);
   background:rgba(255,255,255,.04);
   cursor:pointer;
   display:flex;flex-direction:column;
   align-items:center;justify-content:center;
-  gap:4px;
-  padding:20px 8px;
-  transition:.25s cubic-bezier(.34,1.56,.64,1);
+  gap:5px;
+  padding:12px 6px;
+  transition:background .2s ease, border-color .2s ease;
   position:relative;
   overflow:hidden;
-  --orb-c: #fbbf24;
-  animation:orbPulse 3s ease-in-out infinite;
-  animation-play-state:paused;
+  animation:orbFloatGently 3s ease-in-out infinite;
+  /* 각 버튼마다 살짝 다른 타이밍으로 자연스럽게 */
 }
+.energy-orb:nth-child(2n){ animation-duration:3.5s; animation-delay:.3s; }
+.energy-orb:nth-child(3n){ animation-duration:4s;   animation-delay:.6s; }
+.energy-orb:nth-child(4n){ animation-duration:2.8s; animation-delay:.9s; }
+.energy-orb:nth-child(5n){ animation-duration:3.8s; animation-delay:1.2s; }
+
 .energy-orb:not(.collected):hover{
-  transform:scale(1.08);
-  border-color:var(--orb-c);
   background:color-mix(in srgb,var(--orb-c) 10%,transparent);
-  animation-play-state:running;
+  border-color:var(--orb-c);
 }
 .energy-orb.absorbed{
   animation:orbAbsorb .4s ease forwards;
@@ -2168,23 +2194,37 @@ footer::before{
 }
 .energy-orb.collected{
   border-color:var(--orb-c);
-  border-width:2.5px;
-  background:color-mix(in srgb,var(--orb-c) 28%,rgba(0,0,0,.3));
-  box-shadow:0 0 18px color-mix(in srgb,var(--orb-c) 55%,transparent),
-             inset 0 0 12px color-mix(in srgb,var(--orb-c) 20%,transparent);
-  animation:orbPulse 2s ease-in-out infinite;
-  animation-play-state:running;
+  border-width:1.5px;
+  background:color-mix(in srgb,var(--orb-c) 15%,rgba(0,0,0,.3));
+  animation:orbFloatGently 2s ease-in-out infinite;
 }
 .energy-orb.collected::after{
   content:'✓';
   position:absolute;top:4px;right:6px;
-  font-size:14px;font-weight:900;
+  font-size:12px;font-weight:900;
   color:var(--orb-c);
-  text-shadow:0 0 6px var(--orb-c);
 }
-.orb-emoji{font-size:2.2rem;line-height:1;pointer-events:none;}
-.orb-label{font-size:14px;font-weight:700;color:#cbd5e1;text-align:center;line-height:1.3;pointer-events:none;}
-.energy-orb.collected .orb-label{color:#fff;font-weight:900;}
+.orb-emoji{font-size:1.9rem;line-height:1;pointer-events:none;}
+.orb-label{font-size:14px;font-weight:600;color:#94a3b8;text-align:center;line-height:1.25;pointer-events:none;word-break:keep-all;overflow-wrap:break-word;}
+.energy-orb.collected .orb-label{color:#f0f4ff;font-weight:700;}
+@media(max-width:600px){
+  .orb-grid{grid-template-columns:repeat(5,1fr);gap:6px;}
+  .energy-orb{padding:8px 4px;gap:4px;}
+  .orb-emoji{font-size:1.35rem;}
+  .orb-label{font-size:10.5px;line-height:1.2;}
+}
+@media(max-width:420px){
+  .orb-grid{grid-template-columns:repeat(4,1fr);gap:5px;}
+  .energy-orb{padding:7px 3px;gap:3px;}
+  .orb-emoji{font-size:1.25rem;}
+  .orb-label{font-size:10px;}
+}
+@media(max-width:340px){
+  .orb-grid{grid-template-columns:repeat(4,1fr);gap:4px;}
+  .energy-orb{padding:6px 2px;gap:2px;}
+  .orb-emoji{font-size:1.1rem;}
+  .orb-label{font-size:9px;}
+}
 
 /* 페이즈 섹션 간 여백 */
 .orb-section-gap{height:56px;}
@@ -2785,16 +2825,9 @@ footer::before{
           <div class="dna-bars-title">전공 DNA 에너지</div>
           <div class="dna-bars" id="dna-bars"></div>
 
-          <!-- 에너지 탱크 게이지 -->
-          <div class="energy-tank">
-            <div class="tank-header">
-              <div class="tank-label">⚡ ENERGY TANK</div>
-              <div class="tank-count"><span id="tank-collected">0</span> / 20 오브 흡수</div>
-            </div>
-            <div class="tank-bar-bg">
-              <div class="tank-bar-fill" id="tank-fill" style="width:0%"></div>
-            </div>
-            <div class="tank-segments" id="tank-segs"></div>
+          <!-- 내 별 표시 -->
+          <div style="display:flex;align-items:center;justify-content:flex-end;margin-bottom:16px;">
+            <div class="stage-stars-badge" id="ec-stars-badge">⭐ 0 / 20</div>
           </div>
 
           <!-- 페이즈 1: 좋아하는 활동 -->
@@ -4522,8 +4555,7 @@ function initDnaBars(){
 
 // 탱크 세그먼트 초기화
 function initTankSegs(){
-  const el = document.getElementById('tank-segs');
-  el.innerHTML = Array.from({length:20},(_,i)=>`<span class="tank-seg" id="tseg-${i}">⭐</span>`).join('');
+  // tank-segs removed; badge used instead
 }
 
 // 오브 그리드 렌더
@@ -4591,15 +4623,9 @@ function updateDnaBars(){
 }
 
 function updateTank(){
-  const pct = Math.round(orbCollected / ORB_MAX * 100);
-  document.getElementById('tank-fill').style.width = pct + '%';
-  document.getElementById('tank-collected').textContent = orbCollected;
+  const badge = document.getElementById('ec-stars-badge');
+  if(badge) badge.textContent = `⭐ ${orbCollected} / ${ORB_MAX}`;
   document.getElementById('ec-energy-val').textContent = orbCollected;
-  // 별 세그먼트 점등
-  for(let i=0;i<20;i++){
-    const seg = document.getElementById('tseg-'+i);
-    if(seg) seg.classList.toggle('lit', i < orbCollected);
-  }
 }
 
 function updatePhaseText(){
@@ -4616,9 +4642,11 @@ function updatePhaseText(){
 }
 
 function flashTankFull(){
-  const tank = document.querySelector('.energy-tank');
-  tank.style.borderColor = '#fbbf24';
-  setTimeout(()=>tank.style.borderColor='', 600);
+  const badge = document.getElementById('ec-stars-badge');
+  if(!badge) return;
+  badge.style.borderColor = '#fbbf24';
+  badge.style.boxShadow = '0 0 12px rgba(251,191,36,.5)';
+  setTimeout(()=>{ badge.style.borderColor=''; badge.style.boxShadow=''; }, 600);
 }
 
 function spawnParticles(x, y, color){
@@ -5164,8 +5192,7 @@ ${roadmapText || '(작성 없음)'}
       <div class="rq-step-label">
         <div class="rq-step-num" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);">1</div>
         <div>
-          <div class="rq-step-title-txt">질문 배우기</div>
-          <div class="rq-step-sub">탐구 주제를 입력하면 AI가 6가지 질문 유형별 예시를 만들어드려요</div>
+          <div class="rq-step-title-txt">학과에 대한 관심 주제를 질문해보세요</div>
         </div>
       </div>
 
@@ -5173,7 +5200,7 @@ ${roadmapText || '(작성 없음)'}
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;flex-wrap:wrap;">
         <div style="flex:1;min-width:200px;">
           <input id="ql-topic-input" type="text"
-            placeholder="탐구 주제를 입력하세요 (예: 광합성, 독립운동, 기후변화...)"
+            placeholder="예: 생명공학과는 AI시대에 어떻게 변화할까?"
             style="width:100%;padding:15px 22px;border-radius:999px;border:1.5px solid rgba(255,255,255,.12);background:rgba(255,255,255,.05);font-family:'Pretendard','Noto Sans KR',sans-serif;font-size:15px;color:#f0f4ff;outline:none;backdrop-filter:blur(8px);transition:.2s;"
             onfocus="this.style.borderColor='rgba(99,102,241,.7)';this.style.background='rgba(99,102,241,.08)'"
             onblur="this.style.borderColor='rgba(255,255,255,.12)';this.style.background='rgba(255,255,255,.05)'"
@@ -5194,42 +5221,42 @@ ${roadmapText || '(작성 없음)'}
       <div id="ql-cards-grid" style="display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:20px;">
 
         <div class="ql-card" data-type="factual">
-          <div class="ql-card-badge" style="background:rgba(59,130,246,.15);color:#60a5fa;border:1px solid rgba(59,130,246,.3);">🔍 사실적</div>
+          <div class="ql-card-badge" style="background:rgba(59,130,246,.15);color:#60a5fa;border:1px solid rgba(59,130,246,.3);">🔍 사실적 질문</div>
           <p class="ql-card-desc">텍스트나 자료에서 확인 가능한 사실을 묻는 질문</p>
           <div class="ql-card-divider" style="border-color:rgba(59,130,246,.25);"></div>
           <div class="ql-card-example" id="ql-ex-factual">질문을 생성하면<br>여기에 나타나요</div>
         </div>
 
         <div class="ql-card" data-type="inferential">
-          <div class="ql-card-badge" style="background:rgba(139,92,246,.15);color:#a78bfa;border:1px solid rgba(139,92,246,.3);">🧩 추론적</div>
+          <div class="ql-card-badge" style="background:rgba(139,92,246,.15);color:#a78bfa;border:1px solid rgba(139,92,246,.3);">🧩 추론적 질문</div>
           <p class="ql-card-desc">자료를 바탕으로 숨겨진 의미나 원인을 추론하는 질문</p>
           <div class="ql-card-divider" style="border-color:rgba(139,92,246,.25);"></div>
           <div class="ql-card-example" id="ql-ex-inferential">질문을 생성하면<br>여기에 나타나요</div>
         </div>
 
         <div class="ql-card" data-type="critical">
-          <div class="ql-card-badge" style="background:rgba(239,68,68,.15);color:#f87171;border:1px solid rgba(239,68,68,.3);">⚖️ 비판적</div>
+          <div class="ql-card-badge" style="background:rgba(239,68,68,.15);color:#f87171;border:1px solid rgba(239,68,68,.3);">⚖️ 비판적 질문</div>
           <p class="ql-card-desc">주장·근거·관점의 타당성을 평가하는 질문</p>
           <div class="ql-card-divider" style="border-color:rgba(239,68,68,.25);"></div>
           <div class="ql-card-example" id="ql-ex-critical">질문을 생성하면<br>여기에 나타나요</div>
         </div>
 
         <div class="ql-card" data-type="applied">
-          <div class="ql-card-badge" style="background:rgba(16,185,129,.15);color:#34d399;border:1px solid rgba(16,185,129,.3);">🚀 적용적</div>
+          <div class="ql-card-badge" style="background:rgba(16,185,129,.15);color:#34d399;border:1px solid rgba(16,185,129,.3);">🚀 적용적 질문</div>
           <p class="ql-card-desc">배운 내용을 실생활이나 새로운 상황에 적용하는 질문</p>
           <div class="ql-card-divider" style="border-color:rgba(16,185,129,.25);"></div>
           <div class="ql-card-example" id="ql-ex-applied">질문을 생성하면<br>여기에 나타나요</div>
         </div>
 
         <div class="ql-card" data-type="reflective">
-          <div class="ql-card-badge" style="background:rgba(245,158,11,.15);color:#fbbf24;border:1px solid rgba(245,158,11,.3);">💎 성찰적</div>
+          <div class="ql-card-badge" style="background:rgba(245,158,11,.15);color:#fbbf24;border:1px solid rgba(245,158,11,.3);">💎 성찰적 질문</div>
           <p class="ql-card-desc">자신의 생각·경험·가치관을 돌아보게 하는 질문</p>
           <div class="ql-card-divider" style="border-color:rgba(245,158,11,.25);"></div>
           <div class="ql-card-example" id="ql-ex-reflective">질문을 생성하면<br>여기에 나타나요</div>
         </div>
 
         <div class="ql-card" data-type="creative">
-          <div class="ql-card-badge" style="background:rgba(236,72,153,.15);color:#f472b6;border:1px solid rgba(236,72,153,.3);">💡 창의적</div>
+          <div class="ql-card-badge" style="background:rgba(236,72,153,.15);color:#f472b6;border:1px solid rgba(236,72,153,.3);">💡 창의적 질문</div>
           <p class="ql-card-desc">기존의 틀을 벗어나 새로운 가능성을 상상하는 질문</p>
           <div class="ql-card-divider" style="border-color:rgba(236,72,153,.25);"></div>
           <div class="ql-card-example" id="ql-ex-creative">질문을 생성하면<br>여기에 나타나요</div>
@@ -5254,7 +5281,7 @@ ${roadmapText || '(작성 없음)'}
     <!-- ══════════════════════════════════
          STEP 2: 탐구 설계
     ══════════════════════════════════ -->
-    <div class="rq-step-block" id="rq-block-2" style="opacity:.45;filter:blur(1px);pointer-events:none;transition:.5s;">
+    <div class="rq-step-block" id="rq-block-2" style="opacity:1;filter:none;pointer-events:auto;transition:.5s;">
       <div class="rq-step-label">
         <div class="rq-step-num" style="background:linear-gradient(135deg,#06b6d4,#0891b2);">2</div>
         <div>
@@ -5456,25 +5483,27 @@ ${roadmapText || '(작성 없음)'}
 }
 .rq-arrow-line {
   width: 2px; height: 32px;
-  background: linear-gradient(180deg, rgba(99,102,241,.4), rgba(52,211,153,.4));
+  background: linear-gradient(180deg, rgba(99,102,241,.7), rgba(52,211,153,.7));
   border-radius: 999px;
 }
 .rq-arrow-head {
-  font-size: 14px; color: rgba(240,244,255,.3);
+  font-size: 16px; color: rgba(240,244,255,.7);
   margin: 2px 0;
 }
 .rq-arrow-label {
-  font-size: 12px; color: rgba(240,244,255,.35);
+  font-size: 13px; color: rgba(240,244,255,.75);
   letter-spacing: .5px; text-align: center; margin-top: 4px;
+  font-weight: 600;
 }
 
 /* 질문 카드 (다크 테마) */
 .ql-card {
   background: rgba(255,255,255,.04);
-  border: 1px solid rgba(255,255,255,.08);
+  border: 1.5px solid rgba(255,255,255,.12);
   border-radius: 14px;
   padding: 16px 14px 14px;
   display: flex; flex-direction: column;
+  align-items: center; text-align: center;
   gap: 0;
   transition: .22s;
   cursor: pointer;
@@ -5483,14 +5512,25 @@ ${roadmapText || '(작성 없음)'}
 .ql-card:hover {
   transform: translateY(-3px);
   background: rgba(255,255,255,.07);
-  border-color: rgba(255,255,255,.15);
   box-shadow: 0 8px 24px rgba(0,0,0,.25);
 }
 .ql-card.ql-selected {
-  border-color: rgba(52,211,153,.5) !important;
   background: rgba(52,211,153,.06) !important;
   box-shadow: 0 0 0 1.5px rgba(52,211,153,.3), 0 8px 24px rgba(52,211,153,.12);
 }
+/* 카드별 무지개 테두리 (얇게, 블러 없음) */
+.ql-card[data-type="factual"]     { border-color: #60a5fa; }
+.ql-card[data-type="inferential"] { border-color: #a78bfa; }
+.ql-card[data-type="critical"]    { border-color: #f87171; }
+.ql-card[data-type="applied"]     { border-color: #34d399; }
+.ql-card[data-type="reflective"]  { border-color: #fbbf24; }
+.ql-card[data-type="creative"]    { border-color: #f472b6; }
+.ql-card[data-type="factual"]:hover     { border-color: #93c5fd; }
+.ql-card[data-type="inferential"]:hover { border-color: #c4b5fd; }
+.ql-card[data-type="critical"]:hover    { border-color: #fca5a5; }
+.ql-card[data-type="applied"]:hover     { border-color: #6ee7b7; }
+.ql-card[data-type="reflective"]:hover  { border-color: #fde68a; }
+.ql-card[data-type="creative"]:hover    { border-color: #f9a8d4; }
 .ql-card-badge {
   display: inline-flex; align-items: center; gap: 4px;
   padding: 5px 11px; border-radius: 999px;
@@ -5624,25 +5664,20 @@ window.qlGenerate = async function(){
   });
 
   try {
-    var resp = await fetch('/.netlify/functions/claude', {
+    var resp = await fetch('https://api.anthropic.com/v1/messages', {
       method:'POST',
-      headers:{'Content-Type':'application/json'},
+      headers:{
+        'Content-Type':'application/json',
+        'anthropic-version':'2023-06-01',
+        'anthropic-dangerous-direct-browser-access':'true'
+      },
       body: JSON.stringify({
         model:'claude-sonnet-4-20250514',
-        max_tokens:1500,
+        max_tokens:1000,
         system:'당신은 중고등학생의 탐구 역량을 키우는 질문 설계 전문가입니다. 반드시 JSON만 출력하고 마크다운 코드블록이나 다른 텍스트는 절대 포함하지 마세요.',
         messages:[{
           role:'user',
-          content:'탐구 주제 "'+topic+'"에 대해 6가지 질문 유형별로 각각 1개의 구체적이고 탐구 가능한 질문을 작성해주세요.
-
-각 질문은:
-- 해당 탐구 주제와 직접 연결되어야 함
-- 중고등학생이 실제로 탐구할 수 있는 범위여야 함
-- 질문 유형의 특성을 정확히 반영해야 함
-- 1~2문장, 물음표로 끝날 것
-
-JSON 형식으로만 답변:
-{"factual":"사실적 질문","inferential":"추론적 질문","critical":"비판적 질문","applied":"적용적 질문","reflective":"성찰적 질문","creative":"창의적 질문"}'
+          content:'탐구 주제 "'+topic+'"에 대해 6가지 질문 유형별로 각각 1개의 구체적이고 탐구 가능한 질문을 작성해주세요.\n\n각 질문은:\n- 해당 탐구 주제와 직접 연결되어야 함\n- 중고등학생이 실제로 탐구할 수 있는 범위여야 함\n- 질문 유형의 특성을 정확히 반영해야 함\n- 1~2문장, 물음표로 끝날 것\n\nJSON 형식으로만 답변:\n{"factual":"사실적 질문","inferential":"추론적 질문","critical":"비판적 질문","applied":"적용적 질문","reflective":"성찰적 질문","creative":"창의적 질문"}'
         }]
       })
     });
@@ -5689,7 +5724,7 @@ JSON 형식으로만 답변:
   window.resetResearch = function(){
     var block2 = document.getElementById('rq-block-2');
     var arrow2 = document.getElementById('rq-arrow-2');
-    if(block2){ block2.style.opacity='.45'; block2.style.filter='blur(1px)'; block2.style.pointerEvents='none'; }
+    if(block2){ block2.style.opacity='.55'; block2.style.filter='none'; block2.style.pointerEvents='none'; }
     if(arrow2) arrow2.style.opacity = '0';
     qlSelectedType = null;
     document.querySelectorAll('.ql-card').forEach(function(c){ c.classList.remove('ql-selected'); });
