@@ -1610,20 +1610,21 @@ footer::before{
   .gz-desc{font-size:14px;line-height:1.75;}
   .star-total-bar{flex-direction:column;gap:10px;padding:14px 20px;text-align:center;}
   .star-progress-wrap{max-width:100%;width:100%;}
-  .stage-header{padding:14px 16px;gap:10px;flex-wrap:nowrap;align-items:center;}
-  .stage-planet-emoji{width:38px;height:38px;flex-shrink:0;}
+  .stage-header{padding:12px 14px;gap:8px;flex-wrap:nowrap;align-items:center;}
+  .stage-planet-emoji{width:32px;height:32px;flex-shrink:0;font-size:1.25rem;}
   .stage-info{flex:1;min-width:0;}
-  .stage-num{font-size:11px;letter-spacing:1.5px;margin-bottom:2px;}
-  .stage-name{font-size:0.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .stage-num{font-size:10px;letter-spacing:1px;margin-bottom:1px;}
+  .stage-name{font-size:0.8rem;white-space:normal;overflow:visible;text-overflow:unset;line-height:1.25;word-break:keep-all;}
   .stage-subtitle{display:none;}
   .stage-stars-badge{
     display:flex;
-    padding:5px 10px;
-    font-size:12px;
+    padding:4px 7px;
+    font-size:11px;
     white-space:nowrap;
     flex-shrink:0;
+    letter-spacing:0;
   }
-  .stage-toggle-btn{width:30px;height:30px;font-size:14px;flex-shrink:0;}
+  .stage-toggle-btn{width:26px;height:26px;font-size:12px;flex-shrink:0;}
   .stage-body{padding:20px 16px;}
   .planet-display{flex-direction:column;align-items:center;text-align:center;padding:18px;gap:16px;}
   .planet-img-wrap{width:100px;height:100px;}
@@ -1656,6 +1657,8 @@ footer::before{
   .rq-phase-body{padding:16px 14px!important;}
   .rq-task{padding:12px 12px;}
   .rq-task-text{font-size:13px;}
+  #rq-type-chips{grid-template-columns:repeat(3,1fr)!important;}
+  .nep-pick-input{max-width:160px;font-size:13px;padding:8px 10px;}
 }
 @media(max-width:620px){
   #rq-setup-card{padding:24px 14px!important;}
@@ -2645,6 +2648,7 @@ footer::before{
   border-radius:10px;padding:10px 14px;
   color:#f0f4ff;font-family:'Pretendard','Noto Sans KR',sans-serif;
   font-size:14px;font-weight:600;outline:none;transition:.2s;
+  max-width:200px;
 }
 .nep-pick-input:focus{border-color:rgba(96,165,250,.6);}
 .nep-pick-input::placeholder{color:rgba(255,255,255,.2);font-weight:400;}
@@ -3022,13 +3026,7 @@ footer::before{
       </div>
     </div>
 
-    <!-- 최종 총합 -->
-    <div id="gz-final-box" style="display:none;text-align:center;padding:40px 24px;background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.2);border-radius:24px;margin-top:16px;">
-      <div style="font-size:3rem;margin-bottom:12px;">🏆</div>
-      <div style="font-size:1.5rem;font-weight:800;color:#fbbf24;margin-bottom:8px;">우주 탐험 완료!</div>
-      <div id="gz-final-score" style="font-size:2.5rem;font-weight:800;color:#fbbf24;text-shadow:0 0 20px rgba(251,191,36,.5);margin-bottom:8px;"></div>
-      <div id="gz-final-grade" style="font-size:15px;color:rgba(240,244,255,.5);line-height:1.7;"></div>
-    </div>
+
 
   </div>
 </section>
@@ -4011,22 +4009,7 @@ function updateStarBar(){
   if(total > 0) showFinal();
 }
 
-function showFinal(){
-  const rq = (typeof rqStars !== 'undefined') ? rqStars : 0;
-  const total = gzStars.s1 + gzStars.s2 + gzStars.s3 + gzStars.s4 + rq;
-  const box = document.getElementById('gz-final-box');
-  box.style.display = 'block';
-  document.getElementById('gz-final-score').textContent = total + ' / ' + GZ_MAX + ' ⭐';
-  const grades = [
-    [75,'🏆 전공 탐험 마스터!'],
-    [55,'🚀 전공 탐험 리더'],
-    [35,'🌟 전공 탐험가'],
-    [20,'🌱 전공탐험 새싹'],
-    [0,'🔴 탐험을 시작해봐요!']
-  ];
-  const g = grades.find(([min])=> total >= min);
-  document.getElementById('gz-final-grade').textContent = g[1];
-}
+function showFinal(){ /* 우주탐험 완료 팝업 제거됨 */ }
 
 // ── 단계 토글 ──
 function toggleStage(n){
@@ -4728,6 +4711,9 @@ function launchAnalysis(){
   document.getElementById('ec-result-wrap').classList.add('show');
   document.getElementById('ec-result-wrap').scrollIntoView({behavior:'smooth', block:'nearest'});
 
+  // ── DNA 별자리 추천 학과를 STAGE 4 로드맵에 즉시 연동 ──
+  refreshNepCardsFromDna(constellation.majors.slice());
+
   // ── AI 맞춤 분석 메시지 추가 ──
   (async () => {
     const aiMsgEl = document.getElementById('ec-ai-analysis');
@@ -5197,8 +5183,8 @@ ${roadmapText || '(작성 없음)'}
       </div>
 
       <!-- 입력 + 버튼 -->
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;flex-wrap:wrap;">
-        <div style="flex:1;min-width:200px;">
+      <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:24px;">
+        <div style="width:100%;">
           <input id="ql-topic-input" type="text"
             placeholder="예: 생명공학과는 AI시대에 어떻게 변화할까?"
             style="width:100%;padding:15px 22px;border-radius:999px;border:1.5px solid rgba(255,255,255,.12);background:rgba(255,255,255,.05);font-family:'Pretendard','Noto Sans KR',sans-serif;font-size:15px;color:#f0f4ff;outline:none;backdrop-filter:blur(8px);transition:.2s;"
@@ -5207,11 +5193,13 @@ ${roadmapText || '(작성 없음)'}
             oninput="qlSyncTopic()"
           />
         </div>
+        <div style="text-align:center;">
         <button onclick="qlGenerate()"
-          style="display:inline-flex;align-items:center;gap:7px;padding:15px 26px;border-radius:999px;background:linear-gradient(135deg,#6366f1,#7c3aed);color:#fff;font-family:'Pretendard','Noto Sans KR',sans-serif;font-size:14px;font-weight:700;border:none;cursor:pointer;box-shadow:0 4px 18px rgba(99,102,241,.4);transition:.25s;white-space:nowrap;"
+          style="display:inline-flex;align-items:center;gap:7px;padding:15px 32px;border-radius:999px;background:linear-gradient(135deg,#6366f1,#7c3aed);color:#fff;font-family:'Pretendard','Noto Sans KR',sans-serif;font-size:14px;font-weight:700;border:none;cursor:pointer;box-shadow:0 4px 18px rgba(99,102,241,.4);transition:.25s;white-space:nowrap;"
           onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 28px rgba(99,102,241,.55)'"
           onmouseout="this.style.transform='';this.style.boxShadow='0 4px 18px rgba(99,102,241,.4)'"
         >✦ 질문 생성하기</button>
+        </div>
       </div>
 
       <!-- 로딩 상태 -->
@@ -5337,19 +5325,19 @@ ${roadmapText || '(작성 없음)'}
       <!-- 탐구 방식 칩 -->
       <div style="margin-bottom:28px;">
         <label style="display:block;font-size:13px;letter-spacing:2px;color:rgba(240,244,255,.55);font-weight:600;margin-bottom:10px;">🧪 탐구 방식 <span style="font-weight:400;letter-spacing:0;font-size:12px;color:rgba(240,244,255,.38);">(복수 선택 가능)</span></label>
-        <div style="display:flex;flex-wrap:wrap;gap:8px;" id="rq-type-chips">
-          <span class="rq-chip" data-val="문헌조사">📚 문헌조사</span>
-          <span class="rq-chip" data-val="실험·관찰">🧫 실험·관찰</span>
-          <span class="rq-chip" data-val="설문조사">📋 설문조사</span>
-          <span class="rq-chip" data-val="인터뷰">🎤 인터뷰</span>
-          <span class="rq-chip" data-val="데이터분석">📊 데이터분석</span>
-          <span class="rq-chip" data-val="현장방문">🏫 현장방문</span>
-          <span class="rq-chip" data-val="독서·토론">📖 독서·토론</span>
-          <span class="rq-chip" data-val="비교분석">⚖️ 비교분석</span>
-          <span class="rq-chip" data-val="사례연구">🔍 사례연구</span>
-          <span class="rq-chip" data-val="시뮬레이션">💻 시뮬레이션</span>
-          <span class="rq-chip" data-val="제작·메이킹">🔧 제작·메이킹</span>
-          <span class="rq-chip" data-val="통계분석">📐 통계분석</span>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;justify-items:center;" id="rq-type-chips">
+          <span class="rq-chip" data-val="문헌조사" style="width:100%;justify-content:center;">📚 문헌조사</span>
+          <span class="rq-chip" data-val="실험·관찰" style="width:100%;justify-content:center;">🧫 실험·관찰</span>
+          <span class="rq-chip" data-val="설문조사" style="width:100%;justify-content:center;">📋 설문조사</span>
+          <span class="rq-chip" data-val="인터뷰" style="width:100%;justify-content:center;">🎤 인터뷰</span>
+          <span class="rq-chip" data-val="데이터분석" style="width:100%;justify-content:center;">📊 데이터분석</span>
+          <span class="rq-chip" data-val="현장방문" style="width:100%;justify-content:center;">🏫 현장방문</span>
+          <span class="rq-chip" data-val="독서·토론" style="width:100%;justify-content:center;">📖 독서·토론</span>
+          <span class="rq-chip" data-val="비교분석" style="width:100%;justify-content:center;">⚖️ 비교분석</span>
+          <span class="rq-chip" data-val="사례연구" style="width:100%;justify-content:center;">🔍 사례연구</span>
+          <span class="rq-chip" data-val="시뮬레이션" style="width:100%;justify-content:center;">💻 시뮬레이션</span>
+          <span class="rq-chip" data-val="제작·메이킹" style="width:100%;justify-content:center;">🔧 제작·메이킹</span>
+          <span class="rq-chip" data-val="통계분석" style="width:100%;justify-content:center;">📐 통계분석</span>
         </div>
       </div>
 
@@ -6327,6 +6315,8 @@ function startResearch(){
   "summary": "탐구 결과 정리·시각화 방법. 사용할 그래프 종류와 이유. 보고서 구성과 분량. 세특 소재 활용법."
 }`
           }]
+        })
+      });
       var data = await resp.json();
       var text = (data.content?.[0]?.text||'').replace(/```json[\s\S]*?```|```/g,'').trim();
       var planMatch = text.match(/\{[\s\S]*\}/);
@@ -6565,7 +6555,7 @@ rqRenderStars(0);
       onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 0 0 1px rgba(255,255,255,.15) inset,0 16px 48px rgba(26,108,245,.7),0 0 60px rgba(26,108,245,.5),0 0 100px rgba(99,102,241,.35)'"
       onmouseout="this.style.transform='';this.style.boxShadow='0 0 0 1px rgba(255,255,255,.1) inset,0 8px 32px rgba(26,108,245,.5),0 0 40px rgba(26,108,245,.35),0 0 80px rgba(99,102,241,.2)'"
     >
-      📄 전공 탐구 포트폴리오 PDF 다운로드
+      📄 전공 탐구 포트폴리오
     </button>
   </div>
 
