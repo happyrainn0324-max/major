@@ -2896,20 +2896,37 @@ footer::before{
             <div class="stage-stars-badge" id="ec-stars-badge">⭐ 0 / 20</div>
           </div>
 
-          <!-- 페이즈 1: 좋아하는 활동 -->
-          <div class="ec-phase-label" id="phase1-label">⚡ 좋아하는 활동</div>
-          <div class="orb-grid" id="orb-activities"></div>
-
-          <!-- 페이즈 구분 여백 -->
-          <div class="orb-section-gap"></div>
-
-          <!-- 페이즈 2: 관심 분야 -->
+          <!-- 관심 분야 -->
           <div class="ec-phase-label" id="phase2-label">🌀 관심 분야</div>
           <div class="orb-grid" id="orb-fields"></div>
 
-          <div style="height:60px;"></div>
+          <!-- 희망 직업 입력 -->
+          <div class="ec-phase-label" id="job-wish-label" style="margin-top:28px;">💼 희망 직업</div>
+          <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);border-radius:16px;padding:18px 16px;margin-bottom:8px;">
+            <div style="font-size:13px;color:rgba(240,244,255,.5);margin-bottom:14px;">희망하는 직업을 입력해주세요. 1번은 필수, 2·3번은 선택이에요.</div>
+            <div style="display:flex;flex-direction:column;gap:10px;">
+              <div style="display:flex;align-items:center;gap:10px;">
+                <span style="font-size:13px;color:#a5f3fc;font-weight:700;min-width:48px;">직업 1<span style="color:#fb7185;"> *</span></span>
+                <input id="job-wish-1" type="text" placeholder="예) 소프트웨어 개발자" maxlength="30"
+                  style="flex:1;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:11px 14px;color:#f0f4ff;font-size:14px;font-family:'Pretendard','Noto Sans KR',sans-serif;outline:none;"
+                  oninput="onJobWishInput()" />
+              </div>
+              <div style="display:flex;align-items:center;gap:10px;">
+                <span style="font-size:13px;color:rgba(240,244,255,.5);min-width:48px;">직업 2</span>
+                <input id="job-wish-2" type="text" placeholder="선택 사항" maxlength="30"
+                  style="flex:1;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:11px 14px;color:#f0f4ff;font-size:14px;font-family:'Pretendard','Noto Sans KR',sans-serif;outline:none;" />
+              </div>
+              <div style="display:flex;align-items:center;gap:10px;">
+                <span style="font-size:13px;color:rgba(240,244,255,.5);min-width:48px;">직업 3</span>
+                <input id="job-wish-3" type="text" placeholder="선택 사항" maxlength="30"
+                  style="flex:1;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:11px 14px;color:#f0f4ff;font-size:14px;font-family:'Pretendard','Noto Sans KR',sans-serif;outline:none;" />
+              </div>
+            </div>
+          </div>
 
-          <button class="apt-submit-btn" id="apt-submit-btn" onclick="launchAnalysis()">
+          <div style="height:32px;"></div>
+
+          <button class="apt-submit-btn" id="apt-submit-btn" onclick="launchAnalysis()" disabled style="opacity:0.4;cursor:not-allowed;">
             🔭 전공 DNA 별자리 분석
           </button>
         </div>
@@ -4520,29 +4537,7 @@ const DNA_TYPES = [
   {id:'lead',     label:'리더형', color:'#fb923c', emoji:'👑'},
 ];
 
-// 활동 오브 20개 (각 DNA 유형에 가중치 부여)
-const ACTIVITY_ORBS = [
-  {emoji:'📚', label:'책 읽기',     dna:{explore:3, create:1}},
-  {emoji:'🔭', label:'실험하기',    dna:{explore:3, build:1}},
-  {emoji:'🎨', label:'그림 그리기', dna:{create:3, connect:1}},
-  {emoji:'💻', label:'코딩하기',    dna:{build:3, explore:1}},
-  {emoji:'🍳', label:'요리하기',    dna:{nature:2, create:2}},
-  {emoji:'🎤', label:'노래하기',    dna:{create:2, connect:2}},
-  {emoji:'✍️', label:'글쓰기',     dna:{create:3, explore:1}},
-  {emoji:'🏃', label:'운동하기',    dna:{nature:3, build:1}},
-  {emoji:'🤝', label:'친구 돕기',   dna:{connect:3, lead:1}},
-  {emoji:'🔧', label:'분해조립',    dna:{build:3, explore:1}},
-  {emoji:'✈️', label:'여행하기',   dna:{explore:2, connect:2}},
-  {emoji:'📷', label:'사진 찍기',   dna:{create:2, explore:2}},
-  {emoji:'💬', label:'토론하기',    dna:{connect:2, lead:2}},
-  {emoji:'🌱', label:'식물 키우기', dna:{nature:4}},
-  {emoji:'🎬', label:'영화 보기',   dna:{create:2, connect:2}},
-  {emoji:'🐾', label:'동물과 놀기', dna:{nature:3, connect:1}},
-  {emoji:'📐', label:'수학 풀기',   dna:{explore:3, build:1}},
-  {emoji:'🎭', label:'뮤지컬 보기', dna:{create:3, connect:1}},
-  {emoji:'🕹️', label:'게임 만들기', dna:{build:3, create:1}},
-  {emoji:'🧑‍💼', label:'팀 이끌기',  dna:{lead:4}},
-];
+// 활동 오브 배열 (제거됨 - 관심 분야만 사용)
 
 // 관심 분야 오브 20개
 const FIELD_ORBS = [
@@ -4599,7 +4594,7 @@ const CONSTELLATION_MAP = [
 // DNA 점수 저장
 let dnaScore = {explore:0, create:0, connect:0, build:0, nature:0, lead:0};
 let orbCollected = 0;
-const ORB_MAX = 20;
+const ORB_MAX = 10;
 
 // DNA 바 초기화
 function initDnaBars(){
@@ -4624,13 +4619,6 @@ function initTankSegs(){
 
 // 오브 그리드 렌더
 function renderOrbGrids(){
-  document.getElementById('orb-activities').innerHTML = ACTIVITY_ORBS.map((o,i)=>`
-    <button class="energy-orb" id="orb-a${i}" onclick="absorbOrb(this,'a${i}',${JSON.stringify(o.dna).replace(/"/g,"'")})"
-      style="--orb-c:${getDnaColor(o.dna)}">
-      <span class="orb-emoji">${o.emoji}</span>
-      <span class="orb-label">${o.label}</span>
-    </button>
-  `).join('');
   document.getElementById('orb-fields').innerHTML = FIELD_ORBS.map((o,i)=>`
     <button class="energy-orb" id="orb-f${i}" onclick="absorbOrb(this,'f${i}',${JSON.stringify(o.dna).replace(/"/g,"'")})"
       style="--orb-c:${getDnaColor(o.dna)}">
@@ -4705,20 +4693,38 @@ function updateDnaBars(){
 function updateTank(){
   const badge = document.getElementById('ec-stars-badge');
   if(badge) badge.textContent = `⭐ ${orbCollected} / ${ORB_MAX}`;
-  document.getElementById('ec-energy-val').textContent = orbCollected;
+  const ev = document.getElementById('ec-energy-val');
+  if(ev) ev.textContent = orbCollected;
+}
+
+function onJobWishInput(){
+  const job1 = (document.getElementById('job-wish-1')||{}).value||'';
+  const btn = document.getElementById('apt-submit-btn');
+  if(!btn) return;
+  if(job1.trim()){
+    btn.disabled = false;
+    btn.style.opacity = '1';
+    btn.style.cursor = 'pointer';
+  } else {
+    btn.disabled = true;
+    btn.style.opacity = '0.4';
+    btn.style.cursor = 'not-allowed';
+  }
 }
 
 function updatePhaseText(){
   const phases = [
-    [0,'에너지 오브를 수집하세요','나와 맞는 것들을 클릭해서 흡수!'],
-    [5,'에너지 충전 중...','목성의 대기가 반응해요 🟠'],
-    [10,'절반 충전 완료!','DNA 패턴이 선명해지고 있어요 ✨'],
-    [15,'거의 다 됐어요!','별자리가 곧 완성돼요 🌟'],
-    [20,'에너지 풀 충전! 🎉','분석 버튼을 눌러봐요!'],
+    [0,'관심 분야 오브를 수집하세요','나와 맞는 분야를 클릭해서 선택!'],
+    [3,'분야 선택 중...','목성의 대기가 반응해요 🟠'],
+    [5,'절반 선택!','DNA 패턴이 선명해지고 있어요 ✨'],
+    [8,'거의 다 됐어요!','별자리가 곧 완성돼요 🌟'],
+    [10,'분야 수집 완료! 🎉','희망 직업을 입력하고 분석해봐요!'],
   ];
   const phase = [...phases].reverse().find(([min])=>orbCollected>=min);
-  document.getElementById('ec-phase-name').textContent = phase[1];
-  document.getElementById('ec-phase-sub').textContent = phase[2];
+  const nameEl = document.getElementById('ec-phase-name');
+  const subEl = document.getElementById('ec-phase-sub');
+  if(nameEl) nameEl.textContent = phase[1];
+  if(subEl) subEl.textContent = phase[2];
 }
 
 function flashTankFull(){
@@ -4778,40 +4784,99 @@ function drawConstellation(canvas, starPoints, color){
   });
 }
 
-// 분석 실행
-function launchAnalysis(){
-  // 지배적 DNA 유형 찾기
-  const topDna = Object.entries(dnaScore).sort((a,b)=>b[1]-a[1])[0][0];
+// 분석 실행 (AI 기반 10개 학과 추천)
+async function launchAnalysis(){
+  const job1 = (document.getElementById('job-wish-1')||{}).value||'';
+  const job2 = (document.getElementById('job-wish-2')||{}).value||'';
+  const job3 = (document.getElementById('job-wish-3')||{}).value||'';
+
+  if(!job1.trim()){
+    alert('희망 직업 1번을 입력해주세요!');
+    return;
+  }
+
+  // 선택된 관심 분야 텍스트
+  const selectedFields = FIELD_ORBS
+    .filter((_,i) => absorbedOrbs.has('f'+i))
+    .map(o => o.label);
+
+  // 지배적 DNA
+  const topEntry = Object.entries(dnaScore).sort((a,b)=>b[1]-a[1])[0];
+  const topDna = topEntry ? topEntry[0] : 'explore';
   const constellation = CONSTELLATION_MAP.find(c=>c.dna===topDna) || CONSTELLATION_MAP[0];
 
   // 별자리 그리기
   const canvas = document.getElementById('constellation-canvas');
   drawConstellation(canvas, constellation.stars, constellation.color);
-
-  // 텍스트 세팅
   document.getElementById('constellation-title').textContent = '나의 전공 별자리 ✦ ' + constellation.type.split(' ')[0];
   document.getElementById('constellation-type').textContent = constellation.type;
-  document.getElementById('constellation-desc').textContent = constellation.desc;
-  document.getElementById('constellation-majors').innerHTML =
-    constellation.majors.map(m=>`<span class="constellation-major-tag">🎓 ${m}</span>`).join('');
+  document.getElementById('constellation-desc').textContent = '🤖 AI가 추천 학과 10개를 분석 중이에요...';
+  document.getElementById('constellation-majors').innerHTML = '<span style="color:rgba(240,244,255,.5);font-size:13px;">잠시만요...</span>';
 
-  // 별 계산 (최대 20)
-  const stars = Math.min(20, orbCollected);
+  // 결과창 먼저 보여주기
+  const stars = Math.min(20, orbCollected > 0 ? orbCollected * 2 : 10);
   document.getElementById('ec-stars-big').textContent = stars + '⭐';
-  document.getElementById('ec-stars-sub').textContent = `${orbCollected}개 에너지 수집 → ${stars}개 별 획득! 목성 탐험 완료 🟠`;
-
+  document.getElementById('ec-stars-sub').textContent = `관심 분야 ${orbCollected}개 + 희망 직업 분석 → 별 ${stars}개 획득! 🔭`;
   gzStars.s2 = stars;
   document.getElementById('stage2-badge').textContent = `⭐ ${stars} / 20`;
   updateStarBar();
-  window._aptData = { count: orbCollected, selected: [...absorbedOrbs], dnaScore: {...dnaScore}, topDna };
+  window._aptData = { count: orbCollected, selected: [...absorbedOrbs], dnaScore: {...dnaScore}, topDna,
+    jobs: [job1, job2, job3].filter(Boolean), fields: selectedFields };
 
   document.getElementById('ec-result-wrap').classList.add('show');
   document.getElementById('ec-result-wrap').scrollIntoView({behavior:'smooth', block:'nearest'});
 
-  // ── DNA 별자리 추천 학과를 STAGE 4 로드맵에 즉시 연동 ──
-  refreshNepCardsFromDna(constellation.majors.slice());
+  // AI API 호출로 10개 학과 추천
+  try {
+    const jobList = [job1, job2, job3].filter(Boolean).join(', ');
+    const fieldList = selectedFields.length > 0 ? selectedFields.join(', ') : '없음';
+    const prompt = `학생의 데이터를 분석해서 추천 학과 10개를 JSON으로 알려주세요.
 
+관심 분야: ${fieldList}
+희망 직업: ${jobList}
 
+응답 형식 (JSON만, 설명 없이):
+{"majors":["학과명1","학과명2","학과명3","학과명4","학과명5","학과명6","학과명7","학과명8","학과명9","학과명10"]}
+
+조건:
+- 한국 대학에 실제로 있는 학과명
+- 희망 직업과 관심 분야를 모두 반영
+- 다양한 계열(이공계, 인문사회, 예체능 등) 고려
+- 학과명만 간결하게`;
+
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 500,
+        messages: [{role:'user', content: prompt}]
+      })
+    });
+    const data = await res.json();
+    const text = data.content?.map(c=>c.text||'').join('') || '';
+    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    if(jsonMatch){
+      const parsed = JSON.parse(jsonMatch[0]);
+      const majors = parsed.majors || constellation.majors;
+      // 결과 업데이트
+      document.getElementById('constellation-desc').textContent = constellation.desc;
+      document.getElementById('constellation-majors').innerHTML =
+        majors.map(m=>`<span class="constellation-major-tag">🎓 ${m}</span>`).join('');
+      // STAGE 4 연동
+      refreshNepCardsFromDna(majors.slice());
+      // aptData 업데이트
+      window._aptData.aiMajors = majors;
+    } else {
+      throw new Error('JSON parse fail');
+    }
+  } catch(e) {
+    // fallback: 기본 별자리 학과 사용
+    document.getElementById('constellation-desc').textContent = constellation.desc;
+    document.getElementById('constellation-majors').innerHTML =
+      constellation.majors.map(m=>`<span class="constellation-major-tag">🎓 ${m}</span>`).join('');
+    refreshNepCardsFromDna(constellation.majors.slice());
+  }
 }
 
 // 초기화 실행
