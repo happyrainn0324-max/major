@@ -1610,21 +1610,24 @@ footer::before{
   .gz-desc{font-size:14px;line-height:1.75;}
   .star-total-bar{flex-direction:column;gap:10px;padding:14px 20px;text-align:center;}
   .star-progress-wrap{max-width:100%;width:100%;}
-  .stage-header{padding:12px 14px;gap:8px;flex-wrap:nowrap;align-items:center;}
-  .stage-planet-emoji{width:32px;height:32px;flex-shrink:0;font-size:1.25rem;}
+  .stage-header{padding:10px 12px;gap:0;flex-wrap:nowrap;align-items:center;}
+  .stage-planet-emoji{width:34px;height:34px;flex-shrink:0;font-size:1.3rem;margin-right:8px;}
   .stage-info{flex:1;min-width:0;}
-  .stage-num{font-size:10px;letter-spacing:1px;margin-bottom:1px;}
-  .stage-name{font-size:0.8rem;white-space:normal;overflow:visible;text-overflow:unset;line-height:1.25;word-break:keep-all;}
+  .stage-num{font-size:10px;letter-spacing:0.5px;margin-bottom:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#87ceeb;}
+  .stage-name{font-size:0.88rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.25;color:#f0f4ff;}
   .stage-subtitle{display:none;}
   .stage-stars-badge{
     display:flex;
-    padding:4px 7px;
-    font-size:11px;
+    align-items:center;
+    padding:3px 7px;
+    font-size:10px;
     white-space:nowrap;
     flex-shrink:0;
     letter-spacing:0;
+    gap:2px;
+    margin-left:6px;
   }
-  .stage-toggle-btn{width:26px;height:26px;font-size:12px;flex-shrink:0;}
+  .stage-toggle-btn{width:24px;height:24px;font-size:11px;flex-shrink:0;margin-left:4px;}
   .stage-body{padding:20px 16px;}
   .planet-display{flex-direction:column;align-items:center;text-align:center;padding:18px;gap:16px;}
   .planet-img-wrap{width:100px;height:100px;}
@@ -1659,6 +1662,52 @@ footer::before{
   .rq-task-text{font-size:13px;}
   #rq-type-chips{grid-template-columns:repeat(3,1fr)!important;}
   .nep-pick-input{max-width:160px;font-size:13px;padding:8px 10px;}
+
+  /* 칩: 이모지 위 / 글자 아래 */
+  .rq-chip{
+    flex-direction:column!important;
+    gap:3px!important;
+    padding:10px 4px!important;
+    font-size:12px!important;
+    text-align:center;
+    justify-content:center!important;
+    align-items:center!important;
+    line-height:1.2;
+    border-radius:14px!important;
+  }
+  .rq-chip-emoji{
+    font-size:1.4rem;
+    line-height:1;
+    display:block;
+  }
+  .rq-chip-label{
+    font-size:11px;
+    display:block;
+    word-break:keep-all;
+  }
+
+  /* 탐구 별 박스: 한 줄 가로 배치 */
+  .rq-star-bar-wrap{
+    padding:12px 14px 10px!important;
+    margin-bottom:18px!important;
+  }
+  .rq-star-bar-inner{
+    flex-wrap:nowrap!important;
+    gap:8px!important;
+    margin-bottom:8px!important;
+    align-items:center;
+  }
+  .rq-star-pips{
+    flex:1!important;
+    flex-wrap:nowrap!important;
+    overflow:hidden;
+    gap:2px!important;
+  }
+  .rq-pip{font-size:.75rem!important;}
+  .rq-star-bar-label{font-size:12px!important;letter-spacing:1px!important;}
+  .rq-star-bar-icon{font-size:1.1rem!important;}
+  .rq-star-count-num{font-size:1.2rem!important;}
+  .rq-star-bar-max{font-size:12px!important;}
 }
 @media(max-width:620px){
   #rq-setup-card{padding:24px 14px!important;}
@@ -1690,7 +1739,9 @@ footer::before{
 @media(max-width:600px){
   footer{padding:56px 20px 50px;}
   .footer-q{font-size:clamp(1.3rem,5vw,1.8rem);line-height:1.6;}
-  .footer-btn{width:100%;text-align:center;}
+  .footer-btn{width:90%;text-align:center;justify-content:center;margin:0 auto;}
+  .footer-row-btns{gap:8px!important;}
+  .footer-row-btns button{flex:1;justify-content:center;}
 }
 
 /* 12. iOS 입력 줌 방지 (font-size 16px) */
@@ -3837,9 +3888,9 @@ async function sendIvMessage(){
 
   let reply = '';
   try {
-    const resp = await fetch('/.netlify/functions/claude', {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
         max_tokens: 1000,
@@ -4730,9 +4781,9 @@ function launchAnalysis(){
     }).filter(Boolean).join(', ');
 
     try {
-      const resp = await fetch('/.netlify/functions/claude', {
+      const resp = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
         body: JSON.stringify({
           model: 'claude-sonnet-4-20250514',
           max_tokens: 1000,
@@ -4904,11 +4955,92 @@ const NEP_DEFAULT_MAJORS = ['컴퓨터공학과','심리학과','생명과학과
 // DNA 별자리 분석 결과를 해왕성 카드에 실시간 반영
 function refreshNepCardsFromDna(majorNames){
   window._dnaRecommendedMajors = majorNames;
+
+  // ── 1. stage4 헤더에 연동 뱃지 표시 ──
+  (function(){
+    const stageHeader = document.querySelector('.stage-header[onclick="toggleStage(4)"]');
+    if(!stageHeader) return;
+    let badge = document.getElementById('dna-linked-badge');
+    if(!badge){
+      badge = document.createElement('div');
+      badge.id = 'dna-linked-badge';
+      badge.style.cssText = [
+        'display:inline-flex;align-items:center;gap:6px;',
+        'padding:5px 14px;border-radius:999px;',
+        'background:linear-gradient(135deg,rgba(168,85,247,.22),rgba(0,229,255,.18));',
+        'border:1px solid rgba(168,85,247,.45);',
+        'font-size:12px;font-weight:700;color:#c084fc;',
+        'letter-spacing:.5px;white-space:nowrap;',
+        'animation:dnaBadgePop .5s cubic-bezier(.34,1.56,.64,1) both;',
+        'margin-left:8px;flex-shrink:0;'
+      ].join('');
+      badge.innerHTML = '🧬 별자리 연동됨';
+      const starsEl = stageHeader.querySelector('.stage-stars-badge');
+      if(starsEl) starsEl.parentNode.insertBefore(badge, starsEl);
+      else stageHeader.appendChild(badge);
+    } else {
+      badge.style.animation = 'none';
+      setTimeout(()=>{ badge.style.animation = 'dnaBadgePop .5s cubic-bezier(.34,1.56,.64,1) both'; }, 10);
+    }
+  })();
+
+  // ── 2. 토스트 알림 ──
+  (function(){
+    let toast = document.getElementById('dna-roadmap-toast');
+    if(!toast){
+      toast = document.createElement('div');
+      toast.id = 'dna-roadmap-toast';
+      toast.style.cssText = [
+        'position:fixed;bottom:32px;left:50%;transform:translateX(-50%) translateY(80px);',
+        'z-index:99999;',
+        'background:linear-gradient(135deg,#1a1040,#0f1e3a);',
+        'border:1px solid rgba(168,85,247,.5);',
+        'border-radius:18px;padding:14px 24px;',
+        'display:flex;align-items:center;gap:12px;',
+        'box-shadow:0 8px 40px rgba(168,85,247,.35),0 0 0 1px rgba(255,255,255,.05) inset;',
+        'font-family:\'Pretendard\',\'Noto Sans KR\',sans-serif;',
+        'transition:transform .45s cubic-bezier(.34,1.56,.64,1),opacity .45s ease;',
+        'opacity:0;pointer-events:none;'
+      ].join('');
+      document.body.appendChild(toast);
+    }
+    const top3 = majorNames.slice(0,3).join(' · ');
+    toast.innerHTML = `
+      <span style="font-size:1.5rem;">🧬</span>
+      <div>
+        <div style="font-size:13px;font-weight:800;color:#e0aaff;margin-bottom:2px;">전공 로드맵에 연동됐어요!</div>
+        <div style="font-size:12px;color:rgba(240,244,255,.6);">추천 학과: <span style="color:#a5f3fc;font-weight:600;">${top3}</span></div>
+      </div>
+      <button onclick="toggleStage(4);document.getElementById('game-zone').querySelector('.stage-header[onclick=\\'toggleStage(4)\\']')?.scrollIntoView({behavior:'smooth',block:'center'})"
+        style="margin-left:8px;padding:7px 16px;border-radius:999px;background:linear-gradient(135deg,#a855f7,#1a6cf5);border:none;color:#fff;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;font-family:inherit;">
+        바로가기 →
+      </button>`;
+    requestAnimationFrame(()=>{
+      toast.style.transform = 'translateX(-50%) translateY(0)';
+      toast.style.opacity = '1';
+    });
+    clearTimeout(window._dnaToastTimer);
+    window._dnaToastTimer = setTimeout(()=>{
+      toast.style.transform = 'translateX(-50%) translateY(80px)';
+      toast.style.opacity = '0';
+    }, 5000);
+  })();
+
+  // ── 3. stage4가 열려 있으면 즉시 카드 갱신 ──
   const body = document.getElementById('stage-body-4');
   if(body && body.classList.contains('open')){
     initNepMajorCards();
   }
 }
+
+// 뱃지 팝 애니메이션 주입
+(function(){
+  if(document.getElementById('dna-badge-style')) return;
+  const s = document.createElement('style');
+  s.id = 'dna-badge-style';
+  s.textContent = '@keyframes dnaBadgePop{from{opacity:0;transform:scale(0.6);}to{opacity:1;transform:scale(1);}}';
+  document.head.appendChild(s);
+})();
 
 function buildNepCardHTML(name, i, medals){
   const d = NEP_MAJOR_DB[name];
@@ -5023,9 +5155,9 @@ function initNepMajorCards(){
       if(!bodyEl) return;
       const dnaInfo = window._aptData ? Object.entries(window._aptData.dnaScore||{}).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([k,v])=>k+':'+v).join(', ') : '';
       try {
-        const resp = await fetch('/.netlify/functions/claude', {
+        const resp = await fetch('https://api.anthropic.com/v1/messages', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'application/json', 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
           body: JSON.stringify({
             model: 'claude-sonnet-4-20250514',
             max_tokens: 1000,
@@ -5098,9 +5230,9 @@ function submitNepRoadmap(){
     const roadmapText = tls.map((t,i) => t ? `${stages[i]}: ${t}` : '').filter(Boolean).join('\n');
     if(!roadmapText && !major) return;
     try {
-      const resp = await fetch('/.netlify/functions/claude', {
+      const resp = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
         body: JSON.stringify({
           model: 'claude-sonnet-4-20250514',
           max_tokens: 1000,
@@ -5133,7 +5265,18 @@ ${roadmapText || '(작성 없음)'}
     if(n===4){
       setTimeout(function(){
         const body = document.getElementById('stage-body-4');
-        if(body && body.classList.contains('open')) initNepMajorCards();
+        if(body && body.classList.contains('open')){
+          initNepMajorCards();
+          // 섹션 설명 DNA 연동 여부 반영
+          const descEl = body.querySelector('.nep-section-desc');
+          if(descEl){
+            if(window._dnaRecommendedMajors && window._dnaRecommendedMajors.length >= 1){
+              descEl.innerHTML = '🧬 <strong style="color:#c084fc;">DNA 별자리 분석</strong> 결과를 바탕으로 AI가 추천한 학과예요!<br>카드를 펼쳐 학과를 깊이 탐색해봐요 ✨';
+            } else {
+              descEl.innerHTML = '⭐ 목성 탐험 별자리 분석 결과를 바탕으로 추천된 학과예요.<br>카드를 펼쳐 학과를 깊이 탐색해봐요!<br><span style="font-size:12px;color:rgba(240,244,255,.4);">💡 DNA 별자리 분석을 먼저 하면 더 정확한 학과를 추천받아요</span>';
+            }
+          }
+        }
       }, 60);
     }
   };
@@ -5326,18 +5469,18 @@ ${roadmapText || '(작성 없음)'}
       <div style="margin-bottom:28px;">
         <label style="display:block;font-size:13px;letter-spacing:2px;color:rgba(240,244,255,.55);font-weight:600;margin-bottom:10px;">🧪 탐구 방식 <span style="font-weight:400;letter-spacing:0;font-size:12px;color:rgba(240,244,255,.38);">(복수 선택 가능)</span></label>
         <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;justify-items:center;" id="rq-type-chips">
-          <span class="rq-chip" data-val="문헌조사" style="width:100%;justify-content:center;">📚 문헌조사</span>
-          <span class="rq-chip" data-val="실험·관찰" style="width:100%;justify-content:center;">🧫 실험·관찰</span>
-          <span class="rq-chip" data-val="설문조사" style="width:100%;justify-content:center;">📋 설문조사</span>
-          <span class="rq-chip" data-val="인터뷰" style="width:100%;justify-content:center;">🎤 인터뷰</span>
-          <span class="rq-chip" data-val="데이터분석" style="width:100%;justify-content:center;">📊 데이터분석</span>
-          <span class="rq-chip" data-val="현장방문" style="width:100%;justify-content:center;">🏫 현장방문</span>
-          <span class="rq-chip" data-val="독서·토론" style="width:100%;justify-content:center;">📖 독서·토론</span>
-          <span class="rq-chip" data-val="비교분석" style="width:100%;justify-content:center;">⚖️ 비교분석</span>
-          <span class="rq-chip" data-val="사례연구" style="width:100%;justify-content:center;">🔍 사례연구</span>
-          <span class="rq-chip" data-val="시뮬레이션" style="width:100%;justify-content:center;">💻 시뮬레이션</span>
-          <span class="rq-chip" data-val="제작·메이킹" style="width:100%;justify-content:center;">🔧 제작·메이킹</span>
-          <span class="rq-chip" data-val="통계분석" style="width:100%;justify-content:center;">📐 통계분석</span>
+          <span class="rq-chip" data-val="문헌조사" style="width:100%;justify-content:center;"><span class="rq-chip-emoji">📚</span><span class="rq-chip-label">문헌조사</span></span>
+          <span class="rq-chip" data-val="실험·관찰" style="width:100%;justify-content:center;"><span class="rq-chip-emoji">🧫</span><span class="rq-chip-label">실험·관찰</span></span>
+          <span class="rq-chip" data-val="설문조사" style="width:100%;justify-content:center;"><span class="rq-chip-emoji">📋</span><span class="rq-chip-label">설문조사</span></span>
+          <span class="rq-chip" data-val="인터뷰" style="width:100%;justify-content:center;"><span class="rq-chip-emoji">🎤</span><span class="rq-chip-label">인터뷰</span></span>
+          <span class="rq-chip" data-val="데이터분석" style="width:100%;justify-content:center;"><span class="rq-chip-emoji">📊</span><span class="rq-chip-label">데이터분석</span></span>
+          <span class="rq-chip" data-val="현장방문" style="width:100%;justify-content:center;"><span class="rq-chip-emoji">🏫</span><span class="rq-chip-label">현장방문</span></span>
+          <span class="rq-chip" data-val="독서·토론" style="width:100%;justify-content:center;"><span class="rq-chip-emoji">📖</span><span class="rq-chip-label">독서·토론</span></span>
+          <span class="rq-chip" data-val="비교분석" style="width:100%;justify-content:center;"><span class="rq-chip-emoji">⚖️</span><span class="rq-chip-label">비교분석</span></span>
+          <span class="rq-chip" data-val="사례연구" style="width:100%;justify-content:center;"><span class="rq-chip-emoji">🔍</span><span class="rq-chip-label">사례연구</span></span>
+          <span class="rq-chip" data-val="시뮬레이션" style="width:100%;justify-content:center;"><span class="rq-chip-emoji">💻</span><span class="rq-chip-label">시뮬레이션</span></span>
+          <span class="rq-chip" data-val="제작·메이킹" style="width:100%;justify-content:center;"><span class="rq-chip-emoji">🔧</span><span class="rq-chip-label">제작·메이킹</span></span>
+          <span class="rq-chip" data-val="통계분석" style="width:100%;justify-content:center;"><span class="rq-chip-emoji">📐</span><span class="rq-chip-label">통계분석</span></span>
         </div>
       </div>
 
@@ -5652,10 +5795,10 @@ window.qlGenerate = async function(){
   });
 
   try {
-    var resp = await fetch('/.netlify/functions/claude', {
+    var resp = await fetch('https://api.anthropic.com/v1/messages', {
       method:'POST',
       headers:{
-        'Content-Type':'application/json'
+        'Content-Type':'application/json','anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'
       },
       body: JSON.stringify({
         model:'claude-sonnet-4-20250514',
@@ -5934,6 +6077,8 @@ window.qlGenerate = async function(){
 }
 
 /* ── 주제탐구 칩 ── */
+.rq-chip-emoji{ display:inline; }
+.rq-chip-label{ display:inline; }
 .rq-chip{
   display:inline-flex;align-items:center;gap:5px;
   padding:9px 16px;border-radius:999px;
@@ -6273,7 +6418,7 @@ function startResearch(){
     try {
       var resp = await fetch('https://api.anthropic.com/v1/messages', {
         method:'POST',
-        headers:{'Content-Type':'application/json','x-api-key':'','anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+        headers:{'Content-Type':'application/json','anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
         body: JSON.stringify({
           model:'claude-sonnet-4-20250514',
           max_tokens:3000,
@@ -6422,6 +6567,404 @@ ${steps.map(function(s,i){
 }).join('')}
 <div class="footer">전지적 전공시점 | 인천공항중학교 질문하는 학교</div>
 <script>window.onload=function(){window.print();}<\/script>
+
+<!-- ══════════════════════════════════════
+     📄 전공 탐구 포트폴리오 팝업
+══════════════════════════════════════ -->
+<div id="portfolio-popup-overlay" style="
+  display:none;position:fixed;inset:0;z-index:100000;
+  background:rgba(6,8,15,.88);backdrop-filter:blur(14px);
+  align-items:flex-start;justify-content:center;
+  padding:20px 0 40px;overflow-y:auto;
+">
+  <div id="portfolio-popup-box" style="
+    width:min(720px,94vw);
+    background:linear-gradient(145deg,#0d1628,#0b1120);
+    border:1px solid rgba(255,255,255,.1);
+    border-radius:24px;
+    box-shadow:0 32px 80px rgba(0,0,0,.7),0 0 0 1px rgba(255,255,255,.04) inset;
+    overflow:hidden;
+    position:relative;
+    margin:auto;
+  ">
+    <!-- 헤더 -->
+    <div style="
+      padding:28px 32px 20px;
+      background:linear-gradient(135deg,rgba(26,108,245,.15),rgba(168,85,247,.1));
+      border-bottom:1px solid rgba(255,255,255,.08);
+      display:flex;align-items:center;justify-content:space-between;
+    ">
+      <div>
+        <div style="font-size:12px;letter-spacing:4px;color:rgba(0,229,255,.8);font-weight:600;margin-bottom:6px;">전지적 전공시점</div>
+        <div style="font-size:1.4rem;font-weight:900;color:#f0f4ff;letter-spacing:-1px;">📄 전공 탐구 포트폴리오</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <button onclick="downloadPortfolioPDF()" id="pf-pdf-btn" style="
+          display:inline-flex;align-items:center;gap:7px;
+          padding:11px 22px;border-radius:999px;
+          background:linear-gradient(135deg,#1a6cf5,#6366f1);
+          border:none;color:#fff;font-size:14px;font-weight:700;
+          cursor:pointer;font-family:'Pretendard','Noto Sans KR',sans-serif;
+          box-shadow:0 4px 18px rgba(26,108,245,.4);transition:.2s;
+          white-space:nowrap;
+        "
+          onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 28px rgba(26,108,245,.6)';"
+          onmouseout="this.style.transform='';this.style.boxShadow='0 4px 18px rgba(26,108,245,.4)';"
+        >⬇️ PDF 저장</button>
+        <button onclick="closePortfolioPopup()" style="
+          background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);
+          color:rgba(255,255,255,.5);font-size:18px;width:38px;height:38px;
+          border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;
+          transition:.2s;font-family:monospace;
+        "
+          onmouseover="this.style.background='rgba(255,255,255,.12)';this.style.color='#fff';"
+          onmouseout="this.style.background='rgba(255,255,255,.06)';this.style.color='rgba(255,255,255,.5)';"
+        >✕</button>
+      </div>
+    </div>
+
+    <!-- 바디 -->
+    <div id="pf-popup-body" style="padding:28px 32px;"></div>
+  </div>
+</div>
+
+<style>
+@keyframes pfPopupIn{from{opacity:0;transform:translateY(24px) scale(.97);}to{opacity:1;transform:none;}}
+#portfolio-popup-overlay.show{display:flex!important;}
+#portfolio-popup-box{animation:pfPopupIn .35s cubic-bezier(.34,1.2,.64,1) both;}
+@media(max-width:600px){
+  #portfolio-popup-box{border-radius:18px;}
+  #portfolio-popup-box > div:first-child{padding:20px 18px 16px!important;}
+  #pf-popup-body{padding:18px 16px!important;}
+  #pf-pdf-btn{padding:9px 14px!important;font-size:12px!important;}
+}
+</style>
+
+<script>
+// ── 포트폴리오 팝업 열기 ──
+window.openPortfolioPopup = function(){
+  var overlay = document.getElementById('portfolio-popup-overlay');
+  var body = document.getElementById('pf-popup-body');
+  overlay.classList.add('show');
+  overlay.scrollTop = 0;
+
+  // 데이터 수집
+  var info = window.explorerInfo || {};
+  var name = info.name || '탐험가';
+  var school = info.school || '-';
+  var sid = info.sid || '-';
+
+  var gz = (typeof gzStars !== 'undefined') ? gzStars : {s1:0,s2:0,s3:0,s4:0};
+  var iv = (typeof ivStars !== 'undefined') ? ivStars : 0;
+  var rq = (typeof rqStars !== 'undefined') ? rqStars : 0;
+  var totalStars = (gz.s1||0)+(gz.s2||0)+(gz.s3||0)+(gz.s4||0)+iv+rq;
+  var badge = (typeof getCurrentBadge === 'function') ? getCurrentBadge(totalStars) : {icon:'🔴',name:'탐험 시작!'};
+
+  var major = (document.getElementById('rq-major')||{}).value||'';
+  var topic = (document.getElementById('rq-topic')||{}).value||'';
+  var ivMajorVal = (typeof ivMajor !== 'undefined') ? ivMajor : '';
+
+  var diaryTextareas = document.querySelectorAll('.diary-field textarea');
+  var diaryQs = ['오늘 탐험에서 가장 인상 깊었던 순간은?','탐험 전 예상과 달랐던 점이 있었나요?','이 전공에 대해 더 알고 싶어진 것이 있나요?','미래의 나에게 한 마디'];
+  var diaryEntries = diaryQs.map(function(q,i){ return {q:q, a:(diaryTextareas[i]&&diaryTextareas[i].value)||''};});
+
+  var chatHistory = (typeof ivHistory !== 'undefined') ? ivHistory : [];
+  var pairs = [];
+  for(var hi=0;hi<chatHistory.length-1;hi++){
+    if(chatHistory[hi].role==='user' && chatHistory[hi+1] && chatHistory[hi+1].role==='assistant'){
+      pairs.push({q:chatHistory[hi].content,a:chatHistory[hi+1].content}); hi++;
+    }
+  }
+  var rqPlan = window._rqPlanData ? window._rqPlanData.plan : null;
+  var aiMajors = [];
+  document.querySelectorAll('.ob-report-major-tag').forEach(function(el){ aiMajors.push(el.textContent.trim()); });
+  var nepMajors = window._nepMajors || [];
+  var dnaMajors = window._dnaRecommendedMajors || [];
+  var constellationType = (typeof window._lastConstellation !== 'undefined') ? window._lastConstellation : '';
+
+  var dateStr = new Date().toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric'});
+
+  // 별 행 렌더
+  var starRows = [
+    {label:'🔴 화성 · 전공퀴즈', val:gz.s1||0, max:25, color:'#f97316'},
+    {label:'🟡 목성 · 적합성', val:gz.s2||0, max:20, color:'#fbbf24'},
+    {label:'🟣 토성 · 선택과목', val:gz.s3||0, max:10, color:'#a855f7'},
+    {label:'🔵 해왕성 · 로드맵', val:gz.s4||0, max:10, color:'#60a5fa'},
+    {label:'🎤 학과 인터뷰', val:iv, max:15, color:'#00e5ff'},
+    {label:'🔭 주제탐구', val:rq, max:20, color:'#34d399'},
+  ];
+
+  function card(content, accent){
+    return '<div style="background:rgba(255,255,255,.03);border:1px solid '+( accent||'rgba(255,255,255,.08)')+';border-radius:16px;padding:20px 22px;margin-bottom:16px;">'+content+'</div>';
+  }
+  function secTitle(emoji, title, color){
+    return '<div style="font-size:12px;letter-spacing:3px;color:'+(color||'rgba(240,244,255,.45)')+';font-weight:700;margin-bottom:12px;">'+emoji+' '+title+'</div>';
+  }
+  function tag(text, color){
+    return '<span style="display:inline-block;padding:4px 12px;border-radius:999px;background:'+(color||'rgba(99,102,241,.15)')+';border:1px solid '+((color||'rgba(99,102,241,.3)').replace('.15','.3').replace('.12','.25'))+';font-size:12px;color:#e0aaff;margin:3px 3px 3px 0;">'+text+'</span>';
+  }
+  function row(label, val, max, color){
+    var pct = max>0 ? Math.round(val/max*100) : 0;
+    return '<div style="margin-bottom:10px;">'+
+      '<div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px;">'+
+      '<span style="color:rgba(240,244,255,.65);">'+label+'</span>'+
+      '<span style="font-weight:700;color:'+color+';">'+val+' / '+max+' ⭐</span></div>'+
+      '<div style="height:6px;background:rgba(255,255,255,.06);border-radius:999px;overflow:hidden;">'+
+      '<div style="height:100%;width:'+pct+'%;background:'+color+';border-radius:999px;transition:.6s;"></div></div></div>';
+  }
+
+  // 탐험 정보 정리
+  var filledDiary = diaryEntries.filter(function(e){return e.a.trim();});
+  var filledPairs = pairs.slice(0,5);
+
+  var html = '';
+
+  // ── 학생 정보 카드 ──
+  html += card(
+    secTitle('👤','탐험가 정보','#60a5fa')+
+    '<div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">'+
+    '<div style="font-size:2.5rem;">'+badge.icon+'</div>'+
+    '<div>'+
+      '<div style="font-size:1.3rem;font-weight:900;color:#f0f4ff;">'+name+'</div>'+
+      '<div style="font-size:13px;color:rgba(240,244,255,.5);margin-top:2px;">'+school+' · '+sid+'</div>'+
+      '<div style="font-size:13px;color:#fbbf24;font-weight:700;margin-top:4px;">'+badge.icon+' '+badge.name+' · 총 '+totalStars+'/100 ⭐</div>'+
+    '</div></div>',
+    'rgba(96,165,250,.2)'
+  );
+
+  // ── 별 현황 카드 ──
+  var starHtml = secTitle('⭐','탐험 별 현황','#fbbf24');
+  starRows.forEach(function(r){ starHtml += row(r.label, r.val, r.max, r.color); });
+  html += card(starHtml, 'rgba(251,191,36,.15)');
+
+  // ── 희망 전공 / AI 추천 ──
+  var majorContent = secTitle('🎓','전공 탐구 기록','#c084fc');
+  if(major||ivMajorVal){
+    majorContent += '<div style="font-size:15px;font-weight:700;color:#e0aaff;margin-bottom:10px;">희망 학과: '+(major||ivMajorVal)+'</div>';
+  }
+  if(topic){
+    majorContent += '<div style="font-size:13px;color:rgba(240,244,255,.7);margin-bottom:10px;">📌 탐구 주제: '+topic+'</div>';
+  }
+  if(aiMajors.length){
+    majorContent += '<div style="font-size:12px;color:rgba(240,244,255,.4);margin-bottom:6px;">AI 추천 전공</div>';
+    majorContent += aiMajors.map(function(m){return tag(m,'rgba(168,85,247,.15)');}).join('');
+  }
+  if(dnaMajors.length){
+    majorContent += '<div style="font-size:12px;color:rgba(240,244,255,.4);margin:10px 0 6px;">🧬 DNA 별자리 추천</div>';
+    majorContent += dnaMajors.slice(0,3).map(function(m){return tag(m,'rgba(0,229,255,.1)');}).join('');
+  }
+  html += card(majorContent, 'rgba(168,85,247,.15)');
+
+  // ── 탐구 계획서 ──
+  if(rqPlan){
+    var rqHtml = secTitle('🔭','탐구 계획서','#34d399');
+    var rqFields = [
+      {key:'subject',label:'탐구 주제'},{key:'goal',label:'탐구 목표'},
+      {key:'method',label:'탐구 방법'},{key:'schedule',label:'탐구 일정'},
+      {key:'material',label:'필요 자료'},{key:'expected',label:'예상 결과'},{key:'summary',label:'정리 방법'}
+    ];
+    rqFields.forEach(function(f){
+      if(rqPlan[f.key]){
+        rqHtml += '<div style="margin-bottom:12px;">'+
+          '<div style="font-size:11px;letter-spacing:2px;color:rgba(52,211,153,.7);font-weight:700;margin-bottom:4px;">'+f.label+'</div>'+
+          '<div style="font-size:13px;color:rgba(240,244,255,.8);line-height:1.7;white-space:pre-line;">'+rqPlan[f.key]+'</div></div>';
+      }
+    });
+    html += card(rqHtml, 'rgba(52,211,153,.15)');
+  }
+
+  // ── 탐험 일기 ──
+  if(filledDiary.length){
+    var diaryHtml = secTitle('📓','탐험 일기','#f59e0b');
+    filledDiary.forEach(function(e){
+      diaryHtml += '<div style="margin-bottom:14px;">'+
+        '<div style="font-size:12px;color:rgba(251,191,36,.8);font-weight:700;margin-bottom:4px;">Q. '+e.q+'</div>'+
+        '<div style="font-size:13px;color:rgba(240,244,255,.8);line-height:1.7;padding-left:10px;border-left:2px solid rgba(251,191,36,.3);">'+e.a+'</div></div>';
+    });
+    html += card(diaryHtml, 'rgba(251,191,36,.12)');
+  }
+
+  // ── 인터뷰 기록 ──
+  if(filledPairs.length){
+    var ivHtml = secTitle('🎤','학과 인터뷰 기록','#00e5ff');
+    filledPairs.forEach(function(p,i){
+      ivHtml += '<div style="margin-bottom:14px;">'+
+        '<div style="font-size:12px;color:rgba(0,229,255,.8);font-weight:700;margin-bottom:4px;">Q'+(i+1)+'. '+p.q+'</div>'+
+        '<div style="font-size:13px;color:rgba(240,244,255,.75);line-height:1.7;padding-left:10px;border-left:2px solid rgba(0,229,255,.25);">'+p.a+'</div></div>';
+    });
+    html += card(ivHtml, 'rgba(0,229,255,.1)');
+  }
+
+  // ── 아무 기록도 없을 때 안내 ──
+  if(!filledDiary.length && !filledPairs.length && !rqPlan && !major && !topic){
+    html += '<div style="text-align:center;padding:40px 20px;color:rgba(240,244,255,.4);font-size:15px;">아직 탐험 기록이 없어요!<br><span style=\"font-size:13px;\">탐험을 진행하면 여기에 기록이 쌓여요 🚀</span></div>';
+  }
+
+  // 날짜
+  html += '<div style="text-align:right;font-size:12px;color:rgba(240,244,255,.25);margin-top:8px;">'+dateStr+'</div>';
+
+  body.innerHTML = html;
+
+  // 저장용 전역 데이터
+  window._pfData = {name,school,sid,badge,totalStars,starRows,major,ivMajorVal,topic,rqPlan,filledDiary,filledPairs,aiMajors,dnaMajors,dateStr};
+};
+
+window.closePortfolioPopup = function(){
+  document.getElementById('portfolio-popup-overlay').classList.remove('show');
+};
+
+// 오버레이 바깥 클릭 닫기
+document.getElementById('portfolio-popup-overlay').addEventListener('click', function(e){
+  if(e.target === this) window.closePortfolioPopup();
+});
+
+// ── PDF 다운로드 (포트폴리오 팝업에서) ──
+window.downloadPortfolioPDF = async function(){
+  var btn = document.getElementById('pf-pdf-btn');
+  if(btn){ btn.disabled=true; btn.textContent='⏳ 생성 중...'; }
+
+  var d = window._pfData || {};
+  var name = d.name||'탐험가';
+  var school = d.school||'';
+  var sid = d.sid||'';
+  var badge = d.badge||{icon:'🔴',name:'탐험 시작!'};
+  var totalStars = d.totalStars||0;
+  var starRows = d.starRows||[];
+  var major = d.major||d.ivMajorVal||'';
+  var topic = d.topic||'';
+  var rqPlan = d.rqPlan;
+  var filledDiary = d.filledDiary||[];
+  var filledPairs = d.filledPairs||[];
+  var aiMajors = d.aiMajors||[];
+  var dnaMajors = d.dnaMajors||[];
+  var dateStr = d.dateStr||new Date().toLocaleDateString('ko-KR');
+
+  // AI 리포트 생성
+  var prompt = '아래는 학생의 전공 탐구 포트폴리오 데이터입니다. 전문적이고 따뜻한 AI 코멘트를 각 섹션에 맞게 작성해주세요.\n\n'+
+    '[학생 정보]\n이름: '+name+'\n학교: '+school+'\n학번: '+sid+'\n뱃지: '+badge.icon+' '+badge.name+'\n총별: '+totalStars+'/100\n\n'+
+    '[희망 학과] '+major+'\n[탐구 주제] '+topic+'\n\n'+
+    (rqPlan ? '[탐구 계획]\n목표: '+(rqPlan.goal||'').substring(0,150)+'\n방법: '+(rqPlan.method||'').substring(0,150)+'\n' : '')+
+    (filledDiary.length ? '[탐험 일기]\n'+filledDiary.map(function(e){return e.q+'\n'+e.a;}).join('\n\n')+'\n' : '')+
+    (filledPairs.length ? '[인터뷰]\n'+filledPairs.slice(0,3).map(function(p,i){return 'Q'+(i+1)+': '+p.q+'\nA: '+p.a.substring(0,150);}).join('\n\n') : '')+
+    '\n\n### 탐험가 소개\n### 나의 탐험 여정\n### 희망 전공 탐구\n### 탐험 일기 요약\n### AI 응원 메시지 (2~3문장, 따뜻하고 구체적으로)';
+
+  var aiText = '';
+  try {
+    var resp = await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:2000,messages:[{role:'user',content:prompt}]})
+    });
+    var data = await resp.json();
+    aiText = data.content?.[0]?.text||'';
+  } catch(e){ aiText = ''; }
+
+  function parseSection(text, heading){
+    var regex = new RegExp('### '+heading+'([\\s\\S]*?)(?=###|$)','i');
+    var m = text.match(regex);
+    return m ? m[1].trim() : '';
+  }
+
+  var starGridHtml = starRows.map(function(r){
+    return '<div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:12px;text-align:center;">'+
+      '<div style="font-size:12px;color:#6b7280;margin-bottom:4px;">'+r.label+'</div>'+
+      '<div style="font-size:1.2rem;font-weight:800;color:'+r.color+';">'+r.val+'<span style="font-size:11px;color:#9ca3af;"> /'+r.max+'</span></div></div>';
+  }).join('');
+
+  var rqFieldHtml = '';
+  if(rqPlan){
+    var rqFields2 = [{key:'subject',label:'탐구 주제'},{key:'goal',label:'탐구 목표'},{key:'method',label:'탐구 방법'},{key:'schedule',label:'탐구 일정'},{key:'material',label:'필요 자료'},{key:'expected',label:'예상 결과'},{key:'summary',label:'정리 방법'}];
+    rqFields2.forEach(function(f){
+      if(rqPlan[f.key]) rqFieldHtml += '<div style="margin-bottom:14px;"><div style="font-size:12px;font-weight:800;color:#059669;margin-bottom:4px;">'+f.label+'</div><div style="font-size:13px;color:#374151;line-height:1.7;white-space:pre-line;">'+rqPlan[f.key]+'</div></div>';
+    });
+  }
+
+  var diaryHtml2 = filledDiary.map(function(e){
+    return '<div style="margin-bottom:14px;"><div style="font-size:12px;font-weight:800;color:#b45309;margin-bottom:4px;">Q. '+e.q+'</div>'+
+      '<div style="font-size:13px;color:#374151;line-height:1.7;padding-left:10px;border-left:3px solid #fbbf24;">'+e.a+'</div></div>';
+  }).join('');
+
+  var ivHtml2 = filledPairs.map(function(p,i){
+    return '<div style="margin-bottom:14px;"><div style="font-size:12px;font-weight:800;color:#0369a1;margin-bottom:4px;">Q'+(i+1)+'. '+p.q+'</div>'+
+      '<div style="font-size:13px;color:#374151;line-height:1.7;padding-left:10px;border-left:3px solid #00e5ff;">'+p.a+'</div></div>';
+  }).join('');
+
+  var aiSections = ['탐험가 소개','나의 탐험 여정','희망 전공 탐구','탐험 일기 요약','AI 응원 메시지'];
+  var aiColors  = ['#1a6cf5','#a855f7','#00bcd4','#f59e0b','#ec4899'];
+  var aiEmojis  = ['👤','🌟','🎓','📓','💌'];
+  var aiHtml = aiText ? aiSections.map(function(sec,i){
+    var content = parseSection(aiText,sec);
+    if(!content) return '';
+    var lines = content.split('\n').filter(function(l){return l.trim();});
+    return '<div style="margin-bottom:24px;padding:18px 20px;border:1px solid #e5e7eb;border-left:4px solid '+aiColors[i]+';border-radius:0 12px 12px 0;">'+
+      '<div style="font-size:13px;font-weight:800;color:'+aiColors[i]+';letter-spacing:2px;margin-bottom:10px;">'+aiEmojis[i]+' '+sec.toUpperCase()+'</div>'+
+      lines.map(function(l){return '<p style="font-size:13px;color:#374151;line-height:1.8;margin-bottom:6px;">'+l.replace(/\*\*/g,'').replace(/\*/g,'')+'</p>';}).join('')+'</div>';
+  }).join('') : '';
+
+  var pdfHtml = `<!DOCTYPE html>
+<html lang="ko"><head><meta charset="UTF-8"/>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Noto Sans KR',sans-serif;background:#fff;color:#111;}
+@page{margin:15mm 18mm;size:A4;}
+.page-break{page-break-after:always;}
+h2{font-size:16px;font-weight:800;color:#1a1a2e;letter-spacing:-0.5px;border-bottom:2px solid #e8f0fe;padding-bottom:10px;margin-bottom:18px;}
+</style></head><body>
+
+<div class="page-break" style="background:linear-gradient(145deg,#0b1220,#0f1e3a);color:#fff;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:60px 40px;">
+  <div style="font-size:12px;letter-spacing:4px;color:rgba(0,229,255,.8);margin-bottom:24px;">전지적 전공시점 · AI 전공 탐구 포트폴리오</div>
+  <div style="font-size:2.4rem;font-weight:900;color:#fff;letter-spacing:-2px;line-height:1.3;margin-bottom:10px;">\${name}의<br>전공 탐구 포트폴리오</div>
+  <div style="font-size:14px;color:rgba(255,255,255,.5);margin-bottom:36px;">\${school} \${sid}</div>
+  <div style="font-size:3.5rem;margin-bottom:12px;">\${badge.icon}</div>
+  <div style="font-size:1.3rem;font-weight:800;color:#fbbf24;margin-bottom:6px;">\${badge.name}</div>
+  <div style="font-size:14px;color:rgba(255,255,255,.5);margin-bottom:36px;">총 \${totalStars} / 100 ⭐ 획득</div>
+  <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">\${starRows.map(function(r){return '<div style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:8px 14px;text-align:center;"><div style="font-size:10px;color:rgba(255,255,255,.45);margin-bottom:4px;">'+r.label+'</div><div style="font-size:1rem;font-weight:800;color:'+r.color+';"> '+r.val+' / '+r.max+'⭐</div></div>';}).join('')}</div>
+  <div style="margin-top:36px;font-size:12px;color:rgba(255,255,255,.25);">\${dateStr}</div>
+</div>
+
+<div style="padding:40px 48px;" class="page-break">
+  <h2>⭐ 탐험 별 현황</h2>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px;">\${starGridHtml}</div>
+  <div style="background:linear-gradient(135deg,#1a6cf5,#6366f1);border-radius:14px;padding:18px;text-align:center;color:#fff;">
+    <div style="font-size:13px;color:rgba(255,255,255,.7);margin-bottom:6px;">총 획득 별</div>
+    <div style="font-size:2rem;font-weight:900;">\${totalStars} <span style="font-size:.9rem;color:rgba(255,255,255,.6);">/ 100 ⭐</span></div>
+    <div style="font-size:1rem;font-weight:700;margin-top:6px;">\${badge.icon} \${badge.name}</div>
+  </div>
+</div>
+
+\${major||topic ? '<div style="padding:40px 48px;" class="page-break"><h2>🎓 전공 탐구 기록</h2>'+
+  (major ? '<div style="font-size:15px;font-weight:700;color:#1a6cf5;margin-bottom:10px;">희망 학과: '+major+'</div>' : '')+
+  (topic ? '<div style="font-size:13px;color:#374151;margin-bottom:14px;">📌 탐구 주제: '+topic+'</div>' : '')+
+  (aiMajors.length ? '<div style="font-size:12px;color:#6b7280;margin-bottom:6px;">AI 추천 전공</div><div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;">'+aiMajors.map(function(m){return '<span style="padding:4px 12px;border-radius:999px;background:#ede9fe;font-size:12px;color:#7c3aed;">'+m+'</span>';}).join('')+'</div>' : '')+
+  '</div>' : ''}
+
+\${rqPlan ? '<div style="padding:40px 48px;" class="page-break"><h2>🔭 탐구 계획서</h2>'+rqFieldHtml+'</div>' : ''}
+
+\${filledDiary.length ? '<div style="padding:40px 48px;" class="page-break"><h2>📓 탐험 일기</h2>'+diaryHtml2+'</div>' : ''}
+
+\${filledPairs.length ? '<div style="padding:40px 48px;" class="page-break"><h2>🎤 학과 인터뷰 기록</h2>'+ivHtml2+'</div>' : ''}
+
+\${aiHtml ? '<div style="padding:40px 48px;"><h2>✨ AI 전공 탐구 리포트</h2>'+aiHtml+'</div>' : ''}
+
+<div style="padding:24px 48px;border-top:1px solid #e5e7eb;display:flex;align-items:center;gap:10px;font-size:12px;color:#9ca3af;">
+  <span>\${name} 탐험가</span><span>·</span><span>전지적 전공시점</span><span>·</span><span>\${school}</span><span>·</span><span>\${dateStr}</span>
+</div>
+
+</body></html>`;
+
+  var w = window.open('','_blank','width=1000,height=800');
+  if(w){
+    w.document.write(pdfHtml);
+    w.document.close();
+    setTimeout(function(){ w.print(); }, 1200);
+  } else {
+    alert('팝업이 차단되었어요. 팝업 허용 후 다시 시도해주세요.');
+  }
+  if(btn){ btn.disabled=false; btn.textContent='⬇️ PDF 저장'; }
+};
+</script>
+
 </body></html>`;
 
   function escHtml(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
@@ -6498,50 +7041,55 @@ rqRenderStars(0);
     <span class="sparkle">✦</span>미래를 <span class="kw-question">질문하는</span> 순간,<br><span class="kw-dream">꿈은</span> 시작된다!
   </p>
   <!-- 버튼 그룹 -->
-  <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:0;">
+  <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:16px;margin-bottom:0;">
 
-    <!-- 내 별 버튼 -->
-    <button id="my-star-btn" onclick="toggleStarPopup()" style="
-      display:inline-flex;align-items:center;gap:10px;
-      background:rgba(255,255,255,.06);
-      border:1.5px solid rgba(251,191,36,.45);
-      color:#fbbf24;
-      font-family:'Pretendard','Noto Sans KR',sans-serif;
-      font-size:17px;font-weight:700;letter-spacing:.3px;
-      padding:19px 32px;border-radius:999px;cursor:pointer;
-      transition:.3s cubic-bezier(.4,0,.2,1);
-      backdrop-filter:blur(12px);
-      box-shadow:0 0 0 1px rgba(251,191,36,.15) inset,0 8px 28px rgba(251,191,36,.2);
-    "
-      onmouseover="this.style.background='rgba(251,191,36,.12)';this.style.boxShadow='0 0 0 1px rgba(251,191,36,.3) inset,0 12px 36px rgba(251,191,36,.35)';this.style.transform='translateY(-3px)'"
-      onmouseout="this.style.background='rgba(255,255,255,.06)';this.style.boxShadow='0 0 0 1px rgba(251,191,36,.15) inset,0 8px 28px rgba(251,191,36,.2)';this.style.transform=''"
-    >
-      <span style="font-size:1.3rem;">⭐</span>
-      <span>내 별 <span id="footer-star-total" style="font-size:1.3rem;font-weight:900;">0</span><span style="font-size:14px;color:rgba(251,191,36,.6);"> / 100</span></span>
-    </button>
+    <!-- 내 별 + 탐험 뱃지 가로 나란히 -->
+    <div class="footer-row-btns">
+      <!-- 내 별 버튼 -->
+      <button id="my-star-btn" onclick="toggleStarPopup()" style="
+        display:inline-flex;align-items:center;gap:10px;
+        background:rgba(255,255,255,.06);
+        border:1.5px solid rgba(251,191,36,.45);
+        color:#fbbf24;
+        font-family:'Pretendard','Noto Sans KR',sans-serif;
+        font-size:17px;font-weight:700;letter-spacing:.3px;
+        padding:19px 28px;border-radius:999px;cursor:pointer;
+        transition:.3s cubic-bezier(.4,0,.2,1);
+        backdrop-filter:blur(12px);
+        box-shadow:0 0 0 1px rgba(251,191,36,.15) inset,0 8px 28px rgba(251,191,36,.2);
+        white-space:nowrap;
+      "
+        onmouseover="this.style.background='rgba(251,191,36,.12)';this.style.boxShadow='0 0 0 1px rgba(251,191,36,.3) inset,0 12px 36px rgba(251,191,36,.35)';this.style.transform='translateY(-3px)'"
+        onmouseout="this.style.background='rgba(255,255,255,.06)';this.style.boxShadow='0 0 0 1px rgba(251,191,36,.15) inset,0 8px 28px rgba(251,191,36,.2)';this.style.transform=''"
+      >
+        <span style="font-size:1.3rem;">⭐</span>
+        <span>내 별 <span id="footer-star-total" style="font-size:1.3rem;font-weight:900;">0</span><span style="font-size:14px;color:rgba(251,191,36,.6);"> / 100</span></span>
+      </button>
 
-    <!-- 뱃지 버튼 (별 개수에 따라) -->
-    <button id="footer-badge-btn" onclick="toggleBadgePopup()" style="
-      display:inline-flex;align-items:center;gap:10px;
-      background:rgba(255,255,255,.04);
-      border:1.5px solid rgba(168,85,247,.35);
-      color:#c084fc;
-      font-family:'Pretendard','Noto Sans KR',sans-serif;
-      font-size:15px;font-weight:700;letter-spacing:.3px;
-      padding:14px 28px;border-radius:999px;cursor:pointer;
-      transition:.3s cubic-bezier(.4,0,.2,1);
-      backdrop-filter:blur(12px);
-      box-shadow:0 0 0 1px rgba(168,85,247,.12) inset,0 6px 20px rgba(168,85,247,.18);
-    "
-      onmouseover="this.style.background='rgba(168,85,247,.1)';this.style.transform='translateY(-2px)';this.style.boxShadow='0 0 0 1px rgba(168,85,247,.25) inset,0 10px 28px rgba(168,85,247,.3)'"
-      onmouseout="this.style.background='rgba(255,255,255,.04)';this.style.transform='';this.style.boxShadow='0 0 0 1px rgba(168,85,247,.12) inset,0 6px 20px rgba(168,85,247,.18)'"
-    >
-      <span id="footer-badge-icon" style="font-size:1.4rem;">🔴</span>
-      <span id="footer-badge-label">탐험 뱃지 확인하기</span>
-    </button>
+      <!-- 탐험 뱃지 버튼 -->
+      <button id="footer-badge-btn" onclick="toggleBadgePopup()" style="
+        display:inline-flex;align-items:center;gap:10px;
+        background:rgba(255,255,255,.04);
+        border:1.5px solid rgba(168,85,247,.35);
+        color:#c084fc;
+        font-family:'Pretendard','Noto Sans KR',sans-serif;
+        font-size:15px;font-weight:700;letter-spacing:.3px;
+        padding:19px 28px;border-radius:999px;cursor:pointer;
+        transition:.3s cubic-bezier(.4,0,.2,1);
+        backdrop-filter:blur(12px);
+        box-shadow:0 0 0 1px rgba(168,85,247,.12) inset,0 6px 20px rgba(168,85,247,.18);
+        white-space:nowrap;
+      "
+        onmouseover="this.style.background='rgba(168,85,247,.1)';this.style.transform='translateY(-2px)';this.style.boxShadow='0 0 0 1px rgba(168,85,247,.25) inset,0 10px 28px rgba(168,85,247,.3)'"
+        onmouseout="this.style.background='rgba(255,255,255,.04)';this.style.transform='';this.style.boxShadow='0 0 0 1px rgba(168,85,247,.12) inset,0 6px 20px rgba(168,85,247,.18)'"
+      >
+        <span id="footer-badge-icon" style="font-size:1.4rem;">🔴</span>
+        <span id="footer-badge-label">탐험 시작!</span>
+      </button>
+    </div>
 
     <!-- 전공 탐구 포트폴리오 버튼 -->
-    <button class="footer-btn footer-report-btn" id="open-report-btn" onclick="openAiPortfolio()" style="
+    <button class="footer-btn footer-report-btn" id="open-report-btn" onclick="openPortfolioPopup()" style="
       display:inline-flex;align-items:center;gap:12px;
       background:linear-gradient(135deg,#1a6cf5,#6366f1);
       color:#fff;
@@ -6558,6 +7106,16 @@ rqRenderStars(0);
       📄 전공 탐구 포트폴리오
     </button>
   </div>
+
+<style>
+.footer-row-btns{
+  display:flex;flex-direction:row;align-items:center;gap:12px;justify-content:center;flex-wrap:wrap;
+}
+@media(max-width:480px){
+  .footer-row-btns button{ font-size:14px!important;padding:15px 18px!important; }
+  .footer-btn.footer-report-btn{ font-size:15px!important;padding:17px 32px!important;width:90%;justify-content:center; }
+}
+</style>
 
   <!-- 뱃지 팝업 -->
   <div id="badge-popup" style="
@@ -6926,10 +7484,10 @@ ${pairs.length > 0 ? '[학과 인터뷰 주요 내용 (최대 3쌍)]\n'+pairs.sl
 ### 미래를 향한 한 마디
 ### AI 응원 메시지 (따뜻하고 구체적인 응원, 2~3문장)`;
 
-    var resp = await fetch('/.netlify/functions/claude', {
+    var resp = await fetch('https://api.anthropic.com/v1/messages', {
       method:'POST',
       headers:{
-        'Content-Type':'application/json'
+        'Content-Type':'application/json','anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'
       },
       body: JSON.stringify({
         model:'claude-sonnet-4-20250514',
