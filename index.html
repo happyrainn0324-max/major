@@ -6402,7 +6402,7 @@ function getSelectedRqTypes(){
 }
 function resetResearch(){
   document.getElementById('rq-result-wrap').style.display = 'none';
-  document.getElementById('rq-setup-card').style.display = 'block';
+  document.getElementById('rq-block-2').style.display = 'block';
   document.getElementById('rq-loading').style.display = 'block';
   document.getElementById('rq-plan-body').style.display = 'none';
   document.getElementById('rqp-steps').innerHTML = '';
@@ -6457,7 +6457,7 @@ function startResearch(){
   var arrow2 = document.getElementById('rq-arrow-2');
   if(arrow2) arrow2.style.opacity = '1';
 
-  document.getElementById('rq-setup-card').style.display = 'none';
+  document.getElementById('rq-block-2').style.display = 'none';
   document.getElementById('rq-result-wrap').style.display = 'block';
   document.getElementById('rq-loading').style.display = 'block';
   document.getElementById('rq-plan-body').style.display = 'none';
@@ -6759,165 +6759,268 @@ window.openPortfolioPopup = function(){
   overlay.classList.add('show');
   overlay.scrollTop = 0;
 
-  // 데이터 수집
+  // ── 데이터 수집 ──
   var info = window.explorerInfo || {};
   var name = info.name || '탐험가';
   var school = info.school || '-';
   var sid = info.sid || '-';
-
-  var gz = (typeof gzStars !== 'undefined') ? gzStars : {s1:0,s2:0,s3:0,s4:0};
-  var iv = (typeof ivStars !== 'undefined') ? ivStars : 0;
-  var rq = (typeof rqStars !== 'undefined') ? rqStars : 0;
-  var totalStars = (gz.s1||0)+(gz.s2||0)+(gz.s3||0)+(gz.s4||0)+iv+rq;
-  var badge = (typeof getCurrentBadge === 'function') ? getCurrentBadge(totalStars) : {icon:'🔴',name:'탐험 시작!'};
-
-  var major = (document.getElementById('rq-major')||{}).value||'';
-  var topic = (document.getElementById('rq-topic')||{}).value||'';
-  var ivMajorVal = (typeof ivMajor !== 'undefined') ? ivMajor : '';
-
-  var diaryTextareas = document.querySelectorAll('.diary-field textarea');
-  var diaryQs = ['오늘 탐험에서 가장 인상 깊었던 순간은?','탐험 전 예상과 달랐던 점이 있었나요?','이 전공에 대해 더 알고 싶어진 것이 있나요?','미래의 나에게 한 마디'];
-  var diaryEntries = diaryQs.map(function(q,i){ return {q:q, a:(diaryTextareas[i]&&diaryTextareas[i].value)||''};});
-
-  var chatHistory = (typeof ivHistory !== 'undefined') ? ivHistory : [];
-  var pairs = [];
-  for(var hi=0;hi<chatHistory.length-1;hi++){
-    if(chatHistory[hi].role==='user' && chatHistory[hi+1] && chatHistory[hi+1].role==='assistant'){
-      pairs.push({q:chatHistory[hi].content,a:chatHistory[hi+1].content}); hi++;
-    }
-  }
-  var rqPlan = window._rqPlanData ? window._rqPlanData.plan : null;
-  var aiMajors = [];
-  document.querySelectorAll('.ob-report-major-tag').forEach(function(el){ aiMajors.push(el.textContent.trim()); });
-  var nepMajors = window._nepMajors || [];
-  var dnaMajors = window._dnaRecommendedMajors || [];
-  var constellationType = (typeof window._lastConstellation !== 'undefined') ? window._lastConstellation : '';
-
   var dateStr = new Date().toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric'});
 
-  // 별 행 렌더
-  var starRows = [
-    {label:'🔴 화성 · 전공퀴즈', val:gz.s1||0, max:25, color:'#f97316'},
-    {label:'🟡 목성 · 적합성', val:gz.s2||0, max:20, color:'#fbbf24'},
-    {label:'🟣 토성 · 선택과목', val:gz.s3||0, max:10, color:'#a855f7'},
-    {label:'🔵 해왕성 · 로드맵', val:gz.s4||0, max:10, color:'#60a5fa'},
-    {label:'🎤 학과 인터뷰', val:iv, max:15, color:'#00e5ff'},
-    {label:'🔭 주제탐구', val:rq, max:20, color:'#34d399'},
-  ];
+  var gz = (typeof gzStars !== 'undefined') ? gzStars : {s1:0,s2:0,s3:0,s4:0};
+  var ivStar = (typeof ivStars !== 'undefined') ? ivStars : 0;
+  var rqStar = (typeof rqStars !== 'undefined') ? rqStars : 0;
+  var totalStars = (gz.s1||0)+(gz.s2||0)+(gz.s3||0)+(gz.s4||0)+ivStar+rqStar;
+  var badge = (typeof getCurrentBadge === 'function') ? getCurrentBadge(totalStars) : {icon:'🔴',name:'탐험 시작!'};
 
-  function card(content, accent){
-    return '<div style="background:rgba(255,255,255,.03);border:1px solid '+( accent||'rgba(255,255,255,.08)')+';border-radius:16px;padding:20px 22px;margin-bottom:16px;">'+content+'</div>';
-  }
-  function secTitle(emoji, title, color){
-    return '<div style="font-size:12px;letter-spacing:3px;color:'+(color||'rgba(240,244,255,.45)')+';font-weight:700;margin-bottom:12px;">'+emoji+' '+title+'</div>';
-  }
-  function tag(text, color){
-    return '<span style="display:inline-block;padding:4px 12px;border-radius:999px;background:'+(color||'rgba(99,102,241,.15)')+';border:1px solid '+((color||'rgba(99,102,241,.3)').replace('.15','.3').replace('.12','.25'))+';font-size:12px;color:#e0aaff;margin:3px 3px 3px 0;">'+text+'</span>';
-  }
-  function row(label, val, max, color){
-    var pct = max>0 ? Math.round(val/max*100) : 0;
-    return '<div style="margin-bottom:10px;">'+
-      '<div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px;">'+
-      '<span style="color:rgba(240,244,255,.65);">'+label+'</span>'+
-      '<span style="font-weight:700;color:'+color+';">'+val+' / '+max+' ⭐</span></div>'+
-      '<div style="height:6px;background:rgba(255,255,255,.06);border-radius:999px;overflow:hidden;">'+
-      '<div style="height:100%;width:'+pct+'%;background:'+color+';border-radius:999px;transition:.6s;"></div></div></div>';
+  // Stage 1: 화성 — 전공 퀴즈
+  var s1Score = gz.s1 || 0;
+
+  // Stage 2: 목성 — 전공 적합성
+  var aptData = window._aptData || {};
+  var selectedOrbs = aptData.selected || [];
+  var dnaScoreObj = aptData.dnaScore || {};
+  var topDnaId = aptData.topDna || '';
+  var dnaMajors = window._dnaRecommendedMajors || [];
+  var aiMajors = [];
+  document.querySelectorAll('.ob-report-major-tag').forEach(function(el){ aiMajors.push(el.textContent.trim()); });
+  var dnaLabel = '';
+  if(typeof DNA_TYPES !== 'undefined' && topDnaId){
+    var dt = DNA_TYPES.find(function(d){return d.id===topDnaId;});
+    if(dt) dnaLabel = dt.emoji+' '+dt.label;
   }
 
-  // 탐험 정보 정리
-  var filledDiary = diaryEntries.filter(function(e){return e.a.trim();});
-  var filledPairs = pairs.slice(0,5);
+  // Stage 3: 토성 — 선택과목
+  var sgDoneObj = (typeof sgMajorDone !== 'undefined') ? sgMajorDone : {};
+  var sgDoneList = [];
+  if(typeof SG_18 !== 'undefined'){
+    Object.keys(sgDoneObj).forEach(function(idx){
+      var m = SG_18[parseInt(idx)];
+      if(m) sgDoneList.push({icon:m.icon, name:m.name, score:sgDoneObj[idx], total:m.quizzes.length});
+    });
+  }
+
+  // Stage 4: 해왕성 — 전공 로드맵
+  var nepMajors = window._nepMajors || [];
+  var nepPickMajor = (document.getElementById('nep-pick-major')||{}).value||'';
+  var tlLabels = ['중학교','고등학교','대학교','미래의 나'];
+  var tlValues = [0,1,2,3].map(function(i){
+    return (document.getElementById('nep-tl-'+i)||{}).value||'';
+  });
+
+  // 인터뷰
+  var ivMajorVal = (typeof ivMajor !== 'undefined') ? ivMajor : '';
+  var ivUnivVal = (typeof ivUniv !== 'undefined') ? ivUniv : '';
+  var ivPersonaVal = (typeof ivPersona !== 'undefined') ? ivPersona : '';
+  var personaLabel = {professor:'교수님', senior:'대학원 선배', student:'학부생 선배'};
+  var chatHistory = (typeof ivHistory !== 'undefined') ? ivHistory : [];
+  var ivPairs = [];
+  for(var hi=0;hi<chatHistory.length-1;hi++){
+    if(chatHistory[hi].role==='user' && chatHistory[hi+1] && chatHistory[hi+1].role==='assistant'){
+      ivPairs.push({q:chatHistory[hi].content, a:chatHistory[hi+1].content}); hi++;
+    }
+  }
+
+  // 주제탐구
+  var rqData = window._rqPlanData || {};
+  var rqPlan = rqData.plan || null;
+  var rqMajor = rqData.major || '';
+  var rqTopic = rqData.topic || (document.getElementById('rq-topic')||{}).value||'';
+  var rqWeeks = rqData.weeks || '';
+  var rqTypes = rqData.types || '';
+
+  // ── 유틸 함수 ──
+  function card(content, accentColor){
+    return '<div style="background:rgba(255,255,255,.035);border:1px solid '+(accentColor||'rgba(255,255,255,.08)')+';border-radius:18px;padding:22px 24px;margin-bottom:20px;">'+content+'</div>';
+  }
+  function sectionHead(emoji, title, color, stars, maxStars){
+    var starBadge = (stars !== undefined) ? '<span style="font-size:12px;font-weight:700;color:'+color+';background:rgba(255,255,255,.06);padding:3px 10px;border-radius:999px;margin-left:10px;">⭐ '+stars+(maxStars!==undefined?' / '+maxStars:'')+'</span>' : '';
+    return '<div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid rgba(255,255,255,.07);">'+
+      '<span style="font-size:20px;">'+emoji+'</span>'+
+      '<span style="font-size:13px;font-weight:800;color:'+color+';letter-spacing:1px;">'+title+'</span>'+
+      starBadge+
+      '</div>';
+  }
+  function field(label, value, color){
+    if(!value || !String(value).trim()) return '';
+    return '<div style="margin-bottom:13px;">'+
+      '<div style="font-size:11px;letter-spacing:2px;color:'+(color||'rgba(240,244,255,.4)')+';font-weight:700;margin-bottom:5px;">'+label+'</div>'+
+      '<div style="font-size:13.5px;color:rgba(240,244,255,.88);line-height:1.75;white-space:pre-line;">'+value+'</div>'+
+      '</div>';
+  }
+  function tag(text, bg, border){
+    return '<span style="display:inline-block;padding:5px 13px;border-radius:999px;background:'+(bg||'rgba(99,102,241,.15)')+';border:1px solid '+(border||'rgba(99,102,241,.3)')+';font-size:12px;color:#e0aaff;margin:3px 3px 3px 0;">'+text+'</span>';
+  }
+  function emptyNote(text){
+    return '<div style="font-size:13px;color:rgba(240,244,255,.28);font-style:italic;padding:4px 0;">'+text+'</div>';
+  }
 
   var html = '';
 
-  // ── 학생 정보 카드 ──
+  // ══════════════════════════════
+  // 커버 카드: 탐험가 정보
+  // ══════════════════════════════
+  html += '<div style="background:linear-gradient(135deg,rgba(26,108,245,.18),rgba(168,85,247,.12));border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:24px 26px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">';
+  html += '<div style="display:flex;align-items:center;gap:16px;">';
+  html += '<div style="font-size:3rem;line-height:1;">'+badge.icon+'</div>';
+  html += '<div>';
+  html += '<div style="font-size:1.5rem;font-weight:900;color:#f0f4ff;letter-spacing:-0.5px;">'+name+'</div>';
+  html += '<div style="font-size:13px;color:rgba(240,244,255,.5);margin-top:3px;">'+school+' · '+sid+'</div>';
+  html += '<div style="font-size:13px;color:#fbbf24;font-weight:700;margin-top:6px;">'+badge.name+' · 총 '+totalStars+' / 100 ⭐</div>';
+  html += '</div></div>';
+  html += '<div style="text-align:right;font-size:12px;color:rgba(240,244,255,.3);">'+dateStr+'</div>';
+  html += '</div>';
+
+  // ══════════════════════════════
+  // 🔴 STAGE 1: 화성 — 전공 탐험 퀴즈
+  // ══════════════════════════════
   html += card(
-    secTitle('👤','탐험가 정보','#60a5fa')+
-    '<div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">'+
-    '<div style="font-size:2.5rem;">'+badge.icon+'</div>'+
-    '<div>'+
-      '<div style="font-size:1.3rem;font-weight:900;color:#f0f4ff;">'+name+'</div>'+
-      '<div style="font-size:13px;color:rgba(240,244,255,.5);margin-top:2px;">'+school+' · '+sid+'</div>'+
-      '<div style="font-size:13px;color:#fbbf24;font-weight:700;margin-top:4px;">'+badge.icon+' '+badge.name+' · 총 '+totalStars+'/100 ⭐</div>'+
-    '</div></div>',
-    'rgba(96,165,250,.2)'
+    sectionHead('🔴','전공 탐험 퀴즈','#f97316', gz.s1||0, 25)+
+    (s1Score > 0
+      ? field('퀴즈 점수', s1Score+' / 25점 획득', '#f97316')+
+        field('수준', s1Score>=20?'🏆 화성 마스터':s1Score>=15?'🌟 전공 박사':s1Score>=10?'🚀 절반 클리어':'🔴 도전 중', '#f97316')
+      : emptyNote('아직 전공 퀴즈를 진행하지 않았어요.')),
+    'rgba(249,115,22,.2)'
   );
 
-  // ── 별 현황 카드 ──
-  var starHtml = secTitle('⭐','탐험 별 현황','#fbbf24');
-  starRows.forEach(function(r){ starHtml += row(r.label, r.val, r.max, r.color); });
-  html += card(starHtml, 'rgba(251,191,36,.15)');
-
-  // ── 희망 전공 / AI 추천 ──
-  var majorContent = secTitle('🎓','전공 탐구 기록','#c084fc');
-  if(major||ivMajorVal){
-    majorContent += '<div style="font-size:15px;font-weight:700;color:#e0aaff;margin-bottom:10px;">희망 학과: '+(major||ivMajorVal)+'</div>';
-  }
-  if(topic){
-    majorContent += '<div style="font-size:13px;color:rgba(240,244,255,.7);margin-bottom:10px;">📌 탐구 주제: '+topic+'</div>';
-  }
-  if(aiMajors.length){
-    majorContent += '<div style="font-size:12px;color:rgba(240,244,255,.4);margin-bottom:6px;">AI 추천 전공</div>';
-    majorContent += aiMajors.map(function(m){return tag(m,'rgba(168,85,247,.15)');}).join('');
-  }
-  if(dnaMajors.length){
-    majorContent += '<div style="font-size:12px;color:rgba(240,244,255,.4);margin:10px 0 6px;">🧬 DNA 별자리 추천</div>';
-    majorContent += dnaMajors.slice(0,3).map(function(m){return tag(m,'rgba(0,229,255,.1)');}).join('');
-  }
-  html += card(majorContent, 'rgba(168,85,247,.15)');
-
-  // ── 탐구 계획서 ──
-  if(rqPlan){
-    var rqHtml = secTitle('🔭','탐구 계획서','#34d399');
-    var rqFields = [
-      {key:'subject',label:'탐구 주제'},{key:'goal',label:'탐구 목표'},
-      {key:'method',label:'탐구 방법'},{key:'schedule',label:'탐구 일정'},
-      {key:'material',label:'필요 자료'},{key:'expected',label:'예상 결과'},{key:'summary',label:'정리 방법'}
-    ];
-    rqFields.forEach(function(f){
-      if(rqPlan[f.key]){
-        rqHtml += '<div style="margin-bottom:12px;">'+
-          '<div style="font-size:11px;letter-spacing:2px;color:rgba(52,211,153,.7);font-weight:700;margin-bottom:4px;">'+f.label+'</div>'+
-          '<div style="font-size:13px;color:rgba(240,244,255,.8);line-height:1.7;white-space:pre-line;">'+rqPlan[f.key]+'</div></div>';
+  // ══════════════════════════════
+  // 🟡 STAGE 2: 목성 — 전공 적합성 탐험
+  // ══════════════════════════════
+  var s2Html = sectionHead('🟡','전공 적합성 탐험','#fbbf24', gz.s2||0, 20);
+  if(selectedOrbs.length || dnaLabel || dnaMajors.length || aiMajors.length){
+    if(dnaLabel) s2Html += field('나의 DNA 유형', dnaLabel, '#fbbf24');
+    if(selectedOrbs.length){
+      var orbLabels = [];
+      if(typeof ACTIVITY_ORBS !== 'undefined'){
+        selectedOrbs.forEach(function(key){
+          var orb = ACTIVITY_ORBS.find(function(o){return o.emoji+o.label===key||o.label===key;});
+          if(orb) orbLabels.push(orb.emoji+' '+orb.label);
+        });
       }
+      if(orbLabels.length) s2Html += '<div style="margin-bottom:13px;"><div style="font-size:11px;letter-spacing:2px;color:rgba(251,191,36,.7);font-weight:700;margin-bottom:8px;">선택한 활동 오브</div>'+orbLabels.map(function(l){return tag(l,'rgba(251,191,36,.1)','rgba(251,191,36,.3)');}).join('')+'</div>';
+    }
+    if(dnaMajors.length){
+      s2Html += '<div style="margin-bottom:13px;"><div style="font-size:11px;letter-spacing:2px;color:rgba(251,191,36,.7);font-weight:700;margin-bottom:8px;">🧬 DNA 별자리 추천 학과</div>'+dnaMajors.slice(0,5).map(function(m){return tag(m,'rgba(251,191,36,.1)','rgba(251,191,36,.3)');}).join('')+'</div>';
+    }
+    if(aiMajors.length){
+      s2Html += '<div style="margin-bottom:4px;"><div style="font-size:11px;letter-spacing:2px;color:rgba(251,191,36,.7);font-weight:700;margin-bottom:8px;">AI 추천 전공</div>'+aiMajors.map(function(m){return tag(m,'rgba(168,85,247,.15)','rgba(168,85,247,.3)');}).join('')+'</div>';
+    }
+  } else {
+    s2Html += emptyNote('아직 전공 적합성 탐험을 진행하지 않았어요.');
+  }
+  html += card(s2Html, 'rgba(251,191,36,.2)');
+
+  // ══════════════════════════════
+  // 🟣 STAGE 3: 토성 — 선택과목 탐험
+  // ══════════════════════════════
+  var s3Html = sectionHead('🟣','선택과목 탐험','#a855f7', gz.s3||0, 10);
+  if(sgDoneList.length){
+    s3Html += '<div style="margin-bottom:4px;"><div style="font-size:11px;letter-spacing:2px;color:rgba(168,85,247,.8);font-weight:700;margin-bottom:10px;">탐험한 학과 퀴즈</div>';
+    sgDoneList.forEach(function(s){
+      var stars = '⭐'.repeat(s.score)+'☆'.repeat(s.total-s.score);
+      s3Html += '<div style="display:flex;align-items:center;justify-content:space-between;padding:9px 14px;background:rgba(168,85,247,.08);border-radius:10px;margin-bottom:7px;">'+
+        '<span style="font-size:13.5px;color:rgba(240,244,255,.85);">'+s.icon+' '+s.name+'</span>'+
+        '<span style="font-size:13px;color:#a855f7;font-weight:700;">'+stars+' ('+s.score+'/'+s.total+')</span>'+
+        '</div>';
     });
-    html += card(rqHtml, 'rgba(52,211,153,.15)');
+    s3Html += '</div>';
+  } else {
+    s3Html += emptyNote('아직 선택과목 퀴즈를 진행하지 않았어요.');
   }
+  html += card(s3Html, 'rgba(168,85,247,.2)');
 
-  // ── 탐험 일기 ──
-  if(filledDiary.length){
-    var diaryHtml = secTitle('📓','탐험 일기','#f59e0b');
-    filledDiary.forEach(function(e){
-      diaryHtml += '<div style="margin-bottom:14px;">'+
-        '<div style="font-size:12px;color:rgba(251,191,36,.8);font-weight:700;margin-bottom:4px;">Q. '+e.q+'</div>'+
-        '<div style="font-size:13px;color:rgba(240,244,255,.8);line-height:1.7;padding-left:10px;border-left:2px solid rgba(251,191,36,.3);">'+e.a+'</div></div>';
-    });
-    html += card(diaryHtml, 'rgba(251,191,36,.12)');
+  // ══════════════════════════════
+  // 🔵 STAGE 4: 해왕성 — 전공 로드맵
+  // ══════════════════════════════
+  var s4Html = sectionHead('🔵','전공 로드맵 탐험','#60a5fa', gz.s4||0, 10);
+  var hasS4 = nepPickMajor || tlValues.some(function(v){return v.trim();}) || nepMajors.length;
+  if(hasS4){
+    if(nepPickMajor) s4Html += field('탐색한 학과', nepPickMajor, '#60a5fa');
+    if(nepMajors.length){
+      s4Html += '<div style="margin-bottom:13px;"><div style="font-size:11px;letter-spacing:2px;color:rgba(96,165,250,.8);font-weight:700;margin-bottom:8px;">AI 추천 로드맵 학과</div>'+nepMajors.slice(0,3).map(function(m){return tag(m,'rgba(96,165,250,.1)','rgba(96,165,250,.3)');}).join('')+'</div>';
+    }
+    var tlFilled = tlValues.some(function(v){return v.trim();});
+    if(tlFilled){
+      s4Html += '<div style="font-size:11px;letter-spacing:2px;color:rgba(96,165,250,.8);font-weight:700;margin-bottom:10px;">나의 성장 로드맵</div>';
+      tlValues.forEach(function(v,i){
+        if(!v.trim()) return;
+        s4Html += '<div style="display:flex;gap:12px;margin-bottom:10px;">'+
+          '<div style="flex-shrink:0;width:70px;font-size:11px;font-weight:700;color:#60a5fa;padding-top:2px;">'+tlLabels[i]+'</div>'+
+          '<div style="font-size:13px;color:rgba(240,244,255,.85);line-height:1.7;border-left:2px solid rgba(96,165,250,.3);padding-left:12px;">'+v+'</div>'+
+          '</div>';
+      });
+    }
+  } else {
+    s4Html += emptyNote('아직 전공 로드맵 탐험을 진행하지 않았어요.');
   }
+  html += card(s4Html, 'rgba(96,165,250,.2)');
 
-  // ── 인터뷰 기록 ──
-  if(filledPairs.length){
-    var ivHtml = secTitle('🎤','학과 인터뷰 기록','#00e5ff');
-    filledPairs.forEach(function(p,i){
-      ivHtml += '<div style="margin-bottom:14px;">'+
-        '<div style="font-size:12px;color:rgba(0,229,255,.8);font-weight:700;margin-bottom:4px;">Q'+(i+1)+'. '+p.q+'</div>'+
-        '<div style="font-size:13px;color:rgba(240,244,255,.75);line-height:1.7;padding-left:10px;border-left:2px solid rgba(0,229,255,.25);">'+p.a+'</div></div>';
-    });
-    html += card(ivHtml, 'rgba(0,229,255,.1)');
+  // ══════════════════════════════
+  // 🎤 학과 인터뷰
+  // ══════════════════════════════
+  var ivHtml = sectionHead('🎤','학과 인터뷰','#00e5ff', ivStar, 15);
+  var hasIv = ivMajorVal || ivPairs.length;
+  if(hasIv){
+    var metaLine = '';
+    if(ivMajorVal) metaLine += ivMajorVal;
+    if(ivUnivVal) metaLine += ' · '+ivUnivVal;
+    if(ivPersonaVal && personaLabel[ivPersonaVal]) metaLine += ' · '+personaLabel[ivPersonaVal]+'와 인터뷰';
+    if(metaLine) ivHtml += field('인터뷰 대상', metaLine, '#00e5ff');
+    if(ivPairs.length){
+      ivHtml += '<div style="font-size:11px;letter-spacing:2px;color:rgba(0,229,255,.8);font-weight:700;margin-bottom:10px;">인터뷰 내용</div>';
+      ivPairs.slice(0,6).forEach(function(p,i){
+        ivHtml += '<div style="margin-bottom:14px;">'+
+          '<div style="font-size:12px;color:rgba(0,229,255,.9);font-weight:700;margin-bottom:5px;">Q'+(i+1)+'. '+p.q+'</div>'+
+          '<div style="font-size:13px;color:rgba(240,244,255,.8);line-height:1.75;padding-left:12px;border-left:2px solid rgba(0,229,255,.25);">'+p.a+'</div>'+
+          '</div>';
+      });
+    }
+  } else {
+    ivHtml += emptyNote('아직 학과 인터뷰를 진행하지 않았어요.');
   }
+  html += card(ivHtml, 'rgba(0,229,255,.18)');
 
-  // ── 아무 기록도 없을 때 안내 ──
-  if(!filledDiary.length && !filledPairs.length && !rqPlan && !major && !topic){
-    html += '<div style="text-align:center;padding:40px 20px;color:rgba(240,244,255,.4);font-size:15px;">아직 탐험 기록이 없어요!<br><span style=\"font-size:13px;\">탐험을 진행하면 여기에 기록이 쌓여요 🚀</span></div>';
+  // ══════════════════════════════
+  // 🔭 주제 탐구
+  // ══════════════════════════════
+  var rqHtml = sectionHead('🔭','주제 탐구','#34d399', rqStar, 20);
+  var hasRq = rqTopic || rqPlan;
+  if(hasRq){
+    if(rqMajor) rqHtml += field('희망 학과', rqMajor, '#34d399');
+    if(rqTopic) rqHtml += field('탐구 질문', rqTopic, '#34d399');
+    if(rqWeeks) rqHtml += field('탐구 기간', rqWeeks, '#34d399');
+    if(rqTypes) rqHtml += field('탐구 방식', rqTypes, '#34d399');
+    if(rqPlan){
+      var rqFields = [
+        {key:'subject',label:'탐구 주제'},
+        {key:'goal',label:'탐구 목표'},
+        {key:'method',label:'탐구 방법'},
+        {key:'schedule',label:'탐구 일정'},
+        {key:'material',label:'필요 자료'},
+        {key:'expected',label:'예상 결과'},
+        {key:'summary',label:'정리 방법'}
+      ];
+      rqHtml += '<div style="margin-top:6px;font-size:11px;letter-spacing:2px;color:rgba(52,211,153,.8);font-weight:700;margin-bottom:10px;">AI 생성 탐구 계획서</div>';
+      rqFields.forEach(function(f){
+        if(rqPlan[f.key]) rqHtml += field(f.label, rqPlan[f.key], 'rgba(52,211,153,.7)');
+      });
+    }
+  } else {
+    rqHtml += emptyNote('아직 탐구 계획서를 생성하지 않았어요.');
   }
+  html += card(rqHtml, 'rgba(52,211,153,.18)');
 
-  // 날짜
-  html += '<div style="text-align:right;font-size:12px;color:rgba(240,244,255,.25);margin-top:8px;">'+dateStr+'</div>';
+  // 아무 탐험도 안 했을 때
+  if(totalStars === 0 && !hasIv && !hasRq && !hasS4 && !sgDoneList.length && !selectedOrbs.length){
+    html = '<div style="text-align:center;padding:60px 20px;color:rgba(240,244,255,.35);font-size:15px;">아직 탐험 기록이 없어요!<br><span style="font-size:13px;">각 탐험을 진행하면 여기에 기록이 쌓여요 🚀</span></div>';
+  }
 
   body.innerHTML = html;
 
-  // 저장용 전역 데이터
-  window._pfData = {name,school,sid,badge,totalStars,starRows,major,ivMajorVal,topic,rqPlan,filledDiary,filledPairs,aiMajors,dnaMajors,dateStr};
+  window._pfData = {name,school,sid,badge,totalStars,dateStr,gz,ivStar,rqStar,
+    dnaLabel,selectedOrbs,dnaMajors,aiMajors,sgDoneList,
+    nepPickMajor,nepMajors,tlLabels,tlValues,
+    ivMajorVal,ivUnivVal,ivPersonaVal,ivPairs,
+    rqMajor,rqTopic,rqWeeks,rqTypes,rqPlan};
 };
 
 window.closePortfolioPopup = function(){
