@@ -3019,7 +3019,7 @@ footer::before{
 
           <!-- STEP 1: 추천 학과 카드 3개 -->
           <div class="nep-section-title">🎓 AI 추천 학과 탐색</div>
-          <div class="nep-section-desc">목성 탐험 별자리 분석 결과를 바탕으로 추천된 학과예요.<br>카드를 펼쳐 학과를 깊이 탐색해봐요!</div>
+
           <div class="nep-major-cards" id="nep-major-cards"></div>
 
           <!-- STEP 2: 전공 로드맵 활동지 -->
@@ -3171,30 +3171,30 @@ footer::before{
             <div class="iv-persona-name">진로 선생님</div>
             <div class="iv-persona-desc">중학교~고교 진로 로드맵 설계</div>
           </div>
+          <div class="iv-persona-card" data-persona="undergrad" onclick="selectPersona(this)">
+            <div class="iv-persona-icon">😊</div>
+            <div class="iv-persona-name">학과 선배</div>
+            <div class="iv-persona-desc">수업·동아리·취업 리얼 후기</div>
+          </div>
           <div class="iv-persona-card" data-persona="senior" onclick="selectPersona(this)">
             <div class="iv-persona-icon">🎓</div>
             <div class="iv-persona-name">대학원 선배</div>
             <div class="iv-persona-desc">심화 연구·대학원 생생 경험</div>
           </div>
-          <div class="iv-persona-card" data-persona="undergrad" onclick="selectPersona(this)">
-            <div class="iv-persona-icon">😊</div>
-            <div class="iv-persona-name">학부 선배</div>
-            <div class="iv-persona-desc">수업·동아리·취업 리얼 후기</div>
-          </div>
-          <div class="iv-persona-card" data-persona="worker" onclick="selectPersona(this)">
-            <div class="iv-persona-icon">💼</div>
-            <div class="iv-persona-name">현직자</div>
-            <div class="iv-persona-desc">실무·연봉·커리어 경로 공개</div>
+          <div class="iv-persona-card" data-persona="professor" onclick="selectPersona(this)">
+            <div class="iv-persona-icon">👨‍🏫</div>
+            <div class="iv-persona-name">교수님</div>
+            <div class="iv-persona-desc">연구·커리큘럼·진로 전문가</div>
           </div>
           <div class="iv-persona-card" data-persona="researcher" onclick="selectPersona(this)">
             <div class="iv-persona-icon">🔬</div>
             <div class="iv-persona-name">연구원</div>
             <div class="iv-persona-desc">최신 연구 동향·논문 이야기</div>
           </div>
-          <div class="iv-persona-card" data-persona="professor" onclick="selectPersona(this)">
-            <div class="iv-persona-icon">👨‍🏫</div>
-            <div class="iv-persona-name">교수님</div>
-            <div class="iv-persona-desc">연구·커리큘럼·진로 전문가</div>
+          <div class="iv-persona-card" data-persona="worker" onclick="selectPersona(this)">
+            <div class="iv-persona-icon">💼</div>
+            <div class="iv-persona-name">현직자</div>
+            <div class="iv-persona-desc">실무·연봉·커리어 경로 공개</div>
           </div>
         </div>
       </div>
@@ -5048,9 +5048,13 @@ function buildNepCardHTML(name, i, medals){
             <div class="nep-info-label">🏛️ 전공 배치 대학</div>
             <div class="nep-tags">${d.univs.map(u=>'<span class="nep-tag nep-tag-yellow">'+u+'</span>').join('')}</div>
           </div>
-          <div class="nep-info-block full">
-            <div class="nep-info-label">🎯 중학교 추천 활동</div>
+          <div class="nep-info-block">
+            <div class="nep-info-label">🎯 추천 활동</div>
             <div style="display:flex;flex-direction:column;gap:5px;">${d.midActs.map(a=>'<div style="font-size:13px;color:rgba(240,244,255,.75);padding-left:12px;">• '+a+'</div>').join('')}</div>
+          </div>
+          <div class="nep-info-block">
+            <div class="nep-info-label">📚 추천 도서</div>
+            <div style="display:flex;flex-direction:column;gap:6px;"><div style="font-size:13px;color:rgba(240,244,255,.4);padding-left:12px;">AI 분석 카드에서 확인하세요</div></div>
           </div>
         </div>
       </div>
@@ -5112,14 +5116,10 @@ function initNepMajorCards(){
     const h = document.createElement('div');
     h.id = 'nep-major-cards-header';
     h.style.cssText = 'margin-bottom:16px;font-size:14px;color:rgba(240,244,255,.65);text-align:center;';
-    h.textContent = dnaLinked
-      ? '🧬 DNA 별자리 분석 결과를 바탕으로 AI가 추천한 학과예요!'
-      : '⭐ 목성 탐험 결과를 바탕으로 추천된 학과예요. DNA 별자리 분석을 먼저 하면 더 정확해요!';
+    h.textContent = '';
     el.parentNode.insertBefore(h, el);
   } else {
-    headerEl.textContent = dnaLinked
-      ? '🧬 DNA 별자리 분석 결과를 바탕으로 AI가 추천한 학과예요!'
-      : '⭐ 목성 탐험 결과를 바탕으로 추천된 학과예요. DNA 별자리 분석을 먼저 하면 더 정확해요!';
+    headerEl.textContent = '';
   }
 
   el.innerHTML = majors.map((name,i) => buildNepCardHTML(name, i, medals)).join('');
@@ -5143,7 +5143,7 @@ function initNepMajorCards(){
 ${dnaInfo ? '학생 DNA 점수: '+dnaInfo : ''}
 
 형식(키 순서 동일하게):
-{"overview":"학과 소개 2문장 (이 학과에서 무엇을 배우는지 친근하게)","aptitude":"이런 학생에게 딱! 1문장","jobs":["직업1","직업2","직업3","직업4"],"subjects":["2022개정 고교선택과목1","과목2","과목3"],"univs":["이 학과가 있는 실제 한국 대학 4~6개. 서울대·연세대·고려대 등 실제로 해당 학과가 개설된 대학만"],"midActs":["중학교 추천활동1","활동2","활동3"]}`
+{"overview":"학과 소개 2문장 (이 학과에서 무엇을 배우는지 친근하게)","aptitude":"이런 학생에게 딱! 1문장","jobs":["직업1","직업2","직업3","직업4"],"subjects":["2022개정 고교선택과목1","과목2","과목3"],"univs":["이 학과가 있는 실제 한국 대학 4~6개. 서울대·연세대·고려대 등 실제로 해당 학과가 개설된 대학만"],"midActs":["추천활동1","활동2","활동3"],"books":[{"title":"책제목1","author":"지은이1"},{"title":"책제목2","author":"지은이2"},{"title":"책제목3","author":"지은이3"},{"title":"책제목4","author":"지은이4"},{"title":"책제목5","author":"지은이5"}]}`
             }]
           })
         });
@@ -5170,9 +5170,13 @@ ${dnaInfo ? '학생 DNA 점수: '+dnaInfo : ''}
               <div class="nep-info-label">🏛️ 전공 배치 대학</div>
               <div class="nep-tags">${(info.univs||[]).map(u=>'<span class="nep-tag nep-tag-yellow">'+u+'</span>').join('')}</div>
             </div>
-            <div class="nep-info-block full">
-              <div class="nep-info-label">🎯 중학교 추천 활동</div>
+            <div class="nep-info-block">
+              <div class="nep-info-label">🎯 추천 활동</div>
               <div style="display:flex;flex-direction:column;gap:5px;">${(info.midActs||[]).map(a=>'<div style="font-size:13px;color:rgba(240,244,255,.75);padding-left:12px;">• '+a+'</div>').join('')}</div>
+            </div>
+            <div class="nep-info-block">
+              <div class="nep-info-label">📚 추천 도서</div>
+              <div style="display:flex;flex-direction:column;gap:6px;">${(info.books||[]).map((b,bi)=>'<div style="font-size:13px;color:rgba(240,244,255,.8);padding-left:12px;"><span style=\"color:rgba(240,244,255,.4);font-size:11px;margin-right:6px;\">'+(bi+1)+'</span><strong style=\"color:#f0f4ff;font-weight:600;\">'+(b.title||b)+'</strong><span style=\"color:rgba(240,244,255,.45);font-size:12px;margin-left:6px;\"> — '+(b.author||'')+'</span></div>').join('')}</div>
             </div>
           </div>`;
       } catch(e) {
@@ -5184,7 +5188,8 @@ ${dnaInfo ? '학생 DNA 점수: '+dnaInfo : ''}
               <div class="nep-info-block full"><div class="nep-info-label">💼 관련 직업</div><div class="nep-tags">${db.jobs.map(j=>'<span class="nep-tag nep-tag-blue">'+j+'</span>').join('')}</div></div>
               <div class="nep-info-block"><div class="nep-info-label">📚 선택과목</div><div class="nep-tags">${db.subjects.map(s=>'<span class="nep-tag nep-tag-purple">'+s+'</span>').join('')}</div></div>
               <div class="nep-info-block"><div class="nep-info-label">🏛️ 전공 배치 대학</div><div class="nep-tags">${db.univs.map(u=>'<span class="nep-tag nep-tag-yellow">'+u+'</span>').join('')}</div></div>
-              <div class="nep-info-block full"><div class="nep-info-label">🎯 중학교 추천 활동</div><div style="display:flex;flex-direction:column;gap:5px;">${db.midActs.map(a=>'<div style="font-size:13px;color:rgba(240,244,255,.75);padding-left:12px;">• '+a+'</div>').join('')}</div></div>
+              <div class="nep-info-block"><div class="nep-info-label">🎯 추천 활동</div><div style="display:flex;flex-direction:column;gap:5px;">${db.midActs.map(a=>'<div style="font-size:13px;color:rgba(240,244,255,.75);padding-left:12px;">• '+a+'</div>').join('')}</div></div>
+              <div class="nep-info-block"><div class="nep-info-label">📚 추천 도서</div><div style="display:flex;flex-direction:column;gap:6px;"><div style="font-size:13px;color:rgba(240,244,255,.4);padding-left:12px;">학과 정보 로딩 후 표시됩니다</div></div></div>
             </div>`;
         } else {
           // DB에도 없고 AI도 실패 → 재시도 버튼
@@ -5219,7 +5224,7 @@ window.retryNepCard = function(name, i){
           max_tokens: 1200,
           messages: [{
             role: 'user',
-            content: `대한민국에 실제로 존재하는 "${name}" 학과에 대해 중학생용 소개를 JSON으로만 출력하세요. 반드시 실제 존재하는 대학교명만 사용하세요.\n${dnaInfo ? '학생 DNA: '+dnaInfo : ''}\n형식:\n{"overview":"학과 소개 2문장","aptitude":"이런 학생에게 딱 1문장","jobs":["직업1","직업2","직업3","직업4"],"subjects":["고교선택과목1","과목2","과목3"],"univs":["실제 한국 대학 4~6개"],"midActs":["추천활동1","활동2","활동3"]}`
+            content: `대한민국에 실제로 존재하는 "${name}" 학과에 대해 중학생용 소개를 JSON으로만 출력하세요. 반드시 실제 존재하는 대학교명만 사용하세요.\n${dnaInfo ? '학생 DNA: '+dnaInfo : ''}\n형식:\n{"overview":"학과 소개 2문장","aptitude":"이런 학생에게 딱 1문장","jobs":["직업1","직업2","직업3","직업4"],"subjects":["고교선택과목1","과목2","과목3"],"univs":["실제 한국 대학 4~6개"],"midActs":["추천활동1","활동2","활동3"],"books":[{"title":"책제목1","author":"지은이1"},{"title":"책제목2","author":"지은이2"},{"title":"책제목3","author":"지은이3"},{"title":"책제목4","author":"지은이4"},{"title":"책제목5","author":"지은이5"}]}`
           }]
         })
       });
@@ -5234,7 +5239,8 @@ window.retryNepCard = function(name, i){
           <div class="nep-info-block full"><div class="nep-info-label">💼 관련 직업</div><div class="nep-tags">${(info.jobs||[]).map(j=>'<span class="nep-tag nep-tag-blue">'+j+'</span>').join('')}</div></div>
           <div class="nep-info-block"><div class="nep-info-label">📚 선택과목</div><div class="nep-tags">${(info.subjects||[]).map(s=>'<span class="nep-tag nep-tag-purple">'+s+'</span>').join('')}</div></div>
           <div class="nep-info-block"><div class="nep-info-label">🏛️ 전공 배치 대학</div><div class="nep-tags">${(info.univs||[]).map(u=>'<span class="nep-tag nep-tag-yellow">'+u+'</span>').join('')}</div></div>
-          <div class="nep-info-block full"><div class="nep-info-label">🎯 추천 활동</div><div style="display:flex;flex-direction:column;gap:5px;">${(info.midActs||[]).map(a=>'<div style="font-size:13px;color:rgba(240,244,255,.75);padding-left:12px;">• '+a+'</div>').join('')}</div></div>
+          <div class="nep-info-block"><div class="nep-info-label">🎯 추천 활동</div><div style="display:flex;flex-direction:column;gap:5px;">${(info.midActs||[]).map(a=>'<div style="font-size:13px;color:rgba(240,244,255,.75);padding-left:12px;">• '+a+'</div>').join('')}</div></div>
+          <div class="nep-info-block"><div class="nep-info-label">📚 추천 도서</div><div style="display:flex;flex-direction:column;gap:6px;">${(info.books||[]).map((b,bi)=>'<div style="font-size:13px;color:rgba(240,244,255,.8);padding-left:12px;"><span style=\"color:rgba(240,244,255,.4);font-size:11px;margin-right:6px;\">'+(bi+1)+'</span><strong style=\"color:#f0f4ff;font-weight:600;\">'+(b.title||b)+'</strong><span style=\"color:rgba(240,244,255,.45);font-size:12px;margin-left:6px;\"> — '+(b.author||'')+'</span></div>').join('')}</div></div>
         </div>`;
     } catch(e) {
       bodyEl.innerHTML = '<div style="text-align:center;padding:20px;font-size:14px;color:rgba(240,244,255,.4);">학과 정보를 불러오지 못했어요.<br><span style="font-size:12px;">잠시 후 다시 시도해주세요.</span></div>';
@@ -5308,9 +5314,9 @@ ${roadmapText || '(작성 없음)'}
           const descEl = body.querySelector('.nep-section-desc');
           if(descEl){
             if(window._dnaRecommendedMajors && window._dnaRecommendedMajors.length >= 1){
-              descEl.innerHTML = '🧬 <strong style="color:#c084fc;">DNA 별자리 분석</strong> 결과를 바탕으로 AI가 추천한 학과예요!<br>카드를 펼쳐 학과를 깊이 탐색해봐요 ✨';
+              descEl.innerHTML = '';
             } else {
-              descEl.innerHTML = '⭐ 목성 탐험 별자리 분석 결과를 바탕으로 추천된 학과예요.<br>카드를 펼쳐 학과를 깊이 탐색해봐요!<br><span style="font-size:12px;color:rgba(240,244,255,.4);">💡 DNA 별자리 분석을 먼저 하면 더 정확한 학과를 추천받아요</span>';
+              descEl.innerHTML = '';
             }
           }
         }
@@ -5359,6 +5365,7 @@ ${roadmapText || '(작성 없음)'}
         <div class="rq-step-num" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);">1</div>
         <div>
           <div class="rq-step-title-txt">학과에 대한 관심 주제를 질문해보세요</div>
+          <div class="rq-step-sub">나의 희망학과에 대한 관심 주제를 질문해보세요</div>
         </div>
       </div>
 
@@ -6439,6 +6446,191 @@ var RQP_STEPS = [
   {key:'summary',  icon:'📝', label:'결과 정리 방법', badge:'STEP 7'},
 ];
 
+/* ── 6-B. 학과별 탐구 영역 분석기 ── */
+function getMajorProfile(major, topic) {
+  // 학과 카테고리 매핑
+  var profiles = {
+    의학: {
+      keywords: ['의학','의대','의예','간호','약학','한의','치의','수의','보건','재활','물리치료','작업치료','응급구조'],
+      domains: ['임상의학','기초의학','역학·공중보건','의료기기·디지털헬스','약리학·독성학'],
+      coreTheories: ['항상성(Homeostasis)','면역 반응 메커니즘','세포 신호 전달 경로','약동학·약역학(PK/PD)','Evidence-Based Medicine(EBM)'],
+      dataSources: ['건강보험심사평가원(HIRA) 진료비 통계','국립암센터 암등록통계','질병관리청 감염병 감시 데이터(KDCA)','식품의약품안전처 의약품 허가 DB','PubMed·KoreaMed 임상연구 논문'],
+      methods: ['후향적 코호트 분석','메타분석(Meta-analysis)','케이스-컨트롤 연구','생존분석(Kaplan-Meier)','이중맹검 비교'],
+      statTools: ['R(survival패키지)','SPSS','RevMan(메타분석)','Forest plot'],
+    },
+    공학: {
+      keywords: ['공학','기계','전기','전자','컴퓨터','소프트웨어','화학공학','재료','토목','건축','환경공학','산업공학','항공','우주','로봇','AI','인공지능','데이터','반도체','통신'],
+      domains: ['시스템 설계·최적화','알고리즘·계산 복잡도','재료·구조 특성 분석','에너지·열역학','신호처리·제어이론'],
+      coreTheories: ['열역학 법칙(엔트로피·엔탈피)','제어 이론(PID·피드백 루프)','신호처리(FFT·필터링)','알고리즘 복잡도(Big-O)','재료 파괴역학(Fracture Mechanics)'],
+      dataSources: ['한국산업기술진흥원(KIAT) 기술 통계','특허청 특허 등록 DB(KIPRIS)','국가과학기술정보센터(NDSL) 논문 DB','IEEE Xplore·ACM Digital Library','산업통상자원부 에너지통계'],
+      methods: ['수치해석·시뮬레이션(FEM/CFD)','A/B 실험설계(DOE)','회귀분석·최적화','벤치마크 테스트','프로토타입 제작·측정'],
+      statTools: ['Python(NumPy·SciPy·Matplotlib)','MATLAB','ANSYS·OpenFOAM(시뮬레이션)','Arduino·라즈베리파이(실험)'],
+    },
+    경제경영: {
+      keywords: ['경제','경영','상경','회계','무역','금융','통계','수학','행정','사회','정치','법학','국제'],
+      domains: ['미시경제·게임이론','거시경제·화폐금융','경영전략·조직행동','계량경제·데이터분석','국제경제·무역정책'],
+      coreTheories: ['수요-공급 균형·탄력성','게임이론(죄수의 딜레마·내쉬균형)','행동경제학(전망이론·휴리스틱)','포터의 5Forces·BCG 매트릭스','통화정책 전달경로(IS-LM 모형)'],
+      dataSources: ['통계청 KOSIS 마이크로데이터','한국은행 경제통계시스템(ECOS)','금융감독원 전자공시시스템(DART)','OECD.Stat 국가비교 데이터','World Bank Open Data'],
+      methods: ['회귀분석(OLS·패널데이터)','차분인차(DID)','이중강도 분석','시계열 분석(ARIMA)','설문 조사·리커트 척도 분석'],
+      statTools: ['R(plm·ggplot2)','Stata','Python(pandas·statsmodels)','Eviews'],
+    },
+    인문사회: {
+      keywords: ['인문','사회','심리','사회학','인류','문화','역사','철학','문학','언어','교육','아동','청소년','복지','상담'],
+      domains: ['사회심리·인지과학','문화·비교분석','담론·서사 분석','질적 연구·현장조사','교육·발달 이론'],
+      coreTheories: ['인지 부조화 이론(Festinger)','사회학습 이론(Bandura)','문화자본론(Bourdieu)','근거이론(Grounded Theory)','에릭슨 심리사회 발달 단계'],
+      dataSources: ['한국교육개발원(KEDI) 교육통계','한국청소년정책연구원 패널조사(KYPS)','국가인권위원회 차별실태 보고서','통계청 사회조사 마이크로데이터','RISS·DBpia 학술논문 DB'],
+      methods: ['심층 인터뷰(반구조화 면접)','내용 분석(Content Analysis)','설문조사·요인분석','문헌 비교·담론 분석','사례연구(Case Study)'],
+      statTools: ['SPSS(기술통계·교차분석)','NVivo(질적 분석)','R(lavaan·SEM)'],
+    },
+    자연과학: {
+      keywords: ['물리','화학','생물','생명','지구','천문','환경','수학','통계','식품','농업','해양','기상','지질'],
+      domains: ['실험 설계·변인 통제','데이터 계측·보정','현상 모델링·시뮬레이션','문헌 비교·메타분석','야외 조사·모니터링'],
+      coreTheories: ['르 샤틀리에 원리','멘델 유전 법칙·하디-바인베르크 평형','열역학 제2법칙·엔트로피','맥스웰 방정식','생태계 에너지 피라미드'],
+      dataSources: ['국가환경정보센터(NEINS) 대기·수질 측정 원시데이터','기상청 기상자료개방포털(기온·강수·바람)','국립생물자원관 생물다양성 DB','NOAA·NASA 위성·기후 데이터','국가과학기술정보센터(NDSL) 이공계 논문'],
+      methods: ['대조군-실험군 설계','반복 측정·분산분석(ANOVA)','상관분석·피어슨/스피어만 계수','야외 표본 채집·동정','스펙트럼 분석·크로마토그래피'],
+      statTools: ['Python(scipy·matplotlib)','R','OriginPro','Excel(데이터 정제에만 한정)'],
+    },
+    예체능: {
+      keywords: ['미술','음악','체육','스포츠','디자인','영화','연극','무용','패션','게임','미디어','광고','영상'],
+      domains: ['창작·표현 분석','수용자 반응 연구','비교미학·양식 분석','스포츠 과학·생체역학','미디어 효과 분석'],
+      coreTheories: ['게슈탈트 지각 원리','색채심리학(먼셀 체계)','스포츠 심리·플로우 이론','기호학(Semiotics)·도상학','수용미학(독자반응이론)'],
+      dataSources: ['문화체육관광부 문화예술 실태조사','한국콘텐츠진흥원(KOCCA) 콘텐츠 산업 통계','대한체육회 경기력 측정 데이터','YouTube Data API(영상 반응 데이터)','KOBIS(영화진흥위원회 박스오피스)'],
+      methods: ['안구추적(Eye-tracking)실험','수용자 반응 설문·의미 차이법','생체역학 측정(동작 캡처·근전도)','작품 비교·기호학적 분석','A/B 크리에이티브 테스트'],
+      statTools: ['SPSS(설문 분석)','Python(YouTube API 데이터)','Dartfish(동작 분석)'],
+    },
+  };
+
+  // 학과 카테고리 자동 감지
+  var matched = null;
+  for (var cat in profiles) {
+    var kws = profiles[cat].keywords;
+    for (var i = 0; i < kws.length; i++) {
+      if (major.includes(kws[i])) { matched = profiles[cat]; break; }
+    }
+    if (matched) break;
+  }
+  if (!matched) matched = profiles['공학']; // 기본값
+
+  // 토픽에서 핵심 키워드 추출
+  var topicKeywords = topic.replace(/[가-힣]+[은는이가을를의에서로와과]/g, function(m){ return m; })
+    .split(/[\s,·\-~→]/g).filter(function(w){ return w.length >= 2; }).slice(0, 6);
+
+  // 관련 탐구 영역 자동 선택 (토픽 키워드 기반 매칭)
+  var relevantDomain = matched.domains[0];
+  var domainKeywordMap = {
+    'AI|인공지능|머신러닝|딥러닝|알고리즘|자동화|로봇': matched.domains[0],
+    '데이터|통계|분석|예측|모델': matched.domains[1] || matched.domains[0],
+    '실험|측정|변화|비교|영향': matched.domains[2] || matched.domains[0],
+    '정책|사회|제도|윤리|법': matched.domains[3] || matched.domains[0],
+    '설계|개발|제작|구현|최적화': matched.domains[4] || matched.domains[0],
+  };
+  for (var pattern in domainKeywordMap) {
+    var re = new RegExp(pattern);
+    if (re.test(topic)) { relevantDomain = domainKeywordMap[pattern]; break; }
+  }
+
+  return {
+    profile: matched,
+    topicKeywords: topicKeywords,
+    relevantDomain: relevantDomain,
+  };
+}
+
+/* ── 6-C. 강화된 프롬프트 빌더 ── */
+function buildResearchPrompt(major, topic, periodStr, typeStr) {
+  var analysis = getMajorProfile(major, topic);
+  var p = analysis.profile;
+
+  // 토픽에서 핵심 구성 요소 추출 가이드
+  var topicParts = {
+    keywords: analysis.topicKeywords.join(', '),
+    domain: analysis.relevantDomain,
+    theories: p.coreTheories.slice(0, 3).join(' / '),
+    dataSources: p.dataSources.slice(0, 4).join('\n    - '),
+    methods: p.methods.slice(0, 3).join(' / '),
+    tools: p.statTools.join(', '),
+    allDomains: p.domains.join(' / '),
+  };
+
+  var systemPrompt = `당신은 대한민국 최상위권 입시 컨설턴트이자 ${major} 분야 탐구 전문가입니다.
+학생의 탐구 질문을 깊이 분석하여, 해당 질문이 아닌 다른 어떤 질문에도 사용할 수 없는 완전 맞춤형 탐구 계획서를 작성합니다.
+
+[${major} 탐구 핵심 지식]
+• 관련 탐구 영역: ${topicParts.allDomains}
+• 이 학과의 핵심 이론: ${topicParts.theories}
+• 활용 가능한 실제 데이터 출처:
+    - ${topicParts.dataSources}
+• 적합한 분석 방법: ${topicParts.methods}
+• 분석 도구: ${topicParts.tools}
+
+[자기검증 — 출력 전 필수 수행]
+① 모든 항목에 탐구 질문의 핵심 단어가 직접 포함되었는가?
+② "인터넷 검색, 관련 자료 수집, 엑셀, 노트, 컴퓨터, 현황 파악, ~에 대해 알아본다" 표현이 있는가? → 있으면 전면 재작성
+③ 자료 출처가 실제 기관명·DB명·논문 제목인가? → 추상적이면 전면 재작성
+④ 다른 질문에 그대로 붙여쓸 수 있는 문장이 1개라도 있는가? → 있으면 전면 재작성
+⑤ 예상 결과에 수치·시점·조건이 포함되어 있는가? → 없으면 전면 재작성`;
+
+  var userPrompt = `탐구 계획서를 JSON으로만 출력하세요. 마크다운(\`\`\`)이나 설명 텍스트 절대 금지.
+
+[학생 탐구 정보]
+탐구 질문: "${topic}"
+희망 학과: ${major}
+탐구 기간: ${periodStr}
+탐구 방식: ${typeStr}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+STEP 0. 탐구 질문 심층 분석 (반드시 내부 수행 후 모든 항목에 반영)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+"${topic}"에서 추출:
+A) 핵심 탐구 변수: 이 질문이 측정하려는 것은 무엇인가? (예: X가 Y에 미치는 영향 → X=독립변수, Y=종속변수)
+B) 비교·대조 조건: 어떤 집단/시점/상황을 비교하는가?
+C) 탐구 대상 범위: 어떤 집단/지역/시기에서 나타나는 현상인가?
+D) ${major} 핵심 이론 연결: 위 [${major} 탐구 핵심 지식] 중 어떤 이론이 이 질문을 설명하는가?
+E) 예상 메커니즘: 왜 이런 현상이 나타날 것으로 예상되는가? (인과관계 가설)
+→ A~E를 모든 JSON 항목에 반드시 반영할 것.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+작성 기준 (위반 즉시 해당 항목 전면 재작성)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+【method 필수 형식】
+- 각 단계마다: [실제 기관명] [실제 데이터명/도구명]을 [구체적 방법]으로 [수행]
+- 위 [${major} 탐구 핵심 지식]에 명시된 실제 데이터 출처와 방법을 반드시 활용
+- 분석 방법은 "${topic}"의 변수 구조에 맞는 통계기법/실험설계 명시
+
+【material 필수 형식】
+- 각 항목: "[실제 자료명/도구명]: [이 탐구에서 ${topic.substring(0,20)}의 어떤 변수 측정에 왜 필요한지]"
+- 절대 금지: 컴퓨터, 인터넷, 노트, 엑셀, 취업 포털, 뉴스 기사 (단독 표기)
+
+【expected 필수 형식】
+- 가설: [수치 범위] + [시점/조건] + [${major} 이론 근거]를 포함한 구체적 예측 2문장
+- 예시: "자율비행 SAE Level 4 도달 시점(2031~2035년)에 국내 단거리 노선 파일럿 신규 채용이 현재 대비 45~60% 감소하고, 운항감시 전담 원격조종사 직군이 현 파일럿 인력의 25~35%를 대체할 것으로 예측된다"
+
+【schedule 필수 형식】
+- 각 구간에 탐구 질문 핵심어와 실제 수행 과업 명시
+- 예: "1~3일차: [실제 기관명] [실제 데이터명] 다운로드 및 결측치 처리 — [사용 도구명]"
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+JSON 출력 형식 (6개 키, 순수 JSON만)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+{
+  "subject": "정제된 탐구 주제명(핵심 변수 2개 이상, 20자 내외)\\n\\n[탐구 배경] ${major}의 [A~D에서 추출한 핵심 이론명]과 연결하여 이 질문이 왜 학문적으로 중요한지 2~3문장. '${topic.substring(0,15)}'의 맥락 직접 언급 필수.",
+
+  "goal": "① [A 핵심 변수]와 [B 비교 조건]의 관계를 [실제 데이터명]으로 [구체적 측정 방법]을 통해 정량화한다.\\n② [C 탐구 대상]에서 [E 예상 메커니즘]을 [D ${major} 이론]의 관점으로 검증한다.\\n③ 탐구 결과를 바탕으로 ${major} 진학 후 [이 탐구에서 파생된 구체적 심화 연구 주제명]으로 이어나간다.",
+
+  "method": "1단계 (자료 수집): [위 데이터 출처 중 탐구 질문 A·B 변수에 가장 적합한 실제 기관명] [실제 데이터명] — 수집 기간·범위·방법 구체 명시\\n2단계 (전처리): '${topic.substring(0,20)}'의 [A 변수] 기준 데이터 분류·정제 — 결측치 처리 기준 및 기간 명시\\n3단계 (분석): [탐구 방식 ${typeStr}]에 맞게 [위 분석 방법 중 A·B 변수 구조에 적합한 통계기법/실험설계] 적용 — [위 분석 도구] 사용\\n4단계 (해석): 분석 결과를 [D ${major} 핵심 이론명]의 개념 틀로 해석하고 [E 메커니즘] 검증",
+
+  "schedule": "${periodStr} 전 기간을 구체적 날짜/주차로 구분. 각 구간에 탐구 질문 핵심어 포함. 실제 수행 과업+사용 도구 명시. 예: '1~2일차: [기관명] [데이터명] API/파일 다운로드 및 ${topic.substring(0,10)} 관련 변수 필터링 — Python pandas'",
+
+  "material": "① [탐구 질문 A 변수 측정용 실제 데이터명/도구]: [${topic.substring(0,15)}에서 어떤 변수 측정에 왜 필요한지]\\n② [탐구 질문 B 비교 조건용 실제 데이터명/도구]: [이유]\\n③ [${major} 이론 검증용 실제 논문 DB/자료]: [이유]\\n④ [분석 도구명]: [이 탐구의 어떤 분석 단계에서 왜 사용하는지]\\n⑤ [시각화/검증 도구명]: [이유]",
+
+  "expected": "가설: [탐구 질문에 대한 수치 범위+시점+조건+${major} 이론 근거 포함 1문장]\\n반증 가설: 이 결과가 나타나지 않을 경우를 가정한 대안 설명 1문장\\n${major} 학문적 의의: [D 이론]의 어떤 부분을 이 탐구가 실증적으로 확인/반박하는지\\n세특 연결: 어느 과목의 어떤 개념(교과 단원명 포함)과 직접 연결할 수 있는지",
+
+  "summary": "시각화: [탐구 변수 A·B 관계를 보여주는 구체적 그래프 종류 2가지 + 각각의 선택 이유]\\n보고서: 1장 [탐구 배경 및 질문] / 2장 [이론적 배경: ${major} 핵심 이론] / 3장 [탐구 방법 및 결과] / 4장 [결론 및 한계], 총 A4 [분량]쪽\\n심화 연결: 이 탐구 결과를 ${major} 대학 수업의 어떤 과목·분야로 심화할 수 있는지 구체적으로"
+}`;
+
+  return { system: systemPrompt, user: userPrompt };
+}
+
 /* ── 7. 메인 함수 ── */
 function startResearch(){
   var major = document.getElementById('rq-major').value.trim();
@@ -6479,73 +6671,17 @@ function startResearch(){
   (async function(){
     var plan;
     try {
+      var _prompt = buildResearchPrompt(major, topic, periodStr, typeStr);
       var resp = await fetch('/.netlify/functions/claude', {
         method:'POST',
         headers:{'Content-Type':'application/json'},
         body: JSON.stringify({
           model:'claude-sonnet-4-20250514',
-          max_tokens:4000,
-          system:`당신은 대한민국 최상위권 입시 전문 컨설턴트입니다. 학생의 탐구 질문을 분석해 그 질문에만 존재하는 완전히 맞춤화된 탐구 계획서를 작성합니다.
-
-출력 전 반드시 자기검증을 수행하세요:
-1. 각 항목에 탐구 질문의 핵심 단어가 직접 사용되었는가?
-2. "컴퓨터, 인터넷, 노트, 엑셀, 관련 자료 수집, 문헌 조사, ~에 대해 알아본다, 현황을 파악한다" 표현이 있는가? → 있으면 전면 재작성
-3. 자료 출처가 실제 기관명/DB명인가? → 아니면 전면 재작성
-4. 다른 탐구 질문에도 그대로 붙여 쓸 수 있는 문장이 있는가? → 있으면 전면 재작성`,
+          max_tokens:5000,
+          system: _prompt.system,
           messages:[{
             role:'user',
-            content:`탐구 계획서를 JSON으로만 출력하세요. 마크다운(\`\`\`)이나 설명 텍스트 절대 금지.
-
-[학생 정보]
-탐구 질문: ${topic}
-희망 학과: ${major}
-탐구 기간: ${periodStr}
-탐구 방식: ${typeStr}
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-STEP 0. 탐구 질문 분석 (출력 전 내부 수행 필수)
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-"${topic}"에서 추출:
-A) 핵심 주제어: 무엇을 탐구하는가?
-B) 핵심 변수/조건: 어떤 변화·비교·관계를 묻는가?
-C) 탐구 대상: 누구에게/어디서 나타나는 현상인가?
-D) ${major}와의 연결: 어떤 전공 개념이 이 질문을 설명하는가?
-→ A·B·C·D를 모든 항목에 반드시 반영할 것.
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-작성 기준 (위반 즉시 해당 항목 재작성)
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-【방법·재료 필수 형식】
-✗ 절대금지: "항공사 채용공고 조사", "관련 뉴스 검색", "취업 사이트 조사", "컴퓨터로 분석", "인터넷 검색", "엑셀 프로그램"
-✓ 필수형식: "[실제기관명] [실제데이터명]을 [구체적방법]으로 수집·분석"
-
-탐구 주제별 올바른 예시:
-- 자율비행·파일럿 주제: "국토교통부 항공정보포털(AIRPORTAL) 2015~2024년 파일럿 운송용 면허 신규 취득자 수 및 항공사별 조종사 채용 인원 데이터를 연도별로 수집하여, 자율비행 기술 등급(SAE Level 0~4) 도입 시점과 파일럿 채용률 변화 간 상관관계를 피어슨 상관분석으로 산출"
-- 의료·AI 주제: "건강보험심사평가원 AI 의료기기 허가 현황(2019~2024) 및 식품의약품안전처 인공지능 의료기기 목록에서 진단 보조 AI 도입 전후 오진율 변화를 대응표본 t-검정으로 비교 분석"
-- 환경·기후 주제: "국가환경정보센터(NEINS) 측정소별 시간당 PM2.5 원시데이터와 기상청 기상자료개방포털 풍향·풍속 데이터를 병합하여 기상 변수별 미세먼지 농도 변화를 다중회귀분석으로 산출"
-- 경제·사회 주제: "통계청 KOSIS 산업별 취업자 수 마이크로데이터(2010~2024)와 한국직업능력연구원 직업전망 보고서를 교차 분석하여 자동화 위험 지수(RTI)와 직군별 고용 감소율 간 회귀계수 도출"
-
-【재료 필수 형식】
-✗ 절대금지: 컴퓨터, 인터넷, 노트, 엑셀, 취업 포털 사이트, 항공업계 뉴스
-✓ 필수형식: "○○기관 ○○데이터 (이 탐구에서 ${topic}의 ○○변수 측정에 필요한 이유)"
-
-【예상 결과 필수 형식】
-✗ 절대금지: "단기적으로 유지되지만 장기적으로 감소할 것", "파일럿의 역할이 변화할 가능성", "도움이 될 것으로 예상"
-✓ 필수형식: 수치+시점+조건이 포함된 구체적 가설
-예) "자율비행 기술이 SAE Level 4에 도달하는 2030~2035년 시점에 국내 단거리 노선 파일럿 신규 채용이 현재 대비 50~65% 감소하고, 운항감시·비상개입 전담 원격조종사 직군이 현 파일럿 인력의 20~30%를 대체할 것으로 예측된다"
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-JSON 출력 형식
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-{
-  "subject": "정제된 연구 주제명(탐구 질문 핵심 변수 2개 이상, 20자 내외)\\n탐구 배경: ${major}의 어떤 핵심 이론·사회적 맥락이 이 질문과 연결되는지 2~3문장. 반드시 탐구 질문의 A·B 요소 포함.",
-  "goal": "① [탐구 질문의 A+B 요소]를 [구체적 데이터/지표]로 [측정·비교·분석]한다.\\n② [탐구 질문의 C 대상]에서 [구체적 변수 관계]를 [구체적 분석 방법]으로 검증한다.\\n③ 탐구 결과를 바탕으로 ${major} 진학 후 [구체적 심화 연구 주제명]으로 이어나간다.",
-  "method": "1단계: [실제 기관명] [실제 데이터명] 수집 — [수집 방법·기간]\\n2단계: [탐구 질문의 핵심 변수] 기준으로 데이터 분류·정제하는 구체적 기준\\n3단계: [탐구 방식 ${typeStr}]에 맞는 구체적 분석 방법(통계기법/실험설계/비교분석) + 사용 도구명\\n4단계: 분석 결과를 ${major}의 [구체적 이론/개념명]과 연결하여 해석하는 방법",
-  "schedule": "${periodStr} 기간 구체적 날짜/주차 구분. 각 구간에 탐구 질문 핵심어 포함한 실제 수행 과업 명시. 예: '1~2일차: AIRPORTAL 파일럿 면허 취득자 수 2015~2024 데이터 다운로드·결측치 처리'",
-  "material": "① [이 탐구 고유 자료명]: [${topic}의 어떤 변수 측정에 왜 필요한지]\\n② [이 탐구 고유 자료명]: [이유]\\n③ [이 탐구 고유 자료명]: [이유]\\n④ [이 탐구 고유 자료명]: [이유]\\n⑤ [이 탐구 고유 분석 도구명]: [이유] — 컴퓨터·인터넷·노트·엑셀·취업사이트 절대 금지",
-  "expected": "가설: [탐구 질문에 대한 수치+시점+조건 포함 예측 2문장]\\n${major} 학문적 시사점: [전공 이론과 연결한 의의 1문장]\\n사회적 의의: [실생활·정책·산업과 연결한 의의 1문장]",
-  "summary": "시각화: [탐구 질문의 변수 관계를 보여주는 구체적 그래프 종류 2가지] — 선택 이유\\n보고서 구성: 1장 [제목] / 2장 [제목] / 3장 [제목] / 4장 [제목], 총 A4 [분량]쪽\\n세특 활용: [이 탐구의 구체적 내용을 ${major} 수업의 어떤 개념과 연결하여 세특에 기재할지]"
-}`
+            content: _prompt.user
           }]
         })
       });
@@ -6592,14 +6728,25 @@ function escapeHtml(s){
 
 /* ── 8. Fallback 계획서 ── */
 function generateFallbackPlan(major, topic, period, typeStr){
+  var analysis = getMajorProfile(major, topic);
+  var p = analysis.profile;
+  var ds = p.dataSources[0] || '국가과학기술정보센터(NDSL) 학술논문 DB';
+  var ds2 = p.dataSources[1] || '통계청 KOSIS 마이크로데이터';
+  var ds3 = p.dataSources[2] || 'RISS·DBpia 학술논문 DB';
+  var method1 = p.methods[0] || '비교 분석';
+  var method2 = p.methods[1] || '상관분석';
+  var tool = p.statTools[0] || 'Python(pandas·matplotlib)';
+  var tool2 = p.statTools[1] || 'R(ggplot2)';
+  var theory = p.coreTheories[0] || major+' 핵심 이론';
+  var domain = analysis.relevantDomain;
   return {
-    subject: major+'와 관련하여 "'+topic+'"을 탐구합니다.\n이 주제는 사회 변화와 직업 전망을 이해하는 데 중요한 의미를 가집니다.',
-    goal: '최근 관련 데이터와 자료를 수집하여 현황을 파악합니다.\n수집한 자료를 분석하여 미래 전망을 예측하고, 탐구 결과를 보고서로 정리합니다.',
-    method: '1단계: 인터넷 검색 및 관련 기사·논문 수집\n2단계: '+typeStr+' 방식으로 자료 수집\n3단계: 수집한 자료를 분류하고 표·그래프로 정리\n4단계: 결론 도출 및 보고서 작성',
-    schedule: '1~2일: 관련 자료 및 데이터 수집\n3~4일: 자료 분류 및 분석\n5~6일: 그래프 작성 및 결론 도출\n7일: 보고서 작성 및 정리',
-    material: '컴퓨터, 인터넷 연결\n엑셀 또는 구글 스프레드시트 (데이터 정리)\n취업 포털 사이트, 뉴스 기사, 관련 자료\n노트 및 필기 도구',
-    expected: '단기적으로는 현재 현황이 유지되지만 장기적으로는 변화가 예상됩니다.\n'+major+' 진학과 관련하여 이 탐구가 미래 진로 선택에 도움이 될 것으로 예상합니다.',
-    summary: '수집한 데이터는 꺾은선 그래프와 표로 시각화합니다.\n탐구 과정과 결론을 A4 3~5매 분량의 보고서로 정리하고, 핵심 내용을 발표 자료로 제작합니다.',
+    subject: '['+domain+'] '+topic.substring(0,25)+'의 정량적 탐구\n\n[탐구 배경] '+major+'의 '+theory+' 관점에서 "'+topic+'"은 현대 사회의 핵심 과제와 직결됩니다. 이 탐구는 실제 데이터를 기반으로 변수 간 인과관계를 규명하여 '+major+' 분야의 학문적 논의에 기여합니다.',
+    goal: '① "'+topic+'"에서 핵심 독립변수와 종속변수를 '+ds+' 데이터로 정량화하고 '+method1+'을 통해 측정한다.\n② '+major+' 이론('+theory+') 관점에서 변수 간 상관관계를 '+method2+'로 검증하고 메커니즘을 해석한다.\n③ 탐구 결과를 바탕으로 '+major+' 진학 후 ['+domain+' 심화 연구]로 이어나간다.',
+    method: '1단계 (자료 수집): '+ds+' 및 '+ds2+' 접속 — 탐구 주제 관련 변수 데이터 최근 5~10년치 수집\n2단계 (전처리): "'+topic.substring(0,20)+'" 핵심 변수 기준 데이터 필터링·결측치 처리 — '+tool+'\n3단계 (분석): '+typeStr+' 방식으로 '+method1+' 및 '+method2+' 적용 — '+tool+'\n4단계 (해석): 분석 결과를 '+theory+'의 개념 틀로 해석 — 인과관계 가설 검증',
+    schedule: period+' 기간 수행 계획\n1단계(전반): '+ds+' 데이터 수집·정제 및 탐구 질문 핵심 변수 추출 — '+tool+'\n2단계(중반): '+method1+' 및 '+method2+' 적용·분석 및 결과 정리\n3단계(후반): '+major+' 이론('+theory+') 연결 해석 및 결론 도출\n4단계(마지막 10%): 시각화·보고서 작성 및 세특 연결 정리',
+    material: '① '+ds+': "'+topic.substring(0,15)+'"의 핵심 독립변수 측정에 필요\n② '+ds2+': 비교 집단·시점별 종속변수 데이터 확보에 필요\n③ '+ds3+': '+theory+' 관련 선행연구 검토에 필요\n④ '+tool+': '+method1+' 및 '+method2+' 수행에 필요\n⑤ '+tool2+': 변수 관계 시각화(산점도·회귀선·히트맵) 제작에 필요',
+    expected: '가설: "'+topic+'"에서 독립변수 1단위 증가 시 종속변수가 [X~Y%] 변화하며, 이는 '+theory+'에서 예측하는 방향과 일치할 것으로 예측된다.\n반증 가설: 외부 변수(정책·경제·기술) 개입 시 예측과 다른 방향으로 나타날 수 있으며, 이는 '+theory+' 적용 범위의 한계를 시사한다.\n'+major+' 학문적 의의: '+theory+'의 실증적 검증을 통해 '+domain+' 분야의 예측 모델 개선에 기여\n세특 연결: '+major+' 관련 교과의 [가설검증·데이터 분석] 단원과 직접 연결',
+    summary: '시각화: ① 핵심 변수 시계열 꺾은선 그래프(시점별 변화 추이 확인) ② 독립-종속변수 산점도+회귀선(인과관계 강도 시각화)\n보고서: 1장 [탐구 배경 및 연구 질문] / 2장 [이론적 배경: '+theory+'] / 3장 [탐구 방법 및 결과: '+method1+'] / 4장 [결론·한계·심화 방향], 총 A4 4~6쪽\n심화 연결: '+major+' 대학 ['+domain+'] 전공 과목에서 이 탐구 데이터를 심화 분석 프로젝트로 발전 가능',
   };
 }
 
