@@ -2643,6 +2643,8 @@ footer::before{
 
 /* 추천 학과 카드 3개 */
 .nep-major-cards{display:flex;flex-direction:column;gap:14px;margin-bottom:8px;}
+.nep-pick-btn:hover{background:rgba(99,102,241,.18)!important;border-color:rgba(99,102,241,.5)!important;transform:translateY(-2px)!important;}
+@keyframes nepShake{0%,100%{transform:translateX(0);}25%{transform:translateX(-5px);}75%{transform:translateX(5px);}}
 .nep-mcard{
   background:rgba(255,255,255,.03);
   border:1.5px solid rgba(96,165,250,.2);
@@ -3017,10 +3019,30 @@ footer::before{
         <!-- AI 전공 로드맵 -->
         <div id="neptune-card-game">
 
-          <!-- STEP 1: 추천 학과 카드 3개 -->
+          <!-- STEP 1: 10개 추천 학과 선택 -->
           <div class="nep-section-title">🎓 AI 추천 학과 탐색</div>
 
-          <div class="nep-major-cards" id="nep-major-cards"></div>
+          <!-- 10개 추천 학과 선택 UI -->
+          <div id="nep-select-section">
+            <div id="nep-select-loading" style="text-align:center;padding:32px 0;">
+              <span style="font-size:2rem;display:inline-block;animation:floatY 1s ease-in-out infinite;">🤖</span>
+              <div style="margin-top:12px;font-size:15px;color:rgba(240,244,255,.6);">AI가 나의 성향에 맞는 학과 10개를 분석하는 중...</div>
+            </div>
+            <div id="nep-select-grid" style="display:none;">
+              <div style="font-size:13px;color:rgba(240,244,255,.55);margin-bottom:14px;text-align:center;">아래에서 관심 있는 학과를 <strong style="color:#a5b4fc;">3개</strong> 선택해주세요</div>
+              <div id="nep-10-grid" style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:20px;"></div>
+              <div style="text-align:center;">
+                <div id="nep-select-counter" style="font-size:13px;color:rgba(240,244,255,.4);margin-bottom:12px;">0 / 3 선택됨</div>
+                <button id="nep-confirm-btn" onclick="confirmNepSelection()" disabled
+                  style="padding:14px 48px;border-radius:999px;background:linear-gradient(135deg,#6366f1,#a855f7);color:#fff;font-size:15px;font-weight:700;border:none;cursor:not-allowed;opacity:0.4;transition:.25s;font-family:'Pretendard','Noto Sans KR',sans-serif;">
+                  ✅ 선택 완료 — 학과 정보 보기
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 선택된 3개 카드 -->
+          <div class="nep-major-cards" id="nep-major-cards" style="display:none;margin-top:8px;"></div>
 
           <!-- STEP 2: 전공 로드맵 활동지 -->
           <div class="nep-roadmap-section" id="nep-roadmap-section">
@@ -5080,140 +5102,25 @@ function buildNepCardHTML(name, i, medals){
 }
 
 function initNepMajorCards(){
-  let majors = NEP_DEFAULT_MAJORS;
+  // 10개 학과 선택 UI 표시
+  const selectSection = document.getElementById('nep-select-section');
+  const cardsSection  = document.getElementById('nep-major-cards');
+  if(selectSection) selectSection.style.display = 'block';
+  if(cardsSection)  cardsSection.style.display  = 'none';
 
-  // 1순위: DNA 별자리 AI 분석 결과
-  if(window._dnaRecommendedMajors && window._dnaRecommendedMajors.length >= 1){
-    majors = window._dnaRecommendedMajors.slice(0,3);
-    while(majors.length < 3){
-      const fb = Object.keys(NEP_MAJOR_DB).find(m=>!majors.includes(m));
-      if(fb) majors.push(fb); else break;
-    }
-  }
-  // 2순위: 목성 탐험 결과
-  else if(window._aptData && window._aptData.topDna){
-    const c = (typeof CONSTELLATION_MAP !== 'undefined') && CONSTELLATION_MAP.find(m=>m.dna===window._aptData.topDna);
-    if(c && c.majors){
-      const avail = c.majors.filter(m=>NEP_MAJOR_DB[m]);
-      if(avail.length >= 2) majors = avail.slice(0,3);
-    }
-  }
-  while(majors.length < 3){
-    const fb = Object.keys(NEP_MAJOR_DB).find(m=>!majors.includes(m));
-    if(fb) majors.push(fb); else break;
-  }
-  majors = majors.slice(0,3);
-  window._nepMajors = majors;
+  const loadingEl = document.getElementById('nep-select-loading');
+  const gridEl    = document.getElementById('nep-select-grid');
+  if(loadingEl) loadingEl.style.display = 'block';
+  if(gridEl)    gridEl.style.display    = 'none';
 
-  const medals = ['🥇','🥈','🥉'];
-  const el = document.getElementById('nep-major-cards');
-  if(!el) return;
+  // 학생 DNA/목성 탐험 데이터 수집
+  const dnaInfo = window._aptData
+    ? Object.entries(window._aptData.dnaScore||{}).sort((a,b)=>b[1]-a[1]).slice(0,4).map(([k,v])=>k+':'+v).join(', ')
+    : '';
+  const topDna = window._aptData?.topDna || '';
+  const dnaLinked = !!(window._dnaRecommendedMajors && window._dnaRecommendedMajors.length);
+  const seedMajors = dnaLinked ? window._dnaRecommendedMajors.join(', ') : '';
 
-  // DNA 연동 여부 안내
-  const dnaLinked = !!(window._dnaRecommendedMajors && window._dnaRecommendedMajors.length >= 1);
-  const headerEl = document.getElementById('nep-major-cards-header');
-  if(!headerEl){
-    const h = document.createElement('div');
-    h.id = 'nep-major-cards-header';
-    h.style.cssText = 'margin-bottom:16px;font-size:14px;color:rgba(240,244,255,.65);text-align:center;';
-    h.textContent = '';
-    el.parentNode.insertBefore(h, el);
-  } else {
-    headerEl.textContent = '';
-  }
-
-  el.innerHTML = majors.map((name,i) => buildNepCardHTML(name, i, medals)).join('');
-
-  // AI로 각 학과 카드 내용 채우기
-  majors.forEach((name, i) => {
-    (async () => {
-      const bodyEl = document.getElementById('nep-mcard-body-'+i);
-      if(!bodyEl) return;
-      const dnaInfo = window._aptData ? Object.entries(window._aptData.dnaScore||{}).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([k,v])=>k+':'+v).join(', ') : '';
-      try {
-        const resp = await fetch('/.netlify/functions/claude', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            model: 'claude-sonnet-4-20250514',
-            max_tokens: 1200,
-            messages: [{
-              role: 'user',
-              content: `대한민국에 실제로 존재하는 "${name}" 학과에 대해 중학생용 소개를 JSON으로만 출력하세요. 반드시 실제 존재하는 대학교명만 사용하세요. 다른 텍스트 없이 순수 JSON만 출력하세요.
-${dnaInfo ? '학생 DNA 점수: '+dnaInfo : ''}
-
-형식(키 순서 동일하게):
-{"overview":"학과 소개 2문장 (이 학과에서 무엇을 배우는지 친근하게)","aptitude":"이런 학생에게 딱! 1문장","jobs":["직업1","직업2","직업3","직업4"],"subjects":["2022개정 고교선택과목1","과목2","과목3"],"univs":["이 학과가 있는 실제 한국 대학 4~6개. 서울대·연세대·고려대 등 실제로 해당 학과가 개설된 대학만"],"midActs":["추천활동1","활동2","활동3"],"books":[{"title":"책제목1","author":"지은이1"},{"title":"책제목2","author":"지은이2"},{"title":"책제목3","author":"지은이3"},{"title":"책제목4","author":"지은이4"},{"title":"책제목5","author":"지은이5"}]}`
-            }]
-          })
-        });
-        const data = await resp.json();
-        const rawText = (data.content?.[0]?.text||'').trim();
-        const cleaned = rawText.replace(/```json[\s\S]*?```|```/g,'').trim();
-        const jsonMatch = cleaned.match(/\{[\s\S]*\}/);
-        const info = JSON.parse(jsonMatch ? jsonMatch[0] : cleaned);
-        bodyEl.innerHTML = `
-          <div class="nep-info-grid">
-            <div class="nep-info-block full">
-              <div class="nep-info-label">📖 학과 소개</div>
-              <div class="nep-info-text">${info.overview||''}</div>
-            </div>
-            <div class="nep-info-block full">
-              <div class="nep-info-label">💼 관련 직업</div>
-              <div class="nep-tags">${(info.jobs||[]).map(j=>'<span class="nep-tag nep-tag-blue">'+j+'</span>').join('')}</div>
-            </div>
-            <div class="nep-info-block">
-              <div class="nep-info-label">📚 선택과목 (2022 개정)</div>
-              <div class="nep-tags">${(info.subjects||[]).map(s=>'<span class="nep-tag nep-tag-purple">'+s+'</span>').join('')}</div>
-            </div>
-            <div class="nep-info-block">
-              <div class="nep-info-label">🏛️ 전공 배치 대학</div>
-              <div class="nep-tags">${(info.univs||[]).map(u=>'<span class="nep-tag nep-tag-yellow">'+u+'</span>').join('')}</div>
-            </div>
-            <div class="nep-info-block">
-              <div class="nep-info-label">🎯 추천 활동</div>
-              <div style="display:flex;flex-direction:column;gap:5px;">${(info.midActs||[]).map(a=>'<div style="font-size:13px;color:rgba(240,244,255,.75);padding-left:12px;">• '+a+'</div>').join('')}</div>
-            </div>
-            <div class="nep-info-block">
-              <div class="nep-info-label">📚 추천 도서</div>
-              <div style="display:flex;flex-direction:column;gap:6px;">${(info.books||[]).map((b,bi)=>'<div style="font-size:13px;color:rgba(240,244,255,.8);padding-left:12px;"><span style=\"color:rgba(240,244,255,.4);font-size:11px;margin-right:6px;\">'+(bi+1)+'</span><strong style=\"color:#f0f4ff;font-weight:600;\">'+(b.title||b)+'</strong><span style=\"color:rgba(240,244,255,.45);font-size:12px;margin-left:6px;\"> — '+(b.author||'')+'</span></div>').join('')}</div>
-            </div>
-          </div>`;
-      } catch(e) {
-        const db = NEP_MAJOR_DB[name];
-        if(db) {
-          bodyEl.innerHTML = `
-            <div class="nep-info-grid">
-              <div class="nep-info-block full"><div class="nep-info-label">📖 학과 소개</div><div class="nep-info-text">${db.desc}</div></div>
-              <div class="nep-info-block full"><div class="nep-info-label">💼 관련 직업</div><div class="nep-tags">${db.jobs.map(j=>'<span class="nep-tag nep-tag-blue">'+j+'</span>').join('')}</div></div>
-              <div class="nep-info-block"><div class="nep-info-label">📚 선택과목</div><div class="nep-tags">${db.subjects.map(s=>'<span class="nep-tag nep-tag-purple">'+s+'</span>').join('')}</div></div>
-              <div class="nep-info-block"><div class="nep-info-label">🏛️ 전공 배치 대학</div><div class="nep-tags">${db.univs.map(u=>'<span class="nep-tag nep-tag-yellow">'+u+'</span>').join('')}</div></div>
-              <div class="nep-info-block"><div class="nep-info-label">🎯 추천 활동</div><div style="display:flex;flex-direction:column;gap:5px;">${db.midActs.map(a=>'<div style="font-size:13px;color:rgba(240,244,255,.75);padding-left:12px;">• '+a+'</div>').join('')}</div></div>
-              <div class="nep-info-block"><div class="nep-info-label">📚 추천 도서</div><div style="display:flex;flex-direction:column;gap:6px;"><div style="font-size:13px;color:rgba(240,244,255,.4);padding-left:12px;">학과 정보 로딩 후 표시됩니다</div></div></div>
-            </div>`;
-        } else {
-          // DB에도 없고 AI도 실패 → 재시도 버튼
-          bodyEl.innerHTML = `
-            <div style="text-align:center;padding:20px;">
-              <div style="font-size:14px;color:rgba(240,244,255,.5);margin-bottom:14px;">🤖 학과 정보를 불러오는 중 오류가 발생했어요.</div>
-              <button onclick="retryNepCard('${name}',${i})" style="padding:9px 22px;border-radius:999px;background:rgba(99,102,241,.2);border:1px solid rgba(99,102,241,.4);color:#a5b4fc;font-size:13px;cursor:pointer;font-family:'Pretendard','Noto Sans KR',sans-serif;">🔄 다시 불러오기</button>
-            </div>`;
-        }
-      }
-    })();
-  });
-}
-
-function toggleNepCard(i){
-  document.getElementById('nepcard-'+i)?.classList.toggle('open');
-}
-
-// DB에 없는 학과 재시도
-window.retryNepCard = function(name, i){
-  const bodyEl = document.getElementById('nep-mcard-body-'+i);
-  if(!bodyEl) return;
-  bodyEl.innerHTML = '<div style="text-align:center;padding:16px;font-size:14px;color:rgba(240,244,255,.5);"><span style="animation:floatY 1s ease-in-out infinite;display:inline-block;">🤖</span> AI가 학과 정보를 불러오는 중...</div>';
-  const dnaInfo = window._aptData ? Object.entries(window._aptData.dnaScore||{}).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([k,v])=>k+':'+v).join(', ') : '';
   (async () => {
     try {
       const resp = await fetch('/.netlify/functions/claude', {
@@ -5221,32 +5128,228 @@ window.retryNepCard = function(name, i){
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           model: 'claude-sonnet-4-20250514',
-          max_tokens: 1200,
+          max_tokens: 600,
           messages: [{
             role: 'user',
-            content: `대한민국에 실제로 존재하는 "${name}" 학과에 대해 중학생용 소개를 JSON으로만 출력하세요. 반드시 실제 존재하는 대학교명만 사용하세요.\n${dnaInfo ? '학생 DNA: '+dnaInfo : ''}\n형식:\n{"overview":"학과 소개 2문장","aptitude":"이런 학생에게 딱 1문장","jobs":["직업1","직업2","직업3","직업4"],"subjects":["고교선택과목1","과목2","과목3"],"univs":["실제 한국 대학 4~6개"],"midActs":["추천활동1","활동2","활동3"],"books":[{"title":"책제목1","author":"지은이1"},{"title":"책제목2","author":"지은이2"},{"title":"책제목3","author":"지은이3"},{"title":"책제목4","author":"지은이4"},{"title":"책제목5","author":"지은이5"}]}`
+            content: `중학생의 성향 분석 결과를 바탕으로 대한민국 실제 대학에 개설된 학과 중 서로 다른 계열(이공계·인문사회·예체능·의약학 등)을 포함하여 10개를 추천해주세요.
+${dnaInfo ? '학생 DNA 점수: '+dnaInfo : ''}${topDna ? '\n핵심 성향: '+topDna : ''}${seedMajors ? '\n이미 관심 학과: '+seedMajors : ''}
+
+다양성을 위해 같은 계열에서 최대 3개만 추천하세요.
+JSON 배열로만 출력. 다른 텍스트 없이 순수 JSON만:
+["학과명1","학과명2","학과명3","학과명4","학과명5","학과명6","학과명7","학과명8","학과명9","학과명10"]`
+          }]
+        })
+      });
+      const data = await resp.json();
+      const raw = (data.content?.[0]?.text||'').replace(/```json[\s\S]*?```|```/g,'').trim();
+      const match = raw.match(/\[[\s\S]*\]/);
+      let majors = JSON.parse(match ? match[0] : raw);
+      if(!Array.isArray(majors)) throw new Error('not array');
+      majors = majors.slice(0,10);
+      window._nep10Majors = majors;
+      renderNep10Grid(majors);
+    } catch(e) {
+      // fallback: DNA 기반 + 고정 다양성 풀
+      const fallbackPool = [
+        '컴퓨터공학과','심리학과','생명과학과','경영학과','미디어콘텐츠학과',
+        '건축학과','간호학과','환경공학과','식품영양학과','법학과',
+        '전기전자공학과','사회복지학과','의예과','약학과','교육학과',
+        '데이터사이언스학과','기계공학과','국제관계학과','디자인학과','수의학과'
+      ];
+      let pool = [];
+      if(window._dnaRecommendedMajors) pool = [...window._dnaRecommendedMajors];
+      fallbackPool.forEach(m => { if(!pool.includes(m) && pool.length < 10) pool.push(m); });
+      const majors = pool.slice(0,10);
+      window._nep10Majors = majors;
+      renderNep10Grid(majors);
+    }
+  })();
+}
+
+function renderNep10Grid(majors){
+  const loadingEl = document.getElementById('nep-select-loading');
+  const gridEl    = document.getElementById('nep-select-grid');
+  const grid10    = document.getElementById('nep-10-grid');
+  if(loadingEl) loadingEl.style.display = 'none';
+  if(!gridEl || !grid10) return;
+
+  window._nepSelected = [];
+
+  grid10.innerHTML = majors.map((name, i) => `
+    <button class="nep-pick-btn" id="nep-pick-btn-${i}" onclick="toggleNepPick(${i},'${name.replace(/'/g,'')}')"
+      style="padding:14px 10px;border-radius:14px;border:1.5px solid rgba(255,255,255,.1);
+        background:rgba(255,255,255,.04);color:rgba(240,244,255,.85);font-size:14px;font-weight:600;
+        cursor:pointer;transition:.2s;text-align:center;font-family:'Pretendard','Noto Sans KR',sans-serif;
+        display:flex;align-items:center;gap:8px;justify-content:center;">
+      <span style="font-size:18px;">🎓</span>${name}
+    </button>`).join('');
+
+  gridEl.style.display = 'block';
+  updateNepConfirmBtn();
+}
+
+function toggleNepPick(i, name){
+  const btn = document.getElementById('nep-pick-btn-'+i);
+  if(!btn) return;
+  const sel = window._nepSelected || [];
+  const idx = sel.indexOf(name);
+  if(idx === -1){
+    if(sel.length >= 3){
+      // 흔들기 효과
+      btn.style.animation = 'none';
+      btn.style.borderColor = 'rgba(236,72,153,.7)';
+      setTimeout(()=>{ btn.style.borderColor='rgba(255,255,255,.1)'; }, 600);
+      return;
+    }
+    sel.push(name);
+    btn.style.background = 'linear-gradient(135deg,rgba(99,102,241,.35),rgba(168,85,247,.3))';
+    btn.style.borderColor = 'rgba(168,85,247,.7)';
+    btn.style.color = '#e0aaff';
+    btn.style.transform = 'scale(1.03)';
+  } else {
+    sel.splice(idx,1);
+    btn.style.background = 'rgba(255,255,255,.04)';
+    btn.style.borderColor = 'rgba(255,255,255,.1)';
+    btn.style.color = 'rgba(240,244,255,.85)';
+    btn.style.transform = '';
+  }
+  window._nepSelected = sel;
+  updateNepConfirmBtn();
+}
+
+function updateNepConfirmBtn(){
+  const sel = window._nepSelected || [];
+  const counter = document.getElementById('nep-select-counter');
+  const btn = document.getElementById('nep-confirm-btn');
+  if(counter) counter.textContent = sel.length + ' / 3 선택됨';
+  if(btn){
+    const ready = sel.length === 3;
+    btn.disabled = !ready;
+    btn.style.opacity = ready ? '1' : '0.4';
+    btn.style.cursor  = ready ? 'pointer' : 'not-allowed';
+  }
+}
+
+function confirmNepSelection(){
+  const sel = window._nepSelected || [];
+  if(sel.length !== 3) return;
+
+  // 선택 UI 숨기고 카드 영역 표시
+  const selectSection = document.getElementById('nep-select-section');
+  const cardsSection  = document.getElementById('nep-major-cards');
+  if(selectSection) selectSection.style.display = 'none';
+  if(cardsSection)  { cardsSection.style.display = 'flex'; cardsSection.style.flexDirection = 'column'; }
+
+  window._nepMajors = sel;
+  const medals = ['🥇','🥈','🥉'];
+  cardsSection.innerHTML = sel.map((name,i) => buildNepCardHTML(name, i, medals)).join('');
+
+  // 선택된 학과별 AI 카드 정보 로딩
+  sel.forEach((name, i) => loadNepCardInfo(name, i));
+
+  setTimeout(()=>{ cardsSection.scrollIntoView({behavior:'smooth',block:'start'}); }, 200);
+}
+
+function loadNepCardInfo(name, i){
+  const bodyEl = document.getElementById('nep-mcard-body-'+i);
+  if(!bodyEl) return;
+  const dnaInfo = window._aptData ? Object.entries(window._aptData.dnaScore||{}).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([k,v])=>k+':'+v).join(', ') : '';
+
+  (async () => {
+    try {
+      const resp = await fetch('/.netlify/functions/claude', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 1500,
+          messages: [{
+            role: 'user',
+            content: `대한민국에 실제로 존재하는 "${name}" 학과에 대해 중학생용 소개를 JSON으로만 출력하세요.
+반드시 실제 존재하는 대학교명만 사용하세요. 다른 텍스트 없이 순수 JSON만 출력하세요.
+${dnaInfo ? '학생 DNA 점수: '+dnaInfo : ''}
+
+중요: books 배열에는 반드시 "${name}"과 직접 관련된 실제 존재하는 한국어 또는 번역된 책을 정확한 제목과 실제 저자명으로 5권 포함하세요. 가상의 책 제목은 절대 쓰지 마세요.
+
+형식(키 순서 동일하게, 순수 JSON만):
+{"overview":"학과 소개 2문장","aptitude":"이런 학생에게 딱! 1문장","jobs":["직업1","직업2","직업3","직업4"],"subjects":["2022개정 고교선택과목1","과목2","과목3"],"univs":["실제 한국 대학 4~6개"],"midActs":["추천활동1","활동2","활동3"],"books":[{"title":"실제 책 제목1","author":"실제 저자명1"},{"title":"실제 책 제목2","author":"실제 저자명2"},{"title":"실제 책 제목3","author":"실제 저자명3"},{"title":"실제 책 제목4","author":"실제 저자명4"},{"title":"실제 책 제목5","author":"실제 저자명5"}]}`
           }]
         })
       });
       const data = await resp.json();
       const rawText = (data.content?.[0]?.text||'').trim();
-      const cleaned = rawText.replace(/\`\`\`json[\s\S]*?\`\`\`|\`\`\`/g,'').trim();
+      const cleaned = rawText.replace(/```json[\s\S]*?```|```/g,'').trim();
       const jsonMatch = cleaned.match(/\{[\s\S]*\}/);
       const info = JSON.parse(jsonMatch ? jsonMatch[0] : cleaned);
-      bodyEl.innerHTML = `
-        <div class="nep-info-grid">
-          <div class="nep-info-block full"><div class="nep-info-label">📖 학과 소개</div><div class="nep-info-text">${info.overview||''}</div></div>
-          <div class="nep-info-block full"><div class="nep-info-label">💼 관련 직업</div><div class="nep-tags">${(info.jobs||[]).map(j=>'<span class="nep-tag nep-tag-blue">'+j+'</span>').join('')}</div></div>
-          <div class="nep-info-block"><div class="nep-info-label">📚 선택과목</div><div class="nep-tags">${(info.subjects||[]).map(s=>'<span class="nep-tag nep-tag-purple">'+s+'</span>').join('')}</div></div>
-          <div class="nep-info-block"><div class="nep-info-label">🏛️ 전공 배치 대학</div><div class="nep-tags">${(info.univs||[]).map(u=>'<span class="nep-tag nep-tag-yellow">'+u+'</span>').join('')}</div></div>
-          <div class="nep-info-block"><div class="nep-info-label">🎯 추천 활동</div><div style="display:flex;flex-direction:column;gap:5px;">${(info.midActs||[]).map(a=>'<div style="font-size:13px;color:rgba(240,244,255,.75);padding-left:12px;">• '+a+'</div>').join('')}</div></div>
-          <div class="nep-info-block"><div class="nep-info-label">📚 추천 도서</div><div style="display:flex;flex-direction:column;gap:6px;">${(info.books||[]).map((b,bi)=>'<div style="font-size:13px;color:rgba(240,244,255,.8);padding-left:12px;"><span style=\"color:rgba(240,244,255,.4);font-size:11px;margin-right:6px;\">'+(bi+1)+'</span><strong style=\"color:#f0f4ff;font-weight:600;\">'+(b.title||b)+'</strong><span style=\"color:rgba(240,244,255,.45);font-size:12px;margin-left:6px;\"> — '+(b.author||'')+'</span></div>').join('')}</div></div>
-        </div>`;
+      renderNepCardBody(bodyEl, info, name, i);
     } catch(e) {
-      bodyEl.innerHTML = '<div style="text-align:center;padding:20px;font-size:14px;color:rgba(240,244,255,.4);">학과 정보를 불러오지 못했어요.<br><span style="font-size:12px;">잠시 후 다시 시도해주세요.</span></div>';
+      const db = NEP_MAJOR_DB[name];
+      if(db) {
+        bodyEl.innerHTML = `
+          <div class="nep-info-grid">
+            <div class="nep-info-block full"><div class="nep-info-label">📖 학과 소개</div><div class="nep-info-text">${db.desc}</div></div>
+            <div class="nep-info-block full"><div class="nep-info-label">💼 관련 직업</div><div class="nep-tags">${db.jobs.map(j=>'<span class="nep-tag nep-tag-blue">'+j+'</span>').join('')}</div></div>
+            <div class="nep-info-block"><div class="nep-info-label">📚 선택과목</div><div class="nep-tags">${db.subjects.map(s=>'<span class="nep-tag nep-tag-purple">'+s+'</span>').join('')}</div></div>
+            <div class="nep-info-block"><div class="nep-info-label">🏛️ 전공 배치 대학</div><div class="nep-tags">${db.univs.map(u=>'<span class="nep-tag nep-tag-yellow">'+u+'</span>').join('')}</div></div>
+            <div class="nep-info-block"><div class="nep-info-label">🎯 추천 활동</div><div style="display:flex;flex-direction:column;gap:5px;">${db.midActs.map(a=>'<div style="font-size:13px;color:rgba(240,244,255,.75);padding-left:12px;">• '+a+'</div>').join('')}</div></div>
+            <div class="nep-info-block"><div class="nep-info-label">📚 추천 도서</div><div style="font-size:13px;color:rgba(240,244,255,.4);padding-left:12px;">다시 불러오기를 시도해보세요</div></div>
+          </div>`;
+      } else {
+        bodyEl.innerHTML = `
+          <div style="text-align:center;padding:20px;">
+            <div style="font-size:14px;color:rgba(240,244,255,.5);margin-bottom:14px;">🤖 학과 정보를 불러오는 중 오류가 발생했어요.</div>
+            <button onclick="loadNepCardInfo('${name}',${i})" style="padding:9px 22px;border-radius:999px;background:rgba(99,102,241,.2);border:1px solid rgba(99,102,241,.4);color:#a5b4fc;font-size:13px;cursor:pointer;font-family:'Pretendard','Noto Sans KR',sans-serif;">🔄 다시 불러오기</button>
+          </div>`;
+      }
     }
   })();
+}
+
+function renderNepCardBody(bodyEl, info, name, i){
+  const booksHtml = (info.books||[]).length > 0
+    ? (info.books||[]).map((b,bi)=>`<div style="font-size:13px;color:rgba(240,244,255,.82);padding:5px 12px;border-left:2px solid rgba(168,85,247,.4);margin-bottom:3px;"><span style="color:rgba(168,85,247,.8);font-size:11px;font-weight:700;margin-right:8px;">${bi+1}</span><strong style="color:#f0f4ff;font-weight:700;">${b.title||b}</strong><span style="color:rgba(240,244,255,.45);font-size:12px;margin-left:6px;"> — ${b.author||''}</span></div>`).join('')
+    : '<div style="font-size:13px;color:rgba(240,244,255,.35);padding-left:12px;">추천 도서 정보를 불러오지 못했어요</div>';
+
+  bodyEl.innerHTML = `
+    <div class="nep-info-grid">
+      <div class="nep-info-block full">
+        <div class="nep-info-label">📖 학과 소개</div>
+        <div class="nep-info-text">${info.overview||''}</div>
+      </div>
+      <div class="nep-info-block full">
+        <div class="nep-info-label">💼 관련 직업</div>
+        <div class="nep-tags">${(info.jobs||[]).map(j=>'<span class="nep-tag nep-tag-blue">'+j+'</span>').join('')}</div>
+      </div>
+      <div class="nep-info-block">
+        <div class="nep-info-label">📚 선택과목 (2022 개정)</div>
+        <div class="nep-tags">${(info.subjects||[]).map(s=>'<span class="nep-tag nep-tag-purple">'+s+'</span>').join('')}</div>
+      </div>
+      <div class="nep-info-block">
+        <div class="nep-info-label">🏛️ 전공 배치 대학</div>
+        <div class="nep-tags">${(info.univs||[]).map(u=>'<span class="nep-tag nep-tag-yellow">'+u+'</span>').join('')}</div>
+      </div>
+      <div class="nep-info-block">
+        <div class="nep-info-label">🎯 추천 활동</div>
+        <div style="display:flex;flex-direction:column;gap:5px;">${(info.midActs||[]).map(a=>'<div style="font-size:13px;color:rgba(240,244,255,.75);padding-left:12px;">• '+a+'</div>').join('')}</div>
+      </div>
+      <div class="nep-info-block">
+        <div class="nep-info-label">📚 추천 도서</div>
+        <div style="display:flex;flex-direction:column;gap:4px;">${booksHtml}</div>
+      </div>
+    </div>`;
+}
+
+function toggleNepCard(i){
+  document.getElementById('nepcard-'+i)?.classList.toggle('open');
+}
+
+window.retryNepCard = function(name, i){
+  const bodyEl = document.getElementById('nep-mcard-body-'+i);
+  if(!bodyEl) return;
+  bodyEl.innerHTML = '<div style="text-align:center;padding:16px;font-size:14px;color:rgba(240,244,255,.5);"><span style="animation:floatY 1s ease-in-out infinite;display:inline-block;">🤖</span> AI가 학과 정보를 불러오는 중...</div>';
+  loadNepCardInfo(name, i);
 };
+
 
 function submitNepRoadmap(){
   const tls = [0,1,2,3].map(i=>(document.getElementById('nep-tl-'+i)||{value:''}).value.trim());
