@@ -2941,25 +2941,6 @@ footer::before{
             <div class="constellation-majors" id="constellation-majors"></div>
           </div>
 
-          <!-- AI 추천 10개 학과 선택 UI -->
-          <div id="major-pick-section" style="display:none;margin-bottom:20px;">
-            <div style="background:linear-gradient(135deg,rgba(168,85,247,.12),rgba(26,108,245,.1));border:1px solid rgba(168,85,247,.3);border-radius:20px;padding:24px;">
-              <div style="text-align:center;margin-bottom:18px;">
-                <div style="font-size:1rem;font-weight:800;color:#e0aaff;margin-bottom:6px;">🤖 AI가 분석한 나에게 딱 맞는 학과 10개</div>
-                <div style="font-size:13px;color:rgba(240,244,255,.55);line-height:1.6;">관심 분야 &amp; 희망 직업 기반으로 추천했어요<br><strong style="color:#a5f3fc;">이 중 가장 끌리는 학과 3개를 선택해주세요! ✦</strong></div>
-              </div>
-              <div id="major-pick-loading" style="text-align:center;padding:24px 0;">
-                <div style="font-size:2rem;animation:floatY 1s ease-in-out infinite;display:inline-block;">🤖</div>
-                <div style="font-size:14px;color:rgba(240,244,255,.5);margin-top:10px;">AI가 추천 학과를 분석 중이에요...</div>
-              </div>
-              <div id="major-pick-grid" style="display:none;"></div>
-              <div id="major-pick-footer" style="display:none;margin-top:18px;text-align:center;">
-                <div id="major-pick-counter" style="font-size:14px;font-weight:700;color:#c084fc;margin-bottom:14px;padding:8px 20px;border-radius:999px;background:rgba(168,85,247,.12);border:1px solid rgba(168,85,247,.25);display:inline-block;">0 / 3 선택됨</div>
-                <br>
-                <button id="major-pick-confirm-btn" disabled onclick="confirmMajorPickFromConstellation()" style="padding:16px 48px;border-radius:999px;background:linear-gradient(135deg,#a855f7,#1a6cf5);color:#fff;font-size:16px;font-weight:800;border:none;cursor:not-allowed;opacity:0.4;transition:.25s;font-family:'Pretendard','Noto Sans KR',sans-serif;box-shadow:0 8px 28px rgba(168,85,247,.35);letter-spacing:.3px;">🚀 선택 완료 — 로드맵으로 이동</button>
-              </div>
-            </div>
-          </div>
           <div class="ec-stars-award">
             <span class="ec-stars-big" id="ec-stars-big">0⭐</span>
             <div class="ec-stars-sub" id="ec-stars-sub">목성 탐험 별 획득!</div>
@@ -3057,7 +3038,8 @@ footer::before{
         <div id="neptune-card-game">
 
           <!-- STEP 1: 10개 추천 학과 선택 -->
-          <div class="nep-section-title">🎓 AI 추천 학과 탐색</div>
+          <div class="nep-section-title">🎓 AI 추천 학과 10개 — 마음에 드는 3개를 선택하세요</div>
+          <div class="nep-section-desc" style="margin-bottom:20px;">2단계에서 분석한 관심 분야 &amp; 희망 직업 기반으로 추천했어요 ✦</div>
 
           <!-- 10개 추천 학과 선택 UI -->
           <div id="nep-select-section">
@@ -3067,7 +3049,7 @@ footer::before{
             </div>
             <div id="nep-select-grid" style="display:none;">
               <div style="font-size:13px;color:rgba(240,244,255,.55);margin-bottom:14px;text-align:center;">아래에서 관심 있는 학과를 <strong style="color:#a5b4fc;">3개</strong> 선택해주세요</div>
-              <div id="nep-10-grid" style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:20px;"></div>
+              <div id="nep-10-grid" style="display:block;margin-bottom:20px;"></div>
               <div style="text-align:center;">
                 <div id="nep-select-counter" style="font-size:13px;color:rgba(240,244,255,.4);margin-bottom:12px;">0 / 3 선택됨</div>
                 <button id="nep-confirm-btn" onclick="confirmNepSelection()" disabled
@@ -3140,24 +3122,6 @@ footer::before{
               </div>
             </div>
 
-            <!-- 탐구 계획서 섹션 -->
-            <div id="research-plan-section" style="margin-top:36px;">
-              <div class="nep-section-title">🔬 AI 탐구 계획서 생성</div>
-              <div class="nep-section-desc">학교 수준을 선택하면 AI가 맞춤 탐구 계획서를 만들어줘요!</div>
-              <div style="display:flex;gap:10px;margin-bottom:20px;">
-                <button id="level-btn-middle" onclick="setResearchLevel('middle')" style="flex:1;padding:14px 0;border-radius:14px;font-size:15px;font-weight:700;border:2px solid rgba(96,165,250,.6);background:linear-gradient(135deg,rgba(96,165,250,.25),rgba(99,102,241,.2));color:#93c5fd;cursor:pointer;transition:.2s;font-family:'Pretendard','Noto Sans KR',sans-serif;box-shadow:0 0 16px rgba(96,165,250,.3);">📚 중학교 수준</button>
-                <button id="level-btn-high" onclick="setResearchLevel('high')" style="flex:1;padding:14px 0;border-radius:14px;font-size:15px;font-weight:700;border:2px solid rgba(255,255,255,.12);background:rgba(255,255,255,.05);color:rgba(240,244,255,.5);cursor:pointer;transition:.2s;font-family:'Pretendard','Noto Sans KR',sans-serif;">🏫 고등학교 수준</button>
-              </div>
-              <div id="level-desc-badge" style="padding:10px 16px;border-radius:12px;margin-bottom:20px;font-size:13px;background:rgba(96,165,250,.1);border:1px solid rgba(96,165,250,.25);color:rgba(240,244,255,.75);line-height:1.6;">
-                📚 <strong style="color:#93c5fd;">중학교 수준</strong> — 호기심 중심의 간단한 탐구 주제, 자유학기제 연계, 쉬운 표현으로 작성해줘요
-              </div>
-              <div style="margin-bottom:16px;">
-                <div style="font-size:13px;font-weight:600;color:rgba(240,244,255,.6);margin-bottom:8px;">탐구 주제 (선택)</div>
-                <input id="research-topic-input" type="text" maxlength="60" placeholder="예) 스마트폰이 수면에 미치는 영향 — 비워두면 AI가 학과에 맞게 추천해요" style="width:100%;padding:13px 16px;border-radius:12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);color:#f0f4ff;font-size:14px;font-family:'Pretendard','Noto Sans KR',sans-serif;outline:none;transition:.2s;box-sizing:border-box;" onfocus="this.style.borderColor='rgba(96,165,250,.5)'" onblur="this.style.borderColor='rgba(255,255,255,.12)'" />
-              </div>
-              <button id="research-gen-btn" onclick="generateResearchPlan()" style="width:100%;padding:16px;border-radius:14px;background:linear-gradient(135deg,#3b82f6,#6366f1);color:#fff;font-size:16px;font-weight:800;border:none;cursor:pointer;font-family:'Pretendard','Noto Sans KR',sans-serif;box-shadow:0 6px 24px rgba(59,130,246,.4);transition:.25s;letter-spacing:.3px;">🤖 AI 탐구 계획서 생성하기</button>
-              <div id="research-plan-result" style="display:none;margin-top:24px;"></div>
-            </div>
           </div>
         </div>
       </div>
@@ -4850,9 +4814,7 @@ async function launchAnalysis(){
   document.getElementById('constellation-title').textContent = '나의 전공 별자리 ✦ ' + constellation.type.split(' ')[0];
   document.getElementById('constellation-type').textContent = constellation.type;
   document.getElementById('constellation-desc').textContent = '🤖 AI가 추천 학과 10개를 분석 중이에요...';
-  document.getElementById('constellation-majors').innerHTML = '';
-  const _ps = document.getElementById('major-pick-section');
-  if(_ps){ _ps.style.display='block'; const _pg=document.getElementById('major-pick-grid'),_pf=document.getElementById('major-pick-footer'),_pl=document.getElementById('major-pick-loading'); if(_pg)_pg.style.display='none'; if(_pf)_pf.style.display='none'; if(_pl)_pl.style.display='block'; }
+  document.getElementById('constellation-majors').innerHTML = '<span style="color:rgba(240,244,255,.5);font-size:13px;">🤖 AI가 추천 학과를 분석 중이에요...</span>';
 
   // 결과창 먼저 보여주기
   const stars = Math.min(20, orbCollected > 0 ? orbCollected * 2 : 10);
@@ -4901,16 +4863,22 @@ async function launchAnalysis(){
       const parsed = JSON.parse(jsonMatch[0]);
       const majors = parsed.majors || constellation.majors;
       document.getElementById('constellation-desc').textContent = constellation.desc;
-      document.getElementById('constellation-majors').innerHTML = '';
-      showMajorPickUI(majors);
+      document.getElementById('constellation-majors').innerHTML =
+        majors.slice(0,5).map(m=>`<span class="constellation-major-tag">🎓 ${m}</span>`).join('');
+      // STAGE 4에 연동
+      window._dnaRecommendedMajors = majors;
       window._aptData.aiMajors = majors;
+      refreshNepCardsFromDna(majors);
     } else {
       throw new Error('JSON parse fail');
     }
   } catch(e) {
+    const fallMajors = constellation.majors.slice(0,10);
     document.getElementById('constellation-desc').textContent = constellation.desc;
-    document.getElementById('constellation-majors').innerHTML = '';
-    showMajorPickUI(constellation.majors.slice(0,10));
+    document.getElementById('constellation-majors').innerHTML =
+      fallMajors.slice(0,5).map(m=>`<span class="constellation-major-tag">🎓 ${m}</span>`).join('');
+    window._dnaRecommendedMajors = fallMajors;
+    refreshNepCardsFromDna(fallMajors);
   }
 }
 
@@ -5230,9 +5198,16 @@ function initNepMajorCards(){
   const dnaLinked = !!(window._dnaRecommendedMajors && window._dnaRecommendedMajors.length);
   const seedMajors = dnaLinked ? window._dnaRecommendedMajors.join(', ') : '';
 
+  // 2단계에서 이미 AI 추천받은 학과가 있으면 바로 사용
+  if(window._dnaRecommendedMajors && window._dnaRecommendedMajors.length >= 10){
+    window._nep10Majors = window._dnaRecommendedMajors.slice(0,10);
+    renderNep10Grid(window._nep10Majors);
+    return;
+  }
+
   (async () => {
     try {
-      const resp = await fetch('/.netlify/functions/claude', {
+      const resp = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -5240,12 +5215,11 @@ function initNepMajorCards(){
           max_tokens: 600,
           messages: [{
             role: 'user',
-            content: `중학생의 성향 분석 결과를 바탕으로 대한민국 실제 대학에 개설된 학과 중 서로 다른 계열(이공계·인문사회·예체능·의약학 등)을 포함하여 10개를 추천해주세요.
-${dnaInfo ? '학생 DNA 점수: '+dnaInfo : ''}${topDna ? '\n핵심 성향: '+topDna : ''}${seedMajors ? '\n이미 관심 학과: '+seedMajors : ''}
-
-다양성을 위해 같은 계열에서 최대 3개만 추천하세요.
-JSON 배열로만 출력. 다른 텍스트 없이 순수 JSON만:
-["학과명1","학과명2","학과명3","학과명4","학과명5","학과명6","학과명7","학과명8","학과명9","학과명10"]`
+            content: '대한민국 실제 대학에 개설된 학과 중 이공계·인문사회·예체능·의약학 등 서로 다른 계열을 포함해서 10개를 추천해주세요.'
+              + (dnaInfo ? ' 학생 DNA 점수: '+dnaInfo : '')
+              + (topDna ? ' 핵심 성향: '+topDna : '')
+              + (seedMajors ? ' 관심 학과: '+seedMajors : '')
+              + ' 같은 계열 최대 3개. 순수 JSON 배열만 출력: ["학과명1","학과명2","학과명3","학과명4","학과명5","학과명6","학과명7","학과명8","학과명9","학과명10"]'
           }]
         })
       });
@@ -5258,15 +5232,13 @@ JSON 배열로만 출력. 다른 텍스트 없이 순수 JSON만:
       window._nep10Majors = majors;
       renderNep10Grid(majors);
     } catch(e) {
-      // fallback: DNA 기반 + 고정 다양성 풀
       const fallbackPool = [
         '컴퓨터공학과','심리학과','생명과학과','경영학과','미디어콘텐츠학과',
         '건축학과','간호학과','환경공학과','식품영양학과','법학과',
         '전기전자공학과','사회복지학과','의예과','약학과','교육학과',
         '데이터사이언스학과','기계공학과','국제관계학과','디자인학과','수의학과'
       ];
-      let pool = [];
-      if(window._dnaRecommendedMajors) pool = [...window._dnaRecommendedMajors];
+      let pool = window._dnaRecommendedMajors ? [...window._dnaRecommendedMajors] : [];
       fallbackPool.forEach(m => { if(!pool.includes(m) && pool.length < 10) pool.push(m); });
       const majors = pool.slice(0,10);
       window._nep10Majors = majors;
@@ -5284,13 +5256,17 @@ function renderNep10Grid(majors){
 
   window._nepSelected = [];
 
+  const icons = ['💻','🧬','📐','🎨','⚖️','🏥','🌍','📊','🎓','🔬','🎭','🏗️','💡','📡','🌿','🧪','📚','🎵','⚙️','🛡️'];
   grid10.innerHTML = majors.map((name, i) => `
     <button class="nep-pick-btn" id="nep-pick-btn-${i}" onclick="toggleNepPick(${i},'${name.replace(/'/g,'')}')"
-      style="padding:14px 10px;border-radius:14px;border:1.5px solid rgba(255,255,255,.1);
-        background:rgba(255,255,255,.04);color:rgba(240,244,255,.85);font-size:14px;font-weight:600;
-        cursor:pointer;transition:.2s;text-align:center;font-family:Pretendard,sans-serif;
-        display:flex;align-items:center;gap:8px;justify-content:center;">
-      <span style="font-size:18px;">🎓</span>${name}
+      style="width:100%;display:flex;align-items:center;gap:12px;
+        padding:14px 18px;border-radius:14px;border:1.5px solid rgba(255,255,255,.1);
+        background:rgba(255,255,255,.04);color:rgba(240,244,255,.85);font-size:15px;font-weight:600;
+        cursor:pointer;transition:.2s;text-align:left;font-family:Pretendard,sans-serif;margin-bottom:8px;">
+      <span style="font-size:20px;flex-shrink:0;">${icons[i % icons.length]}</span>
+      <span style="flex:1;">${name}</span>
+      <span id="nep-check-${i}" style="font-size:15px;opacity:0;color:#a5f3fc;transition:.2s;">✓</span>
+      <span style="font-size:11px;color:rgba(240,244,255,.3);background:rgba(255,255,255,.06);padding:3px 8px;border-radius:999px;flex-shrink:0;">${i+1}</span>
     </button>`).join('');
 
   gridEl.style.display = 'block';
@@ -5302,10 +5278,9 @@ function toggleNepPick(i, name){
   if(!btn) return;
   const sel = window._nepSelected || [];
   const idx = sel.indexOf(name);
+  const check = document.getElementById('nep-check-'+i);
   if(idx === -1){
     if(sel.length >= 3){
-      // 흔들기 효과
-      btn.style.animation = 'none';
       btn.style.borderColor = 'rgba(236,72,153,.7)';
       setTimeout(()=>{ btn.style.borderColor='rgba(255,255,255,.1)'; }, 600);
       return;
@@ -5314,13 +5289,15 @@ function toggleNepPick(i, name){
     btn.style.background = 'linear-gradient(135deg,rgba(99,102,241,.35),rgba(168,85,247,.3))';
     btn.style.borderColor = 'rgba(168,85,247,.7)';
     btn.style.color = '#e0aaff';
-    btn.style.transform = 'scale(1.03)';
+    btn.style.transform = 'scale(1.01)';
+    if(check) check.style.opacity = '1';
   } else {
     sel.splice(idx,1);
     btn.style.background = 'rgba(255,255,255,.04)';
     btn.style.borderColor = 'rgba(255,255,255,.1)';
     btn.style.color = 'rgba(240,244,255,.85)';
     btn.style.transform = '';
+    if(check) check.style.opacity = '0';
   }
   window._nepSelected = sel;
   updateNepConfirmBtn();
@@ -5587,555 +5564,9 @@ function copyResearchPlan(){
 
 // ═══ 별자리 학과 선택 UI ═══
 
-function showMajorPickUI(majors){
-  const section=document.getElementById('major-pick-section');
-  const loading=document.getElementById('major-pick-loading');
-  const grid=document.getElementById('major-pick-grid');
-  const footer=document.getElementById('major-pick-footer');
-  if(!section) return;
-  window._constPickSelected=[]; window._constAllMajors=majors;
-  section.style.display='block'; if(loading)loading.style.display='none'; if(footer)footer.style.display='block';
-  const icons=['💻','🧬','📐','🎨','⚖️','🏥','🌍','📊','🎓','🔬','🎭','🏗️','💡','📡','🌿','🧪','📚','🎵','⚙️','🛡️'];
-  if(grid){
-    grid.innerHTML=majors.map((name,i)=>'<button class="const-pick-btn" id="const-pick-btn-'+i+'" onclick="toggleConstPick('+i+',\''+name.replace(/'/g,"&#39;")+'" style="width:100%;display:flex;align-items:center;gap:10px;padding:13px 16px;margin-bottom:8px;border-radius:14px;border:1.5px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);color:rgba(240,244,255,.85);font-size:14px;font-weight:600;cursor:pointer;transition:.2s;text-align:left;font-family:Pretendard,sans-serif;"><span style="font-size:20px;flex-shrink:0;">'+icons[i%icons.length]+'</span><span style="flex:1;">'+name+'</span><span id="const-check-'+i+'" style="font-size:16px;opacity:0;transition:.2s;color:#a5f3fc;">✓</span><span style="font-size:11px;font-weight:500;color:rgba(240,244,255,.35);background:rgba(255,255,255,.06);padding:3px 9px;border-radius:999px;flex-shrink:0;">'+(i+1)+'</span></button>').join('');
-    grid.style.display='block';
-  }
-  updateConstPickBtn();
-  setTimeout(()=>{ if(section) section.scrollIntoView({behavior:'smooth',block:'nearest'}); },200);
-}
-
-function toggleConstPick(i,name){
-  const btn=document.getElementById('const-pick-btn-'+i);
-  const check=document.getElementById('const-check-'+i);
-  const sel=window._constPickSelected||[];
-  const idx=sel.indexOf(name);
-  if(idx===-1){
-    if(sel.length>=3){ if(btn){btn.style.borderColor='rgba(236,72,153,.7)'; setTimeout(()=>{btn.style.borderColor='rgba(255,255,255,.1)';},500);} return; }
-    sel.push(name);
-    if(btn){btn.style.background='linear-gradient(135deg,rgba(99,102,241,.35),rgba(168,85,247,.3))';btn.style.borderColor='rgba(168,85,247,.7)';btn.style.color='#e0aaff';btn.style.transform='scale(1.01)';}
-    if(check){check.style.opacity='1';}
-  } else {
-    sel.splice(idx,1);
-    if(btn){btn.style.background='rgba(255,255,255,.04)';btn.style.borderColor='rgba(255,255,255,.1)';btn.style.color='rgba(240,244,255,.85)';btn.style.transform='';}
-    if(check){check.style.opacity='0';}
-  }
-  window._constPickSelected=sel;
-  updateConstPickBtn();
-}
-
-function updateConstPickBtn(){
-  const sel=window._constPickSelected||[];
-  const counter=document.getElementById('major-pick-counter');
-  const btn=document.getElementById('major-pick-confirm-btn');
-  if(counter) counter.textContent=sel.length+' / 3 선택됨';
-  if(btn){ const ready=sel.length===3; btn.disabled=!ready; btn.style.opacity=ready?'1':'0.4'; btn.style.cursor=ready?'pointer':'not-allowed'; }
-}
-
-function confirmMajorPickFromConstellation(){
-  const sel=window._constPickSelected||[];
-  if(sel.length!==3) return;
-  window._dnaRecommendedMajors=window._constAllMajors||sel;
-  window._nepMajors=sel;
-  const section=document.getElementById('major-pick-section');
-  if(section){ section.innerHTML='<div style="background:linear-gradient(135deg,rgba(34,211,238,.1),rgba(168,85,247,.1));border:1px solid rgba(34,211,238,.3);border-radius:20px;padding:22px;text-align:center;"><div style="font-size:1.5rem;margin-bottom:10px;">🎉</div><div style="font-size:1rem;font-weight:800;color:#a5f3fc;margin-bottom:8px;">학과 3개 선택 완료!</div><div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:14px;">'+sel.map((m,i)=>'<span style="padding:7px 16px;border-radius:999px;background:rgba(168,85,247,.2);border:1px solid rgba(168,85,247,.4);color:#e0aaff;font-size:14px;font-weight:700;">'+["🥇","🥈","🥉"][i]+' '+m+'</span>').join('')+'</div><div style="font-size:13px;color:rgba(240,244,255,.5);">STAGE 4 전공 로드맵에서 AI 학과 카드를 확인하세요 🚀</div></div>'; }
-  refreshNepCardsFromDna(window._constAllMajors||sel);
-  setTimeout(()=>{
-    const s4header=document.querySelector('.stage-header[onclick="toggleStage(4)"]');
-    const s4body=document.getElementById('stage-body-4');
-    if(s4body&&!s4body.classList.contains('open')&&s4header) s4header.click();
-    setTimeout(()=>{ document.querySelector('.stage-header[onclick="toggleStage(4)"]')?.scrollIntoView({behavior:'smooth',block:'start'}); },200);
-  },400);
-}
-
-// stage4 열릴 때 초기화 (toggleStage 훅)
-(function(){
-  const _orig = window.toggleStage;
-  window.toggleStage = function(n){
-    _orig(n);
-    if(n===4){
-      setTimeout(function(){
-        const body = document.getElementById('stage-body-4');
-        if(body && body.classList.contains('open')){
-          initNepMajorCards();
-          const descEl = body.querySelector('.nep-section-desc');
-          if(descEl) descEl.innerHTML = '';
-        }
-      }, 60);
-    }
-  };
-})();
-
-</script>
 
 
-<!-- ════════════════════════════════════════════════════════
-     📚 질문 배우기 섹션
-════════════════════════════════════════════════════════ -->
-<section id="research-section" style="background:linear-gradient(180deg,#06080f 0%,#0d1528 60%,#06080f 100%);padding:100px 0 120px;position:relative;overflow:hidden;z-index:2;">
 
-  <!-- 배경 장식 -->
-  <div class="star-canvas" id="research-star-canvas" style="position:absolute;inset:0;pointer-events:none;z-index:0;overflow:hidden;"></div>
-  <div style="position:absolute;inset:0;pointer-events:none;z-index:1;">
-    <div style="position:absolute;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(52,211,153,.07) 0%,transparent 70%);top:-100px;right:-120px;filter:blur(70px);"></div>
-    <div style="position:absolute;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(99,102,241,.07) 0%,transparent 70%);bottom:-80px;left:-100px;filter:blur(60px);"></div>
-    <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.016) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.016) 1px,transparent 1px);background-size:52px 52px;"></div>
-  </div>
-
-  <div style="width:90%;max-width:960px;margin:0 auto;position:relative;z-index:2;">
-
-    <!-- ── 섹션 헤더 ── -->
-    <div style="text-align:center;margin-bottom:56px;">
-      <div style="display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(52,211,153,.32);background:rgba(52,211,153,.07);color:#34d399;font-size:13px;letter-spacing:4px;padding:7px 22px;border-radius:999px;margin-bottom:20px;font-weight:600;">
-        🔭 AI 주제탐구 설계
-      </div>
-      <h2 style="font-family:'Nanum Brush Script','Noto Sans KR',cursive;font-size:clamp(2.4rem,6.5vw,4rem);font-weight:400;color:#f0f4ff;margin-bottom:14px;line-height:1.3;">
-        🔭 주제탐구를 시작해볼까?
-      </h2>
-      <p style="font-size:15px;color:rgba(240,244,255,.6);line-height:1.9;max-width:540px;margin:0 auto;">
-        질문을 배우고 → 탐구 질문을 만들고 → AI가 계획서를 설계해줘요 ✨
-      </p>
-    </div>
-
-    <!-- ══════════════════════════════════
-         STEP 1: 질문 배우기
-    ══════════════════════════════════ -->
-    <div class="rq-step-block" id="rq-block-1">
-      <!-- 스텝 라벨 -->
-      <div class="rq-step-label">
-        <div class="rq-step-num" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);">1</div>
-        <div>
-          <div class="rq-step-title-txt">학과에 대한 관심 주제를 질문해보세요</div>
-          <div class="rq-step-sub">나의 희망학과에 대한 관심 주제를 질문해보세요</div>
-        </div>
-      </div>
-
-      <!-- 입력 + 버튼 -->
-      <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:12px;">
-        <div style="width:100%;">
-          <input id="ql-topic-input" type="text"
-            placeholder="예: 생명공학과는 AI시대에 어떻게 변화할까?"
-            style="width:100%;padding:15px 22px;border-radius:999px;border:1.5px solid rgba(255,255,255,.12);background:rgba(255,255,255,.05);font-family:'Pretendard','Noto Sans KR',sans-serif;font-size:15px;color:#f0f4ff;outline:none;backdrop-filter:blur(8px);transition:.2s;"
-            onfocus="this.style.borderColor='rgba(99,102,241,.7)';this.style.background='rgba(99,102,241,.08)'"
-            onblur="this.style.borderColor='rgba(255,255,255,.12)';this.style.background='rgba(255,255,255,.05)'"
-            oninput="qlSyncTopic()"
-          />
-        </div>
-        <div style="text-align:center;">
-        <button onclick="qlGenerate()"
-          style="display:inline-flex;align-items:center;gap:7px;padding:15px 32px;border-radius:999px;background:linear-gradient(135deg,#6366f1,#7c3aed);color:#fff;font-family:'Pretendard','Noto Sans KR',sans-serif;font-size:14px;font-weight:700;border:none;cursor:pointer;box-shadow:0 4px 18px rgba(99,102,241,.4);transition:.25s;white-space:nowrap;"
-          onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 28px rgba(99,102,241,.55)'"
-          onmouseout="this.style.transform='';this.style.boxShadow='0 4px 18px rgba(99,102,241,.4)'"
-        >✦ 질문 생성하기</button>
-        </div>
-      </div>
-
-      <!-- 입력 안내 설명 -->
-      <div style="
-        display:flex;flex-wrap:wrap;gap:8px;margin-bottom:22px;
-        padding:13px 18px;border-radius:14px;
-        background:rgba(99,102,241,.06);
-        border:1px solid rgba(99,102,241,.18);
-      ">
-        <div style="font-size:12px;color:rgba(240,244,255,.55);line-height:1.7;width:100%;">
-          💡 <strong style="color:rgba(165,180,252,.8);">이렇게 써보세요</strong>
-        </div>
-        <div style="display:flex;flex-wrap:wrap;gap:6px;">
-          <span style="font-size:11.5px;padding:4px 12px;border-radius:999px;background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.25);color:rgba(165,180,252,.8);cursor:pointer;"
-            onclick="document.getElementById('ql-topic-input').value=this.dataset.q;qlSyncTopic();"
-            data-q="AI가 발전하면 의사라는 직업은 어떻게 변할까?">AI가 발전하면 의사 직업은 어떻게 변할까?</span>
-          <span style="font-size:11.5px;padding:4px 12px;border-radius:999px;background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.25);color:rgba(165,180,252,.8);cursor:pointer;"
-            onclick="document.getElementById('ql-topic-input').value=this.dataset.q;qlSyncTopic();"
-            data-q="기후변화가 환경공학과 진로에 미치는 영향은?">기후변화가 환경공학 진로에 미치는 영향은?</span>
-          <span style="font-size:11.5px;padding:4px 12px;border-radius:999px;background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.25);color:rgba(165,180,252,.8);cursor:pointer;"
-            onclick="document.getElementById('ql-topic-input').value=this.dataset.q;qlSyncTopic();"
-            data-q="심리학과를 졸업하면 어떤 직업을 가질 수 있을까?">심리학과 졸업 후 어떤 직업을 가질 수 있을까?</span>
-        </div>
-        <div style="font-size:11px;color:rgba(240,244,255,.32);width:100%;margin-top:2px;">
-          ✏️ 관심 있는 학과나 분야를 포함해 궁금한 점을 자유롭게 써보세요. 예시를 클릭하면 자동 입력돼요.
-        </div>
-      </div>
-
-      <!-- 로딩 상태 -->
-      <div id="ql-status" style="display:none;text-align:center;padding:12px;font-size:14px;color:#818cf8;font-weight:600;margin-bottom:8px;"></div>
-
-      <!-- 6가지 질문 카드 -->
-      <div id="ql-cards-grid" style="display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:20px;">
-
-        <div class="ql-card" data-type="factual">
-          <div class="ql-card-badge" style="background:rgba(59,130,246,.15);color:#60a5fa;border:1px solid rgba(59,130,246,.3);">🔍 사실적 질문</div>
-          <p class="ql-card-desc">텍스트나 자료에서 확인 가능한 사실을 묻는 질문</p>
-          <div class="ql-card-divider" style="border-color:rgba(59,130,246,.25);"></div>
-          <div class="ql-card-example" id="ql-ex-factual">질문을 생성하면<br>여기에 나타나요</div>
-        </div>
-
-        <div class="ql-card" data-type="inferential">
-          <div class="ql-card-badge" style="background:rgba(139,92,246,.15);color:#a78bfa;border:1px solid rgba(139,92,246,.3);">🧩 추론적 질문</div>
-          <p class="ql-card-desc">자료를 바탕으로 숨겨진 의미나 원인을 추론하는 질문</p>
-          <div class="ql-card-divider" style="border-color:rgba(139,92,246,.25);"></div>
-          <div class="ql-card-example" id="ql-ex-inferential">질문을 생성하면<br>여기에 나타나요</div>
-        </div>
-
-        <div class="ql-card" data-type="critical">
-          <div class="ql-card-badge" style="background:rgba(239,68,68,.15);color:#f87171;border:1px solid rgba(239,68,68,.3);">⚖️ 비판적 질문</div>
-          <p class="ql-card-desc">주장·근거·관점의 타당성을 평가하는 질문</p>
-          <div class="ql-card-divider" style="border-color:rgba(239,68,68,.25);"></div>
-          <div class="ql-card-example" id="ql-ex-critical">질문을 생성하면<br>여기에 나타나요</div>
-        </div>
-
-        <div class="ql-card" data-type="applied">
-          <div class="ql-card-badge" style="background:rgba(16,185,129,.15);color:#34d399;border:1px solid rgba(16,185,129,.3);">🚀 적용적 질문</div>
-          <p class="ql-card-desc">배운 내용을 실생활이나 새로운 상황에 적용하는 질문</p>
-          <div class="ql-card-divider" style="border-color:rgba(16,185,129,.25);"></div>
-          <div class="ql-card-example" id="ql-ex-applied">질문을 생성하면<br>여기에 나타나요</div>
-        </div>
-
-        <div class="ql-card" data-type="reflective">
-          <div class="ql-card-badge" style="background:rgba(245,158,11,.15);color:#fbbf24;border:1px solid rgba(245,158,11,.3);">💎 성찰적 질문</div>
-          <p class="ql-card-desc">자신의 생각·경험·가치관을 돌아보게 하는 질문</p>
-          <div class="ql-card-divider" style="border-color:rgba(245,158,11,.25);"></div>
-          <div class="ql-card-example" id="ql-ex-reflective">질문을 생성하면<br>여기에 나타나요</div>
-        </div>
-
-        <div class="ql-card" data-type="creative">
-          <div class="ql-card-badge" style="background:rgba(236,72,153,.15);color:#f472b6;border:1px solid rgba(236,72,153,.3);">💡 창의적 질문</div>
-          <p class="ql-card-desc">기존의 틀을 벗어나 새로운 가능성을 상상하는 질문</p>
-          <div class="ql-card-divider" style="border-color:rgba(236,72,153,.25);"></div>
-          <div class="ql-card-example" id="ql-ex-creative">질문을 생성하면<br>여기에 나타나요</div>
-        </div>
-
-      </div>
-
-      <!-- 선택 안내 / 선택된 질문 표시 -->
-      <div id="ql-bottom-bar" style="background:rgba(99,102,241,.06);border:1.5px solid rgba(99,102,241,.18);border-radius:14px;padding:14px 20px;display:flex;align-items:center;gap:10px;margin-bottom:0;">
-        <span style="font-size:1.1rem;flex-shrink:0;">💡</span>
-        <span style="font-size:14px;color:rgba(240,244,255,.65);line-height:1.6;" id="ql-bottom-msg">마음에 드는 질문 유형 카드를 클릭하면 STEP 2로 자동으로 연계됩니다.</span>
-      </div>
-    </div>
-
-    <!-- STEP 1→2 연결 화살표 -->
-    <div class="rq-step-arrow" id="rq-arrow-1">
-      <div class="rq-arrow-line"></div>
-      <div class="rq-arrow-head">▼</div>
-      <div class="rq-arrow-label" id="rq-arrow-1-label">카드를 선택하면 자동으로 아래로 연결됩니다</div>
-    </div>
-
-    <!-- ══════════════════════════════════
-         STEP 2: 탐구 설계
-    ══════════════════════════════════ -->
-    <div class="rq-step-block" id="rq-block-2" style="opacity:1;filter:none;pointer-events:auto;transition:.5s;">
-      <div class="rq-step-label">
-        <div class="rq-step-num" style="background:linear-gradient(135deg,#06b6d4,#0891b2);">2</div>
-        <div>
-          <div class="rq-step-title-txt">탐구 설계</div>
-          <div class="rq-step-sub">희망 학과·탐구 기간·방식을 선택하고 탐구 질문을 확정하세요</div>
-        </div>
-      </div>
-
-      <!-- 선택된 질문 뱃지 (STEP1에서 연계) -->
-      <div id="rq-selected-q-badge" style="display:none;margin-bottom:20px;background:rgba(52,211,153,.07);border:1.5px solid rgba(52,211,153,.3);border-radius:14px;padding:14px 20px;">
-        <div style="font-size:12px;letter-spacing:2px;color:#34d399;font-weight:700;margin-bottom:6px;">✅ STEP 1에서 선택된 질문</div>
-        <div id="rq-selected-q-text" style="font-size:15px;color:#f0f4ff;font-weight:600;line-height:1.6;word-break:keep-all;"></div>
-        <button onclick="qlClearSelected()" style="margin-top:10px;font-size:12px;color:rgba(240,244,255,.45);background:none;border:none;cursor:pointer;padding:0;font-family:'Pretendard','Noto Sans KR',sans-serif;">× 직접 입력하기</button>
-      </div>
-
-      <!-- 희망 학과 + 탐구 기간 -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;">
-        <div>
-          <label style="display:block;font-size:13px;letter-spacing:2px;color:rgba(240,244,255,.55);font-weight:600;margin-bottom:8px;">🎓 희망 학과</label>
-          <input id="rq-major" type="text" placeholder="예) 컴퓨터공학과, 심리학과…"
-            style="width:100%;background:rgba(52,211,153,.04);border:1.5px solid rgba(52,211,153,.22);border-radius:12px;padding:13px 16px;color:#f0f4ff;font-family:'Pretendard','Noto Sans KR',sans-serif;font-size:15px;outline:none;transition:.25s;"
-            onfocus="this.style.borderColor='rgba(52,211,153,.7)';this.style.background='rgba(52,211,153,.08)'"
-            onblur="this.style.borderColor='rgba(52,211,153,.22)';this.style.background='rgba(52,211,153,.04)'"
-          />
-        </div>
-        <div>
-          <label style="display:block;font-size:13px;letter-spacing:2px;color:rgba(240,244,255,.55);font-weight:600;margin-bottom:8px;">📅 탐구 기간</label>
-          <select id="rq-period"
-            style="width:100%;background:rgba(52,211,153,.04);border:1.5px solid rgba(52,211,153,.22);border-radius:12px;padding:13px 16px;color:#f0f4ff;font-family:'Pretendard','Noto Sans KR',sans-serif;font-size:15px;outline:none;transition:.25s;cursor:pointer;appearance:none;"
-            onfocus="this.style.borderColor='rgba(52,211,153,.7)'"
-            onblur="this.style.borderColor='rgba(52,211,153,.22)'"
-          >
-            <option value="1" selected style="background:#0d1528;">1주일</option>
-            <option value="2" style="background:#0d1528;">2주일</option>
-            <option value="4" style="background:#0d1528;">한 달 (4주)</option>
-            <option value="12" style="background:#0d1528;">3개월 (12주)</option>
-          </select>
-        </div>
-      </div>
-
-      <!-- 탐구 수준 선택 -->
-      <div style="margin-bottom:20px;">
-        <label style="display:block;font-size:13px;letter-spacing:2px;color:rgba(240,244,255,.55);font-weight:600;margin-bottom:10px;">🎯 탐구 수준</label>
-        <div style="display:flex;gap:10px;">
-          <button id="rq-level-mid" onclick="setRqLevel('middle')"
-            style="flex:1;padding:12px 0;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;transition:.2s;font-family:'Pretendard','Noto Sans KR',sans-serif;border:2px solid rgba(52,211,153,.7);background:linear-gradient(135deg,rgba(52,211,153,.22),rgba(16,185,129,.15));color:#34d399;box-shadow:0 0 14px rgba(52,211,153,.25);">
-            📚 중학교
-          </button>
-          <button id="rq-level-high" onclick="setRqLevel('high')"
-            style="flex:1;padding:12px 0;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;transition:.2s;font-family:'Pretendard','Noto Sans KR',sans-serif;border:2px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);color:rgba(240,244,255,.45);">
-            🏫 고등학교
-          </button>
-        </div>
-        <div id="rq-level-desc" style="margin-top:10px;padding:9px 14px;border-radius:10px;font-size:12px;background:rgba(52,211,153,.08);border:1px solid rgba(52,211,153,.2);color:rgba(240,244,255,.65);line-height:1.6;">
-          📚 <strong style="color:#34d399;">중학교</strong> — 호기심 중심·관찰·비교 방법, 쉬운 말투, 자유학기제 활동 연계
-        </div>
-      </div>
-
-      <!-- 탐구 질문 입력 (STEP1 미선택 시) -->
-      <div id="rq-topic-wrap" style="margin-bottom:20px;">
-        <label style="display:block;font-size:13px;letter-spacing:2px;color:rgba(240,244,255,.55);font-weight:600;margin-bottom:6px;">❓ 탐구 질문</label>
-        <div style="font-size:13px;color:rgba(240,244,255,.38);margin-bottom:8px;">STEP 1에서 질문을 선택하거나 직접 입력하세요</div>
-        <textarea id="rq-topic" rows="3"
-          placeholder="예) 자율주행 기술이 발달하면 10년 후 파일럿 직업은 어떻게 변화할까?"
-          style="width:100%;background:rgba(52,211,153,.04);border:1.5px solid rgba(52,211,153,.22);border-radius:12px;padding:14px 16px;color:#f0f4ff;font-family:'Pretendard','Noto Sans KR',sans-serif;font-size:15px;outline:none;resize:none;line-height:1.7;transition:.25s;"
-          onfocus="this.style.borderColor='rgba(52,211,153,.7)';this.style.background='rgba(52,211,153,.07)'"
-          onblur="this.style.borderColor='rgba(52,211,153,.22)';this.style.background='rgba(52,211,153,.04)'"
-        ></textarea>
-      </div>
-
-      <!-- 탐구 방식 칩 -->
-      <div style="margin-bottom:28px;">
-        <label style="display:block;font-size:13px;letter-spacing:2px;color:rgba(240,244,255,.55);font-weight:600;margin-bottom:10px;">🧪 탐구 방식 <span style="font-weight:400;letter-spacing:0;font-size:12px;color:rgba(240,244,255,.38);">(복수 선택 가능)</span></label>
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;justify-items:center;" id="rq-type-chips">
-          <span class="rq-chip" data-val="문헌조사" style="width:100%;justify-content:center;"><span class="rq-chip-emoji">📚</span><span class="rq-chip-label">문헌조사</span></span>
-          <span class="rq-chip" data-val="실험·관찰" style="width:100%;justify-content:center;"><span class="rq-chip-emoji">🧫</span><span class="rq-chip-label">실험·관찰</span></span>
-          <span class="rq-chip" data-val="설문조사" style="width:100%;justify-content:center;"><span class="rq-chip-emoji">📋</span><span class="rq-chip-label">설문조사</span></span>
-          <span class="rq-chip" data-val="인터뷰" style="width:100%;justify-content:center;"><span class="rq-chip-emoji">🎤</span><span class="rq-chip-label">인터뷰</span></span>
-          <span class="rq-chip" data-val="데이터분석" style="width:100%;justify-content:center;"><span class="rq-chip-emoji">📊</span><span class="rq-chip-label">데이터분석</span></span>
-          <span class="rq-chip" data-val="현장방문" style="width:100%;justify-content:center;"><span class="rq-chip-emoji">🏫</span><span class="rq-chip-label">현장방문</span></span>
-          <span class="rq-chip" data-val="독서·토론" style="width:100%;justify-content:center;"><span class="rq-chip-emoji">📖</span><span class="rq-chip-label">독서·토론</span></span>
-          <span class="rq-chip" data-val="비교분석" style="width:100%;justify-content:center;"><span class="rq-chip-emoji">⚖️</span><span class="rq-chip-label">비교분석</span></span>
-          <span class="rq-chip" data-val="사례연구" style="width:100%;justify-content:center;"><span class="rq-chip-emoji">🔍</span><span class="rq-chip-label">사례연구</span></span>
-          <span class="rq-chip" data-val="시뮬레이션" style="width:100%;justify-content:center;"><span class="rq-chip-emoji">💻</span><span class="rq-chip-label">시뮬레이션</span></span>
-          <span class="rq-chip" data-val="제작·메이킹" style="width:100%;justify-content:center;"><span class="rq-chip-emoji">🔧</span><span class="rq-chip-label">제작·메이킹</span></span>
-          <span class="rq-chip" data-val="통계분석" style="width:100%;justify-content:center;"><span class="rq-chip-emoji">📐</span><span class="rq-chip-label">통계분석</span></span>
-        </div>
-      </div>
-
-      <!-- ⭐ 별 바 -->
-      <div id="rq-star-bar" class="rq-star-bar-wrap" style="margin-bottom:24px;">
-        <div class="rq-star-bar-inner">
-          <div class="rq-star-bar-left">
-            <span class="rq-star-bar-icon">⭐</span>
-            <span class="rq-star-bar-label">탐구 별</span>
-            <span class="rq-star-count-num" id="rq-star-num">0</span>
-            <span class="rq-star-bar-max">/ 20</span>
-          </div>
-          <div class="rq-star-pips" id="rq-star-pips"></div>
-          <div class="rq-star-bar-right">
-            <span id="rq-star-grade" class="rq-star-grade" style="display:none;"></span>
-          </div>
-        </div>
-        <div class="rq-star-prog-bg"><div class="rq-star-prog-fill" id="rq-star-fill" style="width:0%"></div></div>
-        <div style="text-align:center;margin-top:8px;font-size:12px;color:rgba(240,244,255,.38);letter-spacing:.5px;">
-          💡 주제의 구체성·창의성에 따라 ⭐ 자동 부여
-        </div>
-      </div>
-
-      <!-- 계획서 생성 버튼 -->
-      <div style="text-align:center;">
-        <button id="rq-start-btn" onclick="window.startResearch()"
-          style="padding:18px 64px;border-radius:999px;background:linear-gradient(135deg,#34d399,#059669,#1a6cf5);color:#fff;font-size:17px;font-weight:700;border:none;cursor:pointer;box-shadow:0 8px 32px rgba(52,211,153,.35);transition:.3s;font-family:'Pretendard','Noto Sans KR',sans-serif;letter-spacing:.3px;"
-          onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 16px 48px rgba(52,211,153,.5)'"
-          onmouseout="this.style.transform='';this.style.boxShadow='0 8px 32px rgba(52,211,153,.35)'"
-        >🔭 탐구 계획서 생성하기</button>
-      </div>
-    </div>
-
-    <!-- STEP 2→3 연결 화살표 -->
-    <div class="rq-step-arrow" id="rq-arrow-2" style="opacity:0;transition:.5s;">
-      <div class="rq-arrow-line"></div>
-      <div class="rq-arrow-head">▼</div>
-      <div class="rq-arrow-label">계획서를 생성하면 아래에 바로 표시됩니다</div>
-    </div>
-
-    <!-- ══════════════════════════════════
-         STEP 3: 계획서 결과
-    ══════════════════════════════════ -->
-    <div id="rq-result-wrap" style="display:none;">
-
-      <!-- AI 로딩 -->
-      <div id="rq-loading" style="text-align:center;padding:60px 20px;">
-        <div style="font-size:3.5rem;margin-bottom:20px;animation:rqSpin 1.8s linear infinite;">🔭</div>
-        <div style="font-size:17px;font-weight:700;color:#34d399;margin-bottom:10px;" id="rq-loading-msg">AI가 탐구 계획서를 작성하는 중...</div>
-        <div style="font-size:14px;color:rgba(240,244,255,.45);">탐구 질문을 분석해 7단계 계획서를 완성하고 있어요</div>
-        <div style="margin-top:24px;display:flex;justify-content:center;gap:7px;">
-          <div class="rq-dot"></div><div class="rq-dot"></div><div class="rq-dot"></div>
-        </div>
-      </div>
-
-      <!-- 계획서 본문 -->
-      <div id="rq-plan-body" style="display:none;">
-        <div style="display:flex;gap:12px;justify-content:flex-end;margin-bottom:20px;flex-wrap:wrap;">
-          <button onclick="window.downloadRqPDF()"
-            style="display:inline-flex;align-items:center;gap:8px;padding:12px 24px;border-radius:999px;background:linear-gradient(135deg,#34d399,#059669);color:#fff;font-size:14px;font-weight:700;border:none;cursor:pointer;box-shadow:0 4px 18px rgba(52,211,153,.4);transition:.25s;font-family:'Pretendard','Noto Sans KR',sans-serif;"
-            onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 28px rgba(52,211,153,.55)'"
-            onmouseout="this.style.transform='';this.style.boxShadow='0 4px 18px rgba(52,211,153,.4)'"
-          >📄 PDF 다운로드</button>
-          <button onclick="window.resetResearch()"
-            style="display:inline-flex;align-items:center;gap:8px;padding:12px 24px;border-radius:999px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.04);color:rgba(240,244,255,.6);font-size:14px;font-weight:500;cursor:pointer;font-family:'Pretendard','Noto Sans KR',sans-serif;transition:.2s;"
-            onmouseover="this.style.borderColor='rgba(52,211,153,.4)';this.style.color='#34d399'"
-            onmouseout="this.style.borderColor='rgba(255,255,255,.14)';this.style.color='rgba(240,244,255,.6)'"
-          >🔄 새 계획서 만들기</button>
-        </div>
-
-        <div id="rq-plan-card" class="rq-plan-card-wrap">
-          <div class="rqp-header">
-            <div class="rqp-school">🏫 인천공항중학교 · 질문하는 학교</div>
-            <div class="rqp-title">나의 탐구 계획서</div>
-            <div class="rqp-question-box">
-              <div class="rqp-q-label">🔍 탐구 질문</div>
-              <div class="rqp-q-text" id="rqp-q-text"></div>
-            </div>
-            <div class="rqp-meta"><span id="rqp-meta-date"></span></div>
-          </div>
-          <div id="rqp-steps"></div>
-        </div>
-      </div>
-
-    </div>
-
-  </div>
-</section>
-
-
-<style>
-/* ══ 통합 주제탐구 — STEP 레이아웃 ══ */
-.rq-step-block {
-  background: rgba(255,255,255,.03);
-  border: 1px solid rgba(255,255,255,.08);
-  border-radius: 24px;
-  padding: 32px 36px;
-  margin-bottom: 0;
-  transition: opacity .5s, filter .5s;
-  backdrop-filter: blur(12px);
-}
-.rq-step-label {
-  display: flex;
-  align-items: flex-start;
-  gap: 16px;
-  margin-bottom: 24px;
-}
-.rq-step-num {
-  width: 44px; height: 44px;
-  border-radius: 14px;
-  flex-shrink: 0;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 1.25rem; font-weight: 900; color: #fff;
-  box-shadow: 0 4px 16px rgba(0,0,0,.3);
-}
-.rq-step-title-txt {
-  font-size: 1.15rem; font-weight: 800; color: #f0f4ff;
-  letter-spacing: -.3px; margin-bottom: 4px;
-}
-.rq-step-sub {
-  font-size: 13.5px; color: rgba(240,244,255,.5); line-height: 1.6;
-}
-
-/* STEP 화살표 연결부 */
-.rq-step-arrow {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 8px 0;
-  transition: opacity .5s;
-}
-.rq-arrow-line {
-  width: 2px; height: 32px;
-  background: linear-gradient(180deg, rgba(99,102,241,.7), rgba(52,211,153,.7));
-  border-radius: 999px;
-}
-.rq-arrow-head {
-  font-size: 16px; color: rgba(240,244,255,.7);
-  margin: 2px 0;
-}
-.rq-arrow-label {
-  font-size: 13px; color: rgba(240,244,255,.75);
-  letter-spacing: .5px; text-align: center; margin-top: 4px;
-  font-weight: 600;
-}
-
-/* 질문 카드 (다크 테마) */
-.ql-card {
-  background: rgba(255,255,255,.04);
-  border: 1.5px solid rgba(255,255,255,.12);
-  border-radius: 14px;
-  padding: 16px 14px 14px;
-  display: flex; flex-direction: column;
-  align-items: center; text-align: center;
-  gap: 0;
-  transition: .22s;
-  cursor: pointer;
-  min-height: 180px;
-}
-.ql-card:hover {
-  transform: translateY(-3px);
-  background: rgba(255,255,255,.07);
-  box-shadow: 0 8px 24px rgba(0,0,0,.25);
-}
-.ql-card.ql-selected {
-  background: rgba(52,211,153,.06) !important;
-  box-shadow: 0 0 0 1.5px rgba(52,211,153,.3), 0 8px 24px rgba(52,211,153,.12);
-}
-/* 카드별 무지개 테두리 (얇게, 블러 없음) */
-.ql-card[data-type="factual"]     { border-color: #60a5fa; }
-.ql-card[data-type="inferential"] { border-color: #a78bfa; }
-.ql-card[data-type="critical"]    { border-color: #f87171; }
-.ql-card[data-type="applied"]     { border-color: #34d399; }
-.ql-card[data-type="reflective"]  { border-color: #fbbf24; }
-.ql-card[data-type="creative"]    { border-color: #f472b6; }
-.ql-card[data-type="factual"]:hover     { border-color: #93c5fd; }
-.ql-card[data-type="inferential"]:hover { border-color: #c4b5fd; }
-.ql-card[data-type="critical"]:hover    { border-color: #fca5a5; }
-.ql-card[data-type="applied"]:hover     { border-color: #6ee7b7; }
-.ql-card[data-type="reflective"]:hover  { border-color: #fde68a; }
-.ql-card[data-type="creative"]:hover    { border-color: #f9a8d4; }
-.ql-card-badge {
-  display: inline-flex; align-items: center; gap: 4px;
-  padding: 5px 11px; border-radius: 999px;
-  font-family: 'Pretendard','Noto Sans KR',sans-serif;
-  font-size: 12px; font-weight: 700;
-  margin-bottom: 10px; white-space: nowrap;
-}
-.ql-card-desc {
-  font-family: 'Pretendard','Noto Sans KR',sans-serif;
-  font-size: 12.5px; color: rgba(240,244,255,.55);
-  line-height: 1.7; margin: 0 0 10px 0; word-break: keep-all;
-  flex: 1;
-}
-.ql-card-divider {
-  width: 100%; border: none; border-top: 1px solid;
-  opacity: .3; margin-bottom: 10px;
-}
-.ql-card-example {
-  font-family: 'Pretendard','Noto Sans KR',sans-serif;
-  font-size: 12px; color: rgba(240,244,255,.3);
-  line-height: 1.65; font-style: italic;
-  word-break: keep-all; transition: .3s;
-  min-height: 48px;
-}
-.ql-card-example.ql-has-content {
-  color: rgba(240,244,255,.8);
-  font-style: normal; font-weight: 500;
-}
-.ql-card.ql-selected .ql-card-example {
-  color: #f0f4ff;
-}
-
-@media(max-width:900px){
-  #ql-cards-grid { grid-template-columns: repeat(3,1fr) !important; }
-  .rq-step-block { padding: 24px 20px; }
-}
-@media(max-width:600px){
-  #ql-cards-grid { grid-template-columns: repeat(2,1fr) !important; }
-  .ql-card-badge { font-size: 11px; padding: 4px 9px; }
-}
-@media(max-width:420px){
-  .rq-step-block { padding: 20px 14px; }
-}
-</style>
-
-<script>
 // ══ 통합 주제탐구 스크립트 ══
 var qlSelectedType = null;
 var qlGeneratedQuestions = {};
