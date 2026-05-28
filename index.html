@@ -1765,9 +1765,7 @@ window.toggleStage = function(n){
     if(n===1) setTimeout(function(){ if(typeof initQuiz==='function') initQuiz(); }, 50);
     if(n===3) setTimeout(function(){ if(typeof initSgGrid==='function') initSgGrid(); }, 50);
     if(n===4) setTimeout(function(){
-      if(typeof initNepMajorCards==='function') initNepMajorCards();
-      var b4=document.getElementById('stage-body-4');
-      if(b4){ var d=b4.querySelector('.nep-section-desc'); if(d) d.innerHTML=''; }
+      // 학과 추천은 버튼 클릭 시 실행
     }, 60);
   }
 };
@@ -2658,7 +2656,7 @@ window.toggleStage = function(n){
 .nep-star-cards-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:20px 0;}
 .nep-name-btn{
   position:relative;
-  display:flex;align-items:center;justify-content:center;gap:8px;
+  display:block;
   padding:16px 14px;
   border-radius:14px;
   border:1.5px solid var(--nbBorder, rgba(255,255,255,.12));
@@ -2668,8 +2666,10 @@ window.toggleStage = function(n){
   font-size:15px;font-weight:700;
   cursor:pointer;
   transition:all .2s ease;
-  text-align:center;
+  text-align:left;
   width:100%;
+  height:auto;
+  min-height:60px;
 }
 .nep-name-btn:hover:not(.selected){
   border-color:rgba(255,255,255,.3);
@@ -3152,18 +3152,40 @@ window.toggleStage = function(n){
           </div>
         </div>
 
+        <!-- 학과 추천하기 버튼 -->
+        <div style="text-align:center;margin-bottom:28px;">
+          <button id="nep-recommend-btn" onclick="startNepRecommend()" style="
+            padding:15px 40px;
+            border-radius:999px;
+            background:linear-gradient(135deg,#a855f7,#1a6cf5);
+            color:#fff;
+            font-size:15px;
+            font-weight:800;
+            border:none;
+            cursor:pointer;
+            font-family:'Pretendard','Noto Sans KR',sans-serif;
+            box-shadow:0 8px 28px rgba(168,85,247,.45);
+            letter-spacing:.3px;
+            transition:all .25s;
+            display:inline-flex;
+            align-items:center;
+            gap:8px;
+          ">✨ AI 학과 추천하기</button>
+          <div style="margin-top:10px;font-size:12px;color:rgba(240,244,255,.4);">희망 직업·학과를 입력하면 AI가 밀접도 순으로 학과 8개를 추천해줘요</div>
+        </div>
+
         <!-- AI 전공 로드맵 -->
-        <div id="neptune-card-game">
+        <div id="neptune-card-game" style="display:none;">
 
           <!-- STEP 1: AI 추천 학과 탐색 (8개, 2개 선택) -->
-          <div class="nep-section-title">🎓 AI 추천 학과 탐색</div>
-          <div class="nep-section-desc" style="text-align:center;margin-bottom:20px;">희망 직업 &amp; 학과를 분석해 나에게 딱 맞는 학과 8개를 추천해드려요<br><strong style="color:#a5b4fc;">가장 끌리는 학과 2개를 골라보세요 ✦</strong></div>
+          <div class="nep-section-title">🎓 AI 밀접도 분석 — 추천 학과</div>
+          <div class="nep-section-desc" style="text-align:center;margin-bottom:20px;">희망 직업·학과와의 <strong style="color:#fbbf24;">밀접도 순</strong>으로 학과 8개를 추천해드려요<br><strong style="color:#a5b4fc;">가장 끌리는 학과 2개를 골라보세요 ✦</strong></div>
 
           <!-- 로딩 -->
           <div id="nep-select-loading" style="text-align:center;padding:40px 0;">
-            <div style="font-size:2.5rem;display:inline-block;animation:floatY 1.2s ease-in-out infinite;">🔭</div>
-            <div style="margin-top:14px;font-size:15px;color:rgba(240,244,255,.6);">AI가 희망 직업·학과를 분석하고 있어요...</div>
-            <div style="margin-top:6px;font-size:12px;color:rgba(240,244,255,.35);">잠시만 기다려주세요</div>
+            <div style="font-size:2.5rem;display:inline-block;animation:floatY 1.2s ease-in-out infinite;">🤖</div>
+            <div style="margin-top:14px;font-size:15px;color:rgba(240,244,255,.6);">AI가 밀접도를 분석하고 있어요...</div>
+            <div style="margin-top:6px;font-size:12px;color:rgba(240,244,255,.35);">직업·학과 연관성, 취업률, 교과목 유사도 분석 중</div>
           </div>
 
           <!-- 8개 그리드 -->
@@ -4244,9 +4266,7 @@ window.toggleStage = function toggleStage(n){
     if(n===1) setTimeout(()=>{ if(typeof initQuiz==="function") initQuiz(); }, 50);
     if(n===3) setTimeout(()=>{ if(typeof initSgGrid==="function") initSgGrid(); }, 50);
     if(n===4) setTimeout(()=>{
-      if(typeof initNepMajorCards==="function") initNepMajorCards();
-      const body4 = document.getElementById('stage-body-4');
-      if(body4){ const d = body4.querySelector('.nep-section-desc'); if(d) d.innerHTML=''; }
+      // 학과 추천은 버튼 클릭 시 실행
     }, 60);
   }
 }
@@ -5347,6 +5367,8 @@ function refreshNepCardsFromDna(majorNames){
   // ── 3. stage4가 열려 있으면 즉시 카드 갱신 ──
   const body = document.getElementById('stage-body-4');
   if(body && body.classList.contains('open')){
+    var game = document.getElementById('neptune-card-game');
+    if(game){ game.style.display='block'; }
     initNepMajorCards();
   }
 }
@@ -5419,15 +5441,34 @@ function renderNep8Grid(majors){
   if(!sectionEl || !grid8) return;
 
   window._nepSelected = [];
+  // 전체 item 저장 (tags, desc 포함)
+  window._nep8MajorItems = majors;
+
+  const rankLabels = ['🥇','🥈','🥉','4위','5위','6위','7위','8위'];
+  const rankColors = [
+    'rgba(251,191,36,.9)', 'rgba(156,163,175,.9)', 'rgba(180,120,60,.9)',
+    'rgba(148,163,184,.7)','rgba(148,163,184,.7)','rgba(148,163,184,.7)',
+    'rgba(148,163,184,.7)','rgba(148,163,184,.7)'
+  ];
 
   grid8.innerHTML = majors.map((item, i) => {
     const name = typeof item === 'string' ? item : item.name;
+    const desc = (typeof item === 'object' && item.desc) ? item.desc : '';
+    const tags = (typeof item === 'object' && Array.isArray(item.tags)) ? item.tags : [];
+    const rank = (typeof item === 'object' && item.rank) ? item.rank : (i + 1);
     const th   = NEP_STAR_THEMES[i % NEP_STAR_THEMES.length];
+    const rankLabel = rankLabels[i] || `${rank}위`;
+    const rankColor = rankColors[i] || rankColors[3];
+    const tagsHtml = tags.length ? `<div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:6px;">${tags.map(t=>`<span style="font-size:10px;padding:2px 7px;border-radius:999px;background:rgba(255,255,255,.08);color:rgba(240,244,255,.65);border:1px solid rgba(255,255,255,.1);">${t}</span>`).join('')}</div>` : '';
+    const descHtml = desc ? `<div style="font-size:11px;color:rgba(240,244,255,.55);margin-top:5px;line-height:1.5;text-align:left;">${desc}</div>` : '';
     return `<button class="nep-name-btn" id="nep-scard-${i}"
-        onclick="toggleNep8Pick(${i},'${name.replace(/'/g,"\'")}',this)"
-        style="--nbColor:${th.color};--nbBorder:${th.border};">
-      <span class="nep-name-btn-check" id="nep-scard-check-${i}">✦</span>
-      <span class="nep-name-btn-text">${name}</span>
+        onclick="toggleNep8Pick(${i},'${name.replace(/'/g,"\\'").replace(/"/g,'&quot;')}',this)"
+        style="--nbColor:${th.color};--nbBorder:${th.border};position:relative;padding-top:28px;text-align:left;height:auto;">
+      <span style="position:absolute;top:7px;right:9px;font-size:11px;font-weight:800;color:${rankColor};background:rgba(0,0,0,.25);padding:2px 8px;border-radius:999px;border:1px solid ${rankColor};">${rankLabel} 밀접</span>
+      <span class="nep-name-btn-check" id="nep-scard-check-${i}" style="position:absolute;top:9px;left:10px;">✦</span>
+      <span class="nep-name-btn-text" style="display:block;font-size:14px;font-weight:800;">${name}</span>
+      ${tagsHtml}
+      ${descHtml}
     </button>`;
   }).join('');
 
@@ -5631,6 +5672,23 @@ window.retryNepCard = function(name, i){
 };
 
 
+function startNepRecommend(){
+  var job1 = (document.getElementById('job-wish-1')||{}).value||'';
+  var major1 = (document.getElementById('major-wish-1')||{}).value||'';
+  if(!job1.trim() && !major1.trim()){
+    alert('희망 직업 또는 희망 학과를 1개 이상 입력해주세요!');
+    return;
+  }
+  // 버튼 비활성화
+  var btn = document.getElementById('nep-recommend-btn');
+  if(btn){ btn.disabled=true; btn.innerHTML='⏳ AI 분석 중...'; btn.style.opacity='0.6'; btn.style.cursor='not-allowed'; }
+  // neptune-card-game 보이기
+  var game = document.getElementById('neptune-card-game');
+  if(game){ game.style.display='block'; game.scrollIntoView({behavior:'smooth',block:'start'}); }
+  // AI 추천 실행
+  initNepMajorCards();
+}
+
 function initNepMajorCards(){
   // 로딩 표시
   const loadingEl = document.getElementById('nep-select-loading');
@@ -5655,37 +5713,59 @@ function initNepMajorCards(){
         headers: {'Content-Type':'application/json'},
         body: JSON.stringify({
           model: 'claude-sonnet-4-20250514',
-          max_tokens: 900,
+          max_tokens: 1200,
           messages: [{
             role: 'user',
-            content: `학생의 희망 직업과 희망 학과를 분석해 대한민국 대학에 실제로 개설된 관련 학과 8개를 추천하고, 각 학과마다 태그 3개와 한 줄 소개를 JSON으로만 출력하세요. 다른 텍스트 없이 순수 JSON 배열만.
+            content: `너는 대한민국 대학 입시 전문가야. 학생의 희망 직업과 희망 학과를 분석해서, 해당 직업을 갖기 위해 가장 밀접도가 높은 학과 8개를 밀접도 순으로 추천해줘.
 
 희망 직업: ${jobStr}
 희망 학과: ${majorStr}
 
-조건: 희망 직업·학과와 직접 연관된 학과 위주, 다양한 계열 포함, 학과명은 간결하게.
+분석 기준:
+1. 희망 직업으로 이어지는 직접적인 전공 연관성 (가장 중요)
+2. 희망 학과와의 교과목 유사도
+3. 해당 직업 종사자들의 실제 출신 학과 빈도
+4. 취업 연계성과 자격증 취득 용이성
 
-출력 형식 (순수 JSON 배열, 8개):
+조건:
+- 대한민국 대학에 실제로 개설된 학과명만 사용
+- 밀접도가 가장 높은 것부터 1번으로 정렬 (8번이 가장 낮음)
+- 학과명은 간결하게 (예: 컴퓨터공학과, 소프트웨어학과)
+- 각 학과마다 직업과의 연관 이유를 담은 태그 3개와 한 줄 소개 작성
+- 다른 텍스트 없이 순수 JSON 배열만 출력
+
+출력 형식 (순수 JSON 배열, 반드시 8개):
 [
-  {"name":"학과명","tags":["태그1","태그2","태그3"],"desc":"한 줄 소개"},
+  {"name":"학과명","tags":["태그1","태그2","태그3"],"desc":"이 직업과 연관된 한 줄 소개","rank":1},
+  {"name":"학과명","tags":["태그1","태그2","태그3"],"desc":"이 직업과 연관된 한 줄 소개","rank":2},
   ...
+  {"name":"학과명","tags":["태그1","태그2","태그3"],"desc":"이 직업과 연관된 한 줄 소개","rank":8}
 ]`
           }]
         })
       });
       const data = await resp.json();
-      const raw  = (data.content?.[0]?.text||'').replace(/\`\`\`json[\s\S]*?\`\`\`|\`\`\`/g,'').trim();
+      const raw  = (data.content?.[0]?.text||'').replace(/```json[\s\S]*?```|```/g,'').trim();
       const match = raw.match(/\[[\s\S]*\]/);
       let majors = JSON.parse(match ? match[0] : raw);
       if(!Array.isArray(majors)) throw new Error('not array');
+      // rank 기준 정렬 (있는 경우), 없으면 그대로
+      majors.sort((a,b) => (a.rank||99) - (b.rank||99));
       majors = majors.slice(0,8);
       renderNep8Grid(majors);
+      _resetNepBtn();
     } catch(e) {
       // 폴백: 직업/학과 키워드 기반 정적 추천
       const fallback = buildFallbackMajors(jobStr, majorStr);
       renderNep8Grid(fallback);
+      _resetNepBtn();
     }
   })();
+}
+
+function _resetNepBtn(){
+  var btn = document.getElementById('nep-recommend-btn');
+  if(btn){ btn.disabled=false; btn.innerHTML='🔄 다시 AI 추천받기'; btn.style.opacity='1'; btn.style.cursor='pointer'; }
 }
 
 function buildFallbackMajors(jobStr, majorStr){
@@ -6328,26 +6408,53 @@ var qlGeneratedQuestions = {};
 
 // ─ 카드 클릭 → STEP 2 활성화 ─
 document.querySelectorAll('.ql-card').forEach(function(card){
-  card.addEventListener('click', function(){
+  card.addEventListener('click', function(e){
+    var targetCard = e.currentTarget;
     document.querySelectorAll('.ql-card').forEach(function(c){ c.classList.remove('ql-selected'); });
-    card.classList.add('ql-selected');
-    qlSelectedType = card.dataset.type;
+    targetCard.classList.add('ql-selected');
+    qlSelectedType = targetCard.dataset.type;
     var q = qlGeneratedQuestions[qlSelectedType];
 
     if(q){
-      // STEP 2 활성화 + 탐구 설계하기 모달 열기
       qlActivateStep2(q);
-      openIqbotModal();
-      setTimeout(function(){
-        var iqInput = document.getElementById('iqbotQuestion');
-        if (iqInput) { iqInput.value = q; iqInput.focus(); }
-      }, 200);
-      document.getElementById('ql-bottom-msg').textContent = '✅ "' + q.substring(0,40) + (q.length>40?'...':'') + '" — 탐구 설계 모달에서 계획을 완성하세요!';
+      // 팝업 열기 - 직접 DOM 조작으로 확실하게
+      _openIqbot(q);
     } else {
-      document.getElementById('ql-bottom-msg').textContent = '질문 생성 버튼을 눌러 질문을 먼저 만들어보세요.';
+      var msgEl = document.getElementById('ql-bottom-msg');
+      if (msgEl) msgEl.textContent = '질문 생성 버튼을 눌러 질문을 먼저 만들어보세요.';
     }
   });
 });
+
+// 팝업 열기 핵심 함수 - 어디서든 안전하게 호출 가능
+function _openIqbot(question) {
+  var overlay = document.getElementById('iqbotOverlay');
+  if (!overlay) { console.error('iqbotOverlay 없음'); return; }
+
+  // 결과 초기화
+  var resultEl = document.getElementById('iqbotResult');
+  if (resultEl) resultEl.classList.remove('show');
+  var errEl = document.getElementById('iqbotErr');
+  if (errEl) errEl.style.display = 'none';
+  var btn = document.getElementById('iqbotGenBtn');
+  if (btn) { btn.disabled = false; btn.textContent = '✨ AI로 탐구 계획 설계하기'; }
+
+  // 질문 자동 입력
+  if (question) {
+    var iqInput = document.getElementById('iqbotQuestion');
+    if (iqInput) iqInput.value = question;
+  }
+
+  // 팝업 표시
+  overlay.style.display = 'flex';
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+
+  setTimeout(function(){
+    var iq = document.getElementById('iqbotQuestion');
+    if (iq) iq.focus();
+  }, 150);
+}
 
 function qlActivateStep2(question){
   var block2 = document.getElementById('rq-block-2');
@@ -6561,10 +6668,8 @@ function selectQSuggestCard(cardEl, cardId, label) {
   document.querySelectorAll('.ql-card').forEach(function(c){ c.classList.remove('ql-selected'); });
   var card = cardEl.closest ? cardEl.closest('.ql-card') : null;
   if (card) card.classList.add('ql-selected');
-  openIqbotModal();
+  _openIqbot(qText);
   setTimeout(function() {
-    var iqInput = document.getElementById('iqbotQuestion');
-    if (iqInput) { iqInput.value=qText; iqInput.focus(); }
     var rqTopic = document.getElementById('rq-topic');
     if (rqTopic) rqTopic.value = qText;
     var badge = document.getElementById('rq-selected-q-badge');
@@ -10384,9 +10489,11 @@ var introSlide = 0;
 <!-- ── IQ-BOT 탐구 설계 모달 ── -->
 <style>
   .iqbot-overlay {
-    display:none; position:fixed; inset:0; z-index:2000;
+    position:fixed; inset:0; z-index:200000;
     background:rgba(5,5,20,.82); backdrop-filter:blur(12px);
     align-items:center; justify-content:center; padding:24px;
+    overflow-y:auto;
+    display:none;
   }
   .iqbot-overlay.open { display:flex; }
   .iqbot-box {
@@ -10394,6 +10501,7 @@ var introSlide = 0;
     border-radius:28px; max-width:520px; width:100%;
     position:relative; box-shadow:0 32px 80px rgba(0,0,0,.5);
     animation:modalIn .25s ease; overflow:hidden;
+    max-height:90vh; overflow-y:auto;
   }
   @keyframes modalIn { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:none} }
   .iqbot-head {
@@ -10441,7 +10549,7 @@ var introSlide = 0;
   .iqbot-err { display:none; margin-top:14px; padding:12px 16px; background:rgba(239,68,68,.1); border:1.5px solid rgba(239,68,68,.3); border-radius:12px; font-size:14px; font-weight:700; color:#f87171; font-family:'Pretendard','Noto Sans KR',sans-serif; }
 </style>
 
-<div class="iqbot-overlay" id="iqbotOverlay" onclick="if(event.target===this)closeIqbotModal()">
+<div class="iqbot-overlay" id="iqbotOverlay" onclick="if(event.target===this)closeIqbotModal()" style="display:none;">
   <div class="iqbot-box">
     <div class="iqbot-head">
       <h2>🔭 탐구 설계하기</h2>
@@ -10509,23 +10617,32 @@ var introSlide = 0;
 
 <script>
 function openIqbotModal() {
-  document.getElementById('iqbotResult').classList.remove('show');
-  document.getElementById('iqbotErr').style.display = 'none';
+  var overlay = document.getElementById('iqbotOverlay');
+  if (!overlay) return;
+  var resultEl = document.getElementById('iqbotResult');
+  if (resultEl) resultEl.classList.remove('show');
+  var errEl = document.getElementById('iqbotErr');
+  if (errEl) errEl.style.display = 'none';
   var btn = document.getElementById('iqbotGenBtn');
-  btn.disabled = false;
-  btn.textContent = '✨ AI로 탐구 계획 설계하기';
-  // rq-topic 값 자동 복사
+  if (btn) { btn.disabled = false; btn.textContent = '✨ AI로 탐구 계획 설계하기'; }
   var rqTopic = document.getElementById('rq-topic');
   var iqInput = document.getElementById('iqbotQuestion');
-  if (rqTopic && rqTopic.value.trim() && iqInput && !iqInput.value.trim()) {
+  if (rqTopic && rqTopic.value && rqTopic.value.trim() && iqInput && !iqInput.value.trim()) {
     iqInput.value = rqTopic.value.trim();
   }
-  document.getElementById('iqbotOverlay').classList.add('open');
+  overlay.style.display = 'flex';
+  overlay.classList.add('open');
   document.body.style.overflow = 'hidden';
-  setTimeout(function(){ document.getElementById('iqbotQuestion').focus(); }, 150);
+  setTimeout(function(){
+    var q = document.getElementById('iqbotQuestion');
+    if (q) q.focus();
+  }, 150);
 }
 function closeIqbotModal() {
-  document.getElementById('iqbotOverlay').classList.remove('open');
+  var overlay = document.getElementById('iqbotOverlay');
+  if (!overlay) return;
+  overlay.classList.remove('open');
+  overlay.style.display = 'none';
   document.body.style.overflow = '';
 }
 function iqbotLevelChange() {
@@ -10551,34 +10668,49 @@ async function generateIqbot() {
   var box    = document.getElementById('iqbotContent');
   var err    = document.getElementById('iqbotErr');
 
-  btn.disabled = true;
-  btn.textContent = '⏳ AI 설계 중...';
-  result.classList.remove('show');
-  err.style.display = 'none';
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ AI 설계 중...'; }
+  if (result) result.classList.remove('show');
+  if (err) err.style.display = 'none';
 
   var prompt = isHigh
-    ? levelLabel + ' 탐구 계획서를 작성해주세요.\n'
-      + '탐구 질문: "' + q + '" / 탐구 방법: ' + typeText + ' / 기간: ' + period + '\n\n'
-      + '고등학생 수준에 맞게 학생부 세특 연계를 고려해 구체적이고 심화된 내용으로 작성하세요.\n'
-      + '각 항목을 아래 형식으로 3~4줄씩 작성하세요.\n\n'
-      + '📌 탐구 주제\n'
-      + '🎯 탐구 목표 및 가설\n'
-      + '🔬 탐구 방법 및 절차 (4단계)\n'
-      + '📅 탐구 일정 (주차별)\n'
-      + '🧰 필요한 자료 및 도구\n'
-      + '💡 예상 결과 및 가설 검증 방법\n'
-      + '📝 세특 연계 및 결과 정리 방법'
-    : levelLabel + ' 탐구 계획서를 쉽고 친근하게 작성해주세요.\n'
-      + '탐구 질문: "' + q + '" / 탐구 방법: ' + typeText + ' / 기간: ' + period + '\n\n'
-      + '중학생이 혼자 실천할 수 있는 수준으로 쉽게 작성하세요.\n'
-      + '각 항목을 아래 형식으로 2~3줄씩 짧게 작성하세요.\n\n'
-      + '📌 탐구 주제\n'
-      + '🎯 탐구 목표\n'
-      + '🔬 탐구 방법 (3단계)\n'
-      + '📅 탐구 일정\n'
-      + '🧰 필요한 재료\n'
-      + '💡 예상 결과\n'
-      + '📝 결과 정리 방법';
+    ? '당신은 고등학생 학생부 세특 탐구 계획 전문가입니다.\n'
+      + '다음 탐구 질문에 대해 구체적이고 실현 가능한 탐구 계획서를 작성해주세요.\n\n'
+      + '탐구 질문: "' + q + '"\n'
+      + '탐구 방법: ' + typeText + '\n'
+      + '탐구 기간: ' + period + '\n'
+      + '대상: ' + levelLabel + '\n\n'
+      + '【반드시 지켜야 할 조건】\n'
+      + '- 탐구 질문의 핵심 주제를 모든 항목에서 직접 연결하세요\n'
+      + '- 세특(학생부 세부능력 특기사항) 기재에 실제로 활용 가능한 수준으로 작성\n'
+      + '- ' + typeText + ' 방법에 맞는 구체적인 실행 절차 제시\n'
+      + '- ' + period + ' 기간에 맞는 현실적인 일정 설계\n\n'
+      + '아래 형식으로 각 항목을 3~5줄씩 상세하게 작성하세요:\n\n'
+      + '📌 탐구 주제\n(이 탐구의 핵심 주제와 탐구 배경, 왜 이 질문이 중요한지 서술)\n\n'
+      + '🎯 탐구 목표 및 가설\n(구체적인 탐구 목표 2~3가지, 검증 가능한 가설 제시)\n\n'
+      + '🔬 탐구 방법 및 절차\n(' + typeText + ' 방식으로 4단계 절차를 구체적으로 서술)\n\n'
+      + '📅 탐구 일정\n(' + period + ' 기간을 주차별로 나눠 각 단계 일정 제시)\n\n'
+      + '🧰 필요한 자료 및 도구\n(탐구에 필요한 문헌, 도구, 참고자료 목록)\n\n'
+      + '💡 예상 결과 및 가설 검증\n(기대되는 결과, 데이터 분석 방법, 반증 가능성)\n\n'
+      + '📝 세특 연계 및 결과 정리\n(교과 연계 포인트, 보고서 작성 방향, 후속 탐구 아이디어)'
+    : '당신은 중학생 탐구 활동 전문 코치입니다.\n'
+      + '다음 탐구 질문에 대해 중학생이 혼자서도 할 수 있는 쉽고 재미있는 탐구 계획서를 작성해주세요.\n\n'
+      + '탐구 질문: "' + q + '"\n'
+      + '탐구 방법: ' + typeText + '\n'
+      + '탐구 기간: ' + period + '\n'
+      + '대상: ' + levelLabel + '\n\n'
+      + '【반드시 지켜야 할 조건】\n'
+      + '- 탐구 질문의 핵심 주제를 모든 항목에서 직접 연결하세요\n'
+      + '- 중학생이 혼자서 실천할 수 있는 현실적인 내용으로 작성\n'
+      + '- ' + typeText + ' 방법에 맞는 쉬운 실행 방법 제시\n'
+      + '- 친근하고 쉬운 말투로 작성 (어려운 용어 최소화)\n\n'
+      + '아래 형식으로 각 항목을 2~3줄씩 쉽게 작성하세요:\n\n'
+      + '📌 탐구 주제\n(이 탐구가 무엇을 알아보려는 것인지, 왜 궁금한지 쉽게 서술)\n\n'
+      + '🎯 탐구 목표\n(이 탐구로 알고 싶은 것 2가지를 쉽게 서술)\n\n'
+      + '🔬 탐구 방법\n(' + typeText + ' 방식으로 3단계를 쉽고 구체적으로 서술)\n\n'
+      + '📅 탐구 일정\n(' + period + ' 기간 동안 언제 무엇을 할지 알기 쉽게 서술)\n\n'
+      + '🧰 필요한 재료\n(탐구에 필요한 것들을 쉽게 구할 수 있는 것 위주로 나열)\n\n'
+      + '💡 예상 결과\n(어떤 결과가 나올 것 같은지, 결과를 어떻게 확인할지 서술)\n\n'
+      + '📝 결과 정리 방법\n(탐구 결과를 어떻게 기록하고 발표할지 쉽게 서술)';
 
   try {
     var res = await fetch('https://api.anthropic.com/v1/messages', {
@@ -10586,7 +10718,7 @@ async function generateIqbot() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
-        max_tokens: isHigh ? 1800 : 1200,
+        max_tokens: isHigh ? 2000 : 1500,
         messages: [{ role: 'user', content: prompt }]
       })
     });
