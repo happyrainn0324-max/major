@@ -5548,7 +5548,7 @@ function loadNepCardInfo(name, i){
 
   (async () => {
     try {
-      const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      const resp = await fetch('/.netlify/functions/claude', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -5589,7 +5589,7 @@ ${dnaInfo ? '학생 DNA 점수: '+dnaInfo : ''}
       // 탐구 주제만 별도로 가져오기
       (async () => {
         try {
-          const rtResp = await fetch('https://api.anthropic.com/v1/messages', {
+          const rtResp = await fetch('/.netlify/functions/claude', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -5700,7 +5700,7 @@ function initNepMajorCards(){
 
   (async () => {
     try {
-      const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      const resp = await fetch('/.netlify/functions/claude', {
         method: 'POST',
         headers: {'Content-Type':'application/json'},
         body: JSON.stringify({
@@ -5813,7 +5813,7 @@ function submitNepRoadmap(){
     const roadmapText = tls.map((t,i) => t ? `${stages[i]}: ${t}` : '').filter(Boolean).join('\n');
     if(!roadmapText && !major) return;
     try {
-      const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      const resp = await fetch('/.netlify/functions/claude', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -5880,7 +5880,7 @@ async function generateResearchPlan(){
   const topicLine = topic ? '탐구 주제 키워드: '+topic : '(학과 특성에 맞는 흥미로운 탐구 주제를 직접 정해주세요)';
   const prompt = '대한민국 '+levelLabel+' 학생을 위한 탐구 계획서를 작성해주세요.\n\n관련 학과: '+major+'\n'+topicLine+'\n\n'+levelGuide+'\n\n아래 형식으로 충실하게 작성해주세요:\n\n**🔍 탐구 주제**\n(주제 1문장)\n\n**📌 탐구 동기 및 목적**\n(2~3문장)\n\n**❓ 탐구 가설 (또는 탐구 질문)**\n('+(isHigh?'가설 형식으로':'궁금한 점을')+' 작성)\n\n**🛠️ 탐구 방법 및 절차**\n(단계별 번호로)\n\n**📊 예상 결과**\n(2~3문장)\n\n**📚 참고 자료 및 추가 탐구 방향**\n(1~2가지)';
   try {
-    const resp = await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1500,messages:[{role:'user',content:prompt}]})});
+    const resp = await fetch('/.netlify/functions/claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1500,messages:[{role:'user',content:prompt}]})});
     const data = await resp.json();
     const text = data.content?.[0]?.text||'';
     window._lastResearchPlanText = text;
@@ -6643,7 +6643,7 @@ async function generateQSuggestions(params) {
 
   var generated = null;
   try {
-    var res = await fetch('https://api.anthropic.com/v1/messages', {
+    var res = await fetch('/.netlify/functions/claude', {
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body: JSON.stringify({
@@ -7435,7 +7435,7 @@ function startResearch(){
     var level = window._rqLevel || 'middle';
     try {
       var _prompt = buildResearchPrompt(major, topic, periodStr, typeStr, level);
-      var resp = await fetch('https://api.anthropic.com/v1/messages', {
+      var resp = await fetch('/.netlify/functions/claude', {
         method:'POST',
         headers:{'Content-Type':'application/json'},
         body: JSON.stringify({
@@ -10752,7 +10752,7 @@ async function generateIqbot() {
   }
 
   try {
-    var res = await fetch('https://api.anthropic.com/v1/messages', {
+    var res = await fetch('/.netlify/functions/claude', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
