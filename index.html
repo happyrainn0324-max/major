@@ -1580,9 +1580,9 @@ footer::before{
   .hero-ring-1{width:360px;height:360px;}
   .hero-ring-2{width:260px;height:260px;}
   .hero-orb{display:none;}
-  header h1{font-size:clamp(4.4rem,14vw,6.5rem);letter-spacing:-2px;}
+  header h1{font-size:clamp(5.2rem,16vw,7.5rem);letter-spacing:-2px;}
   .tag-pill{font-size:12px;letter-spacing:2px;padding:9px 20px;margin-bottom:32px;}
-  .hero-sub .sub-line1,.hero-sub .sub-line2{font-size:clamp(2.1rem,7.5vw,3.2rem);letter-spacing:2px;}
+  .hero-sub .sub-line1,.hero-sub .sub-line2{font-size:clamp(1.5rem,5.5vw,2.2rem);letter-spacing:2px;}
   .hero-cta{font-size:16px;padding:16px 36px;width:100%;justify-content:center;}
   .hero-cta-ghost{display:none;}
   .hero-stats{flex-direction:column;width:100%;}
@@ -1593,8 +1593,8 @@ footer::before{
 }
 @media(max-width:480px){
   .star-badge{display:block !important;}
-  header h1{font-size:clamp(2.8rem,11vw,4rem);}
-  .hero-sub .sub-line1,.hero-sub .sub-line2{font-size:clamp(2.3rem,8.5vw,3rem);letter-spacing:2px;}
+  header h1{font-size:clamp(3.8rem,13vw,5rem);}
+  .hero-sub .sub-line1,.hero-sub .sub-line2{font-size:clamp(1.3rem,5vw,1.8rem);letter-spacing:1px;}
 }
 
 /* 2. 포스터 섹션 */
@@ -1616,6 +1616,8 @@ footer::before{
   .stage-info{flex:1;min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:3px;}
   .stage-num{font-size:10px;letter-spacing:1px;margin-bottom:0;white-space:nowrap;color:#87ceeb;font-weight:700;flex-shrink:0;}
   .stage-name{font-size:0.92rem;font-weight:700;white-space:normal;overflow:visible;text-overflow:unset;line-height:1.35;color:#f0f4ff;margin:0;word-break:keep-all;}
+  .stage-name-short{display:inline;}
+  .stage-name-full{display:none;}
   .stage-subtitle{display:none;}
   .stage-stars-badge{display:none!important;}
   .stage-toggle-btn{width:28px;height:28px;font-size:13px;flex-shrink:0;margin-left:auto;}
@@ -1729,7 +1731,7 @@ footer::before{
 /* 11. 푸터 */
 @media(max-width:600px){
   footer{padding:56px 20px 50px;}
-  .footer-q{font-size:clamp(1rem,4vw,1.4rem);line-height:1.6;}
+  .footer-q{font-size:clamp(1.4rem,5.5vw,2rem);line-height:1.5;}
   .footer-btn{width:90%;text-align:center;justify-content:center;margin:0 auto;}
   .footer-row-btns{gap:8px!important;}
   .footer-row-btns button{flex:1;justify-content:center;}
@@ -1976,6 +1978,8 @@ window.toggleStage = function(n){
 .stage-info{flex:1;}
 .stage-num{font-size:14px;letter-spacing:3px;color:#87ceeb;font-weight:600;margin-bottom:4px;}
 .stage-name{font-size:1.2rem;font-weight:700;color:#f0f4ff;letter-spacing:-0.3px;}
+.stage-name-short{display:none;}
+.stage-name-full{display:inline;}
 .stage-subtitle{font-size:14px;color:rgba(240,244,255,.62);margin-top:3px;}
 .stage-stars-badge{
   display:flex;align-items:center;gap:6px;
@@ -2654,6 +2658,13 @@ window.toggleStage = function(n){
 .nep-major-cards{display:flex;flex-direction:column;gap:14px;margin-bottom:8px;}
 /* ── 학과 이름 선택 버튼 (별자리 없음) ── */
 .nep-star-cards-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:20px 0;}
+@media(max-width:600px){
+  .nep-star-cards-row{grid-template-columns:1fr !important;}
+}
+.dna-major-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+@media(max-width:600px){
+  .dna-major-grid{grid-template-columns:1fr !important;}
+}
 .nep-name-btn{
   position:relative;
   display:block;
@@ -2691,7 +2702,7 @@ window.toggleStage = function(n){
   color:var(--nbColor, #a855f7);
 }
 .nep-name-btn-text{}
-@media(max-width:480px){
+@media(max-width:600px){
   .nep-star-cards-row{grid-template-columns:1fr;}
   .nep-result-cards-row{grid-template-columns:1fr !important;}
   .wish-input-grid{grid-template-columns:1fr !important;}
@@ -2713,7 +2724,7 @@ window.toggleStage = function(n){
 .nep-confirm-2-btn{display:block;width:100%;margin:8px 0 0;padding:16px;border-radius:16px;background:linear-gradient(135deg,#6366f1,#a855f7);color:#fff;font-size:15px;font-weight:800;border:none;cursor:not-allowed;opacity:.4;transition:.3s;font-family:'Pretendard','Noto Sans KR',sans-serif;letter-spacing:.3px;}
 .nep-confirm-2-btn.ready{opacity:1;cursor:pointer;box-shadow:0 8px 28px rgba(99,102,241,.4);}
 /* 선택된 학과 결과 카드 2열 */
-.nep-result-cards-row{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:8px 0 28px;}
+.nep-result-cards-row{display:grid;grid-template-columns:1fr;gap:18px;margin:8px 0 28px;}
 .nep-result-card{border-radius:20px;padding:22px 18px;border:1.5px solid;position:relative;overflow:hidden;}
 .nep-result-card::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 20% 10%,var(--rc) 0%,transparent 60%);pointer-events:none;opacity:.18;}
 .nrc-header{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
@@ -3037,7 +3048,7 @@ window.toggleStage = function(n){
         <div class="stage-planet-emoji"><img src="data:image/webp;base64,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" alt="토성" /></div>
         <div class="stage-info">
           <div class="stage-num">STAGE 3 · SATURN</div>
-          <div class="stage-name">고교학점제 선택과목 탐험</div>
+          <div class="stage-name"><span class="stage-name-full">고교학점제 선택과목 탐험</span><span class="stage-name-short">고교 선택과목 탐험</span></div>
           <div class="stage-subtitle">2022 개정교육과정 선택과목을 학과별로 탐험해요</div>
         </div>
         <div class="stage-stars-badge" id="stage3-badge">⭐ 0 / 10</div>
@@ -3177,9 +3188,9 @@ window.toggleStage = function(n){
         <!-- AI 전공 로드맵 -->
         <div id="neptune-card-game" style="display:none;">
 
-          <!-- STEP 1: AI 추천 학과 탐색 (8개, 2개 선택) -->
+          <!-- STEP 1: AI 추천 학과 탐색 (8개, 3개 선택) -->
           <div class="nep-section-title">🎓 AI 밀접도 분석 — 추천 학과</div>
-          <div class="nep-section-desc" style="text-align:center;margin-bottom:20px;">희망 직업·학과와의 <strong style="color:#fbbf24;">밀접도 순</strong>으로 학과 8개를 추천해드려요<br><strong style="color:#a5b4fc;">가장 끌리는 학과 2개를 골라보세요 ✦</strong></div>
+          <div class="nep-section-desc" style="text-align:center;margin-bottom:20px;">희망 직업·학과와의 <strong style="color:#fbbf24;">밀접도 순</strong>으로 학과 8개를 추천해드려요<br><strong style="color:#a5b4fc;">가장 끌리는 학과 3개를 골라보세요 ✦</strong></div>
 
           <!-- 로딩 -->
           <div id="nep-select-loading" style="text-align:center;padding:40px 0;">
@@ -3192,14 +3203,14 @@ window.toggleStage = function(n){
           <div id="nep-select-section" style="display:none;">
             <div class="nep-star-cards-row" id="nep-8-grid"></div>
             <div style="margin-top:4px;text-align:center;">
-              <div id="nep-select-counter" style="font-size:13px;color:rgba(240,244,255,.4);margin-bottom:12px;">0 / 2 선택됨</div>
+              <div id="nep-select-counter" style="font-size:13px;color:rgba(240,244,255,.4);margin-bottom:12px;">0 / 3 선택됨</div>
               <button id="nep-confirm-btn" class="nep-confirm-2-btn" onclick="confirmNepSelection()" disabled>
                 ✦ 선택 완료 — 학과 카드 보기
               </button>
             </div>
           </div>
 
-          <!-- 선택된 2개 결과 카드 -->
+          <!-- 선택된 3개 결과 카드 -->
           <div id="nep-major-cards" style="display:none;margin-top:8px;">
             <div class="nep-result-cards-row" id="nep-result-row"></div>
           </div>
@@ -4649,8 +4660,9 @@ function sgNext(){
     document.getElementById('sg-next-btn').style.display='none';
     document.getElementById('sgscore-'+sgCurrentMajorIdx).textContent = '⭐'.repeat(sgScore)+'☆'.repeat(tot-sgScore);
     document.getElementById('sgcard-'+sgCurrentMajorIdx)?.classList.add('done');
-    // 별 합산
-    sgTotalStars = Object.values(sgMajorDone).reduce((a,b)=>a+b,0);
+    // 별 합산: 학과 1개 참여당 별 2개
+    const doneMajorCount = Object.keys(sgMajorDone).length;
+    sgTotalStars = doneMajorCount * 2;
     gzStars.s3 = Math.min(10, sgTotalStars);
     document.getElementById('stage3-badge').textContent = `⭐ ${gzStars.s3} / 10`;
     updateStarBar();
@@ -4660,12 +4672,13 @@ function sgNext(){
 
 function updateSgBoard(){
   initSgGrid();
-  const tot = sgTotalStars;
   const done = Object.keys(sgMajorDone).length;
+  const tot = done * 2;
+  sgTotalStars = tot;
   document.getElementById('sg-star-display').textContent = '⭐'.repeat(Math.min(10,tot))+'☆'.repeat(Math.max(0,10-tot));
   document.getElementById('sg-star-msg').textContent = done===0
     ? '학과를 클릭해서 선택과목 퀴즈에 도전해요!'
-    : `${done}개 학과 완료 · 누적 ${tot}⭐ 획득!`;
+    : `${done}개 학과 완료 · ${tot}⭐ 획득! (학과 1개 = ⭐2개)`;
 }
 
 
@@ -5073,10 +5086,10 @@ function showDnaMajorTags({topDna, selectedFields, major1, scoreEntries}){
       <span style="font-size:12px;font-weight:800;color:${c};letter-spacing:.5px;">${lb} 에너지 추천 학과</span>
       <div style="flex:1;height:1px;background:${c}33;margin-left:4px;"></div>
     </div>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;">
+    <div class="dna-major-grid">
       ${list.map(m => `
         <div style="
-          padding:12px 10px;border-radius:14px;text-align:center;
+          padding:12px 14px;border-radius:14px;text-align:center;
           background:${c}0e;border:1.5px solid ${c}40;
           transition:.2s;cursor:default;box-sizing:border-box;"
           onmouseover="this.style.background='${c}20';this.style.borderColor='${c}90';this.style.transform='translateY(-2px)'"
@@ -5088,10 +5101,9 @@ function showDnaMajorTags({topDna, selectedFields, major1, scoreEntries}){
   </div>`;
 
   matchBox.innerHTML = html;
+  // 포트폴리오용 DNA 추천 학과 저장
+  window._dnaRecommendedMajors = list.map(function(m){ return m.name; });
 }
-
-// 관심분야 DNA 기반 학과 추천 (AI 없이)
-// 관심분야 DNA 기반 학과 추천 (AI 없이)
 function buildMajorRecommendations(topDna, selectedFields, wishMajor){
   // DNA 유형별 기본 추천 학과 풀
   const dnaToMajors = {
@@ -5451,14 +5463,13 @@ function renderNep8Grid(majors){
     const th   = NEP_STAR_THEMES[i % NEP_STAR_THEMES.length];
     const rankLabel = rankLabels[i] || `${rank}위`;
     const rankColor = rankColors[i] || rankColors[3];
-    const tagsHtml = tags.length ? `<div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:6px;">${tags.map(t=>`<span style="font-size:10px;padding:2px 7px;border-radius:999px;background:rgba(255,255,255,.08);color:rgba(240,244,255,.65);border:1px solid rgba(255,255,255,.1);">${t}</span>`).join('')}</div>` : '';
-    const descHtml = desc ? `<div style="font-size:11px;color:rgba(240,244,255,.55);margin-top:5px;line-height:1.5;text-align:left;">${desc}</div>` : '';
+    const tagsHtml = tags.length ? `<div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:6px;justify-content:center;">${tags.map(t=>`<span style="font-size:10px;padding:2px 7px;border-radius:999px;background:rgba(255,255,255,.08);color:rgba(240,244,255,.65);border:1px solid rgba(255,255,255,.1);">${t}</span>`).join('')}</div>` : '';
+    const descHtml = desc ? `<div style="font-size:11px;color:rgba(240,244,255,.55);margin-top:5px;line-height:1.5;text-align:center;">${desc}</div>` : '';
     return `<button class="nep-name-btn" id="nep-scard-${i}"
         onclick="toggleNep8Pick(${i},'${name.replace(/'/g,"\\'").replace(/"/g,'&quot;')}',this)"
-        style="--nbColor:${th.color};--nbBorder:${th.border};position:relative;padding-top:28px;text-align:left;height:auto;">
-      <span style="position:absolute;top:7px;right:9px;font-size:11px;font-weight:800;color:${rankColor};background:rgba(0,0,0,.25);padding:2px 8px;border-radius:999px;border:1px solid ${rankColor};">${rankLabel} 밀접</span>
+        style="--nbColor:${th.color};--nbBorder:${th.border};position:relative;padding-top:16px;text-align:center;height:auto;">
       <span class="nep-name-btn-check" id="nep-scard-check-${i}" style="position:absolute;top:9px;left:10px;">✦</span>
-      <span class="nep-name-btn-text" style="display:block;font-size:14px;font-weight:800;">${name}</span>
+      <span class="nep-name-btn-text" style="display:block;font-size:14px;font-weight:800;text-align:center;">${name}</span>
       ${tagsHtml}
       ${descHtml}
     </button>`;
@@ -5475,7 +5486,7 @@ function toggleNep8Pick(i, name, cardEl){
   const sel = window._nepSelected || [];
   const idx = sel.indexOf(name);
   if(idx === -1){
-    if(sel.length >= 2){
+    if(sel.length >= 3){
       cardEl.style.animation = 'pulse 0.3s ease';
       setTimeout(()=>{ cardEl.style.animation=''; }, 300);
       return;
@@ -5494,9 +5505,9 @@ function updateNepConfirmBtn(){
   const sel = window._nepSelected || [];
   const counter = document.getElementById('nep-select-counter');
   const btn = document.getElementById('nep-confirm-btn');
-  if(counter) counter.textContent = sel.length + ' / 2 선택됨';
+  if(counter) counter.textContent = sel.length + ' / 3 선택됨';
   if(btn){
-    const ready = sel.length === 2;
+    const ready = sel.length === 3;
     btn.disabled = !ready;
     if(ready) btn.classList.add('ready'); else btn.classList.remove('ready');
   }
@@ -5504,7 +5515,7 @@ function updateNepConfirmBtn(){
 
 function confirmNepSelection(){
   const sel = window._nepSelected || [];
-  if(sel.length !== 2) return;
+  if(sel.length !== 3) return;
 
   document.getElementById('nep-select-section').style.display = 'none';
   document.getElementById('nep-select-loading').style.display = 'none';
@@ -5514,7 +5525,7 @@ function confirmNepSelection(){
   cardsEl.style.display = 'block';
   window._nepMajors = sel;
 
-  // 결과 카드 2개 렌더
+  // 결과 카드 3개 렌더
   resultRow.innerHTML = sel.map((name, i) => {
     const thIdx = (window._nep8Majors||[]).indexOf(name);
     const th = NEP_STAR_THEMES[thIdx >= 0 ? thIdx % NEP_STAR_THEMES.length : i % NEP_STAR_THEMES.length];
@@ -5524,7 +5535,7 @@ function confirmNepSelection(){
       <div class="nrc-header">
         <div class="nrc-icon">${d ? d.icon : th.icon}</div>
         <div>
-          <div class="nrc-name">${['⭐','✦'][i]} ${name}</div>
+          <div class="nrc-name">${['⭐','✦','✧'][i] || '✦'} ${name}</div>
         </div>
       </div>
       <div id="nep-rcard-body-${i}">
@@ -5541,10 +5552,13 @@ function confirmNepSelection(){
   setTimeout(()=>{ cardsEl.scrollIntoView({behavior:'smooth', block:'start'}); }, 200);
 }
 
-function loadNepCardInfo(name, i){
+function loadNepCardInfo(name, i, retryCount){
+  retryCount = retryCount || 0;
   const bodyEl = document.getElementById('nep-rcard-body-'+i);
   if(!bodyEl) return;
   const dnaInfo = window._aptData ? Object.entries(window._aptData.dnaScore||{}).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([k,v])=>k+':'+v).join(', ') : '';
+
+  bodyEl.innerHTML = '<div style="text-align:center;padding:16px;font-size:13px;color:rgba(240,244,255,.4);"><span style="animation:floatY 1s ease-in-out infinite;display:inline-block;">🔭</span> AI가 학과 정보를 분석 중...</div>';
 
   (async () => {
     try {
@@ -5567,50 +5581,48 @@ ${dnaInfo ? '학생 DNA 점수: '+dnaInfo : ''}
           }]
         })
       });
+      if(!resp.ok) throw new Error('HTTP '+resp.status);
       const data = await resp.json();
+      if(data.error) throw new Error(data.error.message||'API error');
       const rawText = (data.content?.[0]?.text||'').trim();
+      if(!rawText) throw new Error('empty response');
       const cleaned = rawText.replace(/```json[\s\S]*?```|```/g,'').trim();
       const jsonMatch = cleaned.match(/\{[\s\S]*\}/);
       const info = JSON.parse(jsonMatch ? jsonMatch[0] : cleaned);
+      if(!info.overview) throw new Error('invalid JSON structure');
+      // 포트폴리오용 캐시 저장
+      if(!window._nepCardCache) window._nepCardCache = {};
+      window._nepCardCache[name] = info;
       renderNepCardBody(bodyEl, info, name, i);
     } catch(e) {
+      if(retryCount < 2){
+        // 자동 재시도 (최대 2회)
+        setTimeout(() => loadNepCardInfo(name, i, retryCount+1), 1500);
+        bodyEl.innerHTML = '<div style="text-align:center;padding:16px;font-size:13px;color:rgba(240,244,255,.4);"><span style="animation:floatY 1s ease-in-out infinite;display:inline-block;">🔄</span> 재시도 중... ('+(retryCount+1)+'/2)</div>';
+        return;
+      }
+      // 최종 폴백
       const db = NEP_MAJOR_DB[name];
       const fallbackInfo = db ? {
         overview: db.desc,
         jobs: db.jobs,
         subjects: db.subjects,
         midActs: db.midActs,
-        researchTopics: []
+        researchTopics: db.midActs ? db.midActs.map(a=>`${name} 관련: ${a}`) : []
       } : {
-        overview: `${name}에 대한 기본 정보를 불러오는 중 오류가 발생했어요.`,
-        jobs: [], subjects: [], midActs: [], researchTopics: []
+        overview: `${name}은 대학에서 배우는 전공 학과예요. 관련 직업과 진로를 탐색해보세요.`,
+        jobs: ['관련 전문가','연구원','교육자','컨설턴트'],
+        subjects: ['국어','수학','사회','과학'],
+        midActs: ['관련 도서 읽기','진로 체험 활동','관련 동아리 참여'],
+        researchTopics: [`${name}의 취업 현황 조사`, `${name} 관련 사회 이슈 탐구`, `${name} 졸업 후 진로 분석`]
       };
       renderNepCardBody(bodyEl, fallbackInfo, name, i);
-      // 탐구 주제만 별도로 가져오기
-      (async () => {
-        try {
-          const rtResp = await fetch('/.netlify/functions/claude', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              model: 'claude-sonnet-4-20250514',
-              max_tokens: 500,
-              messages: [{
-                role: 'user',
-                content: `"${name}" 학과와 관련해 중고등학생이 수행할 수 있는 탐구 주제 5개를 JSON 배열로만 출력하세요. 다른 텍스트 없이 순수 JSON만.\n형식: ["탐구주제1","탐구주제2","탐구주제3","탐구주제4","탐구주제5"]`
-              }]
-            })
-          });
-          const rtData = await rtResp.json();
-          const rtRaw = (rtData.content?.[0]?.text||'').replace(/```json[\s\S]*?```|```/g,'').trim();
-          const rtMatch = rtRaw.match(/\[[\s\S]*\]/);
-          const topics = JSON.parse(rtMatch ? rtMatch[0] : rtRaw);
-          if(Array.isArray(topics) && topics.length > 0){
-            fallbackInfo.researchTopics = topics;
-            renderNepCardBody(bodyEl, fallbackInfo, name, i);
-          }
-        } catch(re){}
-      })();
+      // 재시도 버튼 추가
+      const retryBtn = document.createElement('button');
+      retryBtn.textContent = '🔄 다시 불러오기';
+      retryBtn.style.cssText = 'margin:8px auto;display:block;padding:6px 16px;border-radius:999px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.06);color:rgba(240,244,255,.7);font-size:12px;cursor:pointer;';
+      retryBtn.onclick = () => loadNepCardInfo(name, i, 0);
+      bodyEl.appendChild(retryBtn);
     }
   })();
 }
@@ -5657,10 +5669,7 @@ function toggleNepCard(i){
 }
 
 window.retryNepCard = function(name, i){
-  const bodyEl = document.getElementById('nep-rcard-body-'+i);
-  if(!bodyEl) return;
-  bodyEl.innerHTML = '<div style="text-align:center;padding:16px;font-size:14px;color:rgba(240,244,255,.5);"><span style="animation:floatY 1s ease-in-out infinite;display:inline-block;">🤖</span> AI가 학과 정보를 불러오는 중...</div>';
-  loadNepCardInfo(name, i);
+  loadNepCardInfo(name, i, 0);
 };
 
 
@@ -5708,7 +5717,7 @@ function initNepMajorCards(){
           max_tokens: 1200,
           messages: [{
             role: 'user',
-            content: `너는 대한민국 대학 입시 전문가야. 학생의 희망 직업과 희망 학과를 분석해서, 해당 직업을 갖기 위해 가장 밀접도가 높은 학과 8개를 밀접도 순으로 추천해줘.
+            content: `너는 대한민국 진로·진학 전문가야. 학생의 희망 직업과 희망 학과를 분석해서, 해당 직업을 갖기 위해 가장 연관성 높은 학과 8개를 추천해줘.
 
 희망 직업: ${jobStr}
 희망 학과: ${majorStr}
@@ -5720,9 +5729,10 @@ function initNepMajorCards(){
 4. 취업 연계성과 자격증 취득 용이성
 
 조건:
-- 대한민국 대학에 실제로 개설된 학과명만 사용
-- 밀접도가 가장 높은 것부터 1번으로 정렬 (8번이 가장 낮음)
-- 학과명은 간결하게 (예: 컴퓨터공학과, 소프트웨어학과)
+- 대한민국 4년제 대학교 및 전문대학(2~3년제)에 실제로 개설된 학과명 모두 포함 가능
+- 헤어디자인, 뷰티, 요리, 항공, 패션, 스포츠, 공연 등 실용·예능·직업 계열 전공도 적극 반영
+- 희망 직업이 전문대 계열이라면 전문대 학과를 우선 추천
+- 학과명은 간결하게 (예: 헤어디자인과, 미용예술학과, 뷰티케어학과)
 - 각 학과마다 직업과의 연관 이유를 담은 태그 3개와 한 줄 소개 작성
 - 다른 텍스트 없이 순수 JSON 배열만 출력
 
@@ -5763,20 +5773,33 @@ function _resetNepBtn(){
 function buildFallbackMajors(jobStr, majorStr){
   const combined = (jobStr + ' ' + majorStr).toLowerCase();
   const allPools = [
-    {name:'컴퓨터공학과',   tags:['알고리즘','소프트웨어','AI'], desc:'프로그래밍과 시스템 설계를 배워요'},
-    {name:'인공지능학과',   tags:['머신러닝','딥러닝','데이터'], desc:'AI 기술의 핵심을 연구해요'},
-    {name:'경영학과',       tags:['마케팅','전략','리더십'], desc:'기업 경영과 비즈니스 전략을 배워요'},
-    {name:'심리학과',       tags:['상담','행동분석','인지'], desc:'인간의 마음과 행동을 탐구해요'},
-    {name:'생명과학과',     tags:['생물학','연구','실험'], desc:'생명현상의 원리를 깊이 탐구해요'},
-    {name:'미디어콘텐츠학과',tags:['영상','콘텐츠','크리에이터'], desc:'디지털 미디어 콘텐츠를 창작해요'},
-    {name:'간호학과',       tags:['의료','돌봄','임상'], desc:'의료 현장에서 생명을 지켜요'},
-    {name:'환경공학과',     tags:['환경','지속가능','생태'], desc:'지구 환경을 보호하는 기술을 배워요'},
-    {name:'데이터사이언스학과',tags:['통계','시각화','빅데이터'], desc:'데이터로 세상을 분석해요'},
-    {name:'교육학과',       tags:['교육','소통','커리큘럼'], desc:'미래 세대를 이끄는 교육을 연구해요'},
-    {name:'건축학과',       tags:['설계','공간','창의'], desc:'공간과 구조의 아름다움을 창조해요'},
-    {name:'국제관계학과',   tags:['외교','국제','글로벌'], desc:'세계 무대에서 활약하는 외교관을 꿈꿔요'},
+    {name:'컴퓨터공학과',     tags:['알고리즘','소프트웨어','AI'],      desc:'프로그래밍과 시스템 설계를 배워요'},
+    {name:'인공지능학과',     tags:['머신러닝','딥러닝','데이터'],       desc:'AI 기술의 핵심을 연구해요'},
+    {name:'경영학과',         tags:['마케팅','전략','리더십'],           desc:'기업 경영과 비즈니스 전략을 배워요'},
+    {name:'심리학과',         tags:['상담','행동분석','인지'],           desc:'인간의 마음과 행동을 탐구해요'},
+    {name:'생명과학과',       tags:['생물학','연구','실험'],             desc:'생명현상의 원리를 깊이 탐구해요'},
+    {name:'미디어콘텐츠학과', tags:['영상','콘텐츠','크리에이터'],       desc:'디지털 미디어 콘텐츠를 창작해요'},
+    {name:'간호학과',         tags:['의료','돌봄','임상'],               desc:'의료 현장에서 생명을 지켜요'},
+    {name:'환경공학과',       tags:['환경','지속가능','생태'],           desc:'지구 환경을 보호하는 기술을 배워요'},
+    {name:'데이터사이언스학과',tags:['통계','시각화','빅데이터'],         desc:'데이터로 세상을 분석해요'},
+    {name:'교육학과',         tags:['교육','소통','커리큘럼'],           desc:'미래 세대를 이끄는 교육을 연구해요'},
+    {name:'건축학과',         tags:['설계','공간','창의'],               desc:'공간과 구조의 아름다움을 창조해요'},
+    {name:'국제관계학과',     tags:['외교','국제','글로벌'],             desc:'세계 무대에서 활약하는 외교관을 꿈꿔요'},
+    // 전문대·실용계열
+    {name:'헤어디자인과',     tags:['미용','헤어','스타일링'],           desc:'헤어 커트·염색·펌 등 미용 전문 기술을 배워요'},
+    {name:'미용예술학과',     tags:['뷰티','메이크업','피부'],           desc:'헤어·메이크업·피부 등 종합 미용예술을 배워요'},
+    {name:'뷰티케어학과',     tags:['스킨케어','코스메틱','뷰티'],       desc:'피부 관리와 뷰티 서비스를 전문으로 배워요'},
+    {name:'호텔조리과',       tags:['요리','외식','조리사'],             desc:'전문 셰프를 꿈꾸는 조리 실무를 배워요'},
+    {name:'제과제빵과',       tags:['베이킹','디저트','창업'],           desc:'빵·케이크·디저트를 전문으로 배워요'},
+    {name:'항공서비스학과',   tags:['승무원','서비스','항공'],           desc:'항공 승무원·공항 서비스 전문가를 양성해요'},
+    {name:'패션디자인학과',   tags:['의류','스타일링','패션'],           desc:'의류 디자인과 패션 산업을 배워요'},
+    {name:'스포츠지도학과',   tags:['운동','코칭','트레이닝'],           desc:'스포츠 지도사·트레이너를 준비해요'},
+    {name:'사회복지과',       tags:['복지','상담','돌봄'],               desc:'취약계층을 돕는 복지 전문가를 양성해요'},
+    {name:'유아교육과',       tags:['보육','교육','아동'],               desc:'어린이집·유치원 교사를 준비해요'},
+    {name:'실용음악과',       tags:['음악','보컬','작곡'],               desc:'대중음악 실기와 음악 산업을 배워요'},
+    {name:'연기과',           tags:['연기','뮤지컬','공연'],             desc:'영화·드라마·무대 연기를 전문으로 배워요'},
+    {name:'게임그래픽과',     tags:['3D','그래픽','게임'],               desc:'게임 캐릭터·배경 디자인을 배워요'},
   ];
-  // 키워드 매칭 우선
   const scored = allPools.map(m => {
     const score = m.tags.concat([m.name]).filter(t => combined.includes(t.toLowerCase())).length;
     return {...m, score};
@@ -6027,8 +6050,8 @@ function confirmMajorPickFromConstellation(){
       <div class="rq-step-label">
         <div class="rq-step-num" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);">1</div>
         <div>
-          <div class="rq-step-title-txt">학과에 대한 관심 주제를 질문해보세요</div>
-          <div class="rq-step-sub">나의 희망학과에 대한 관심 주제를 질문해보세요</div>
+          <div class="rq-step-title-txt">탐구 질문 배우기</div>
+          <div class="rq-step-sub">나의 희망학과와 관련된 탐구 질문 방법을 배워보세요</div>
         </div>
       </div>
 
@@ -6058,22 +6081,21 @@ function confirmMajorPickFromConstellation(){
         padding:13px 18px;border-radius:14px;
         background:rgba(99,102,241,.06);
         border:1px solid rgba(99,102,241,.18);
+        text-align:center;
       ">
-        <div style="font-size:12px;color:rgba(240,244,255,.55);line-height:1.7;width:100%;">
+        <div style="font-size:12px;color:rgba(240,244,255,.55);line-height:1.7;width:100%;text-align:center;">
           💡 <strong style="color:rgba(165,180,252,.8);">이렇게 써보세요</strong>
         </div>
-        <div style="display:flex;flex-direction:column;gap:6px;width:100%;">
-          <span style="font-size:11.5px;padding:7px 14px;border-radius:10px;background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.25);color:rgba(165,180,252,.8);cursor:pointer;display:block;text-align:left;width:100%;box-sizing:border-box;"
+        <div style="display:flex;flex-direction:column;gap:6px;width:100%;align-items:center;">
+          <span style="font-size:11.5px;padding:7px 18px;border-radius:10px;background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.25);color:rgba(165,180,252,.8);cursor:pointer;display:inline-block;text-align:center;box-sizing:border-box;"
             onclick="document.getElementById('ql-topic-input').value=this.dataset.q;qlSyncTopic();"
             data-q="AI가 발전하면 의사라는 직업은 어떻게 변할까?">AI가 발전하면 의사 직업은 어떻게 변할까?</span>
-          <span style="font-size:11.5px;padding:7px 14px;border-radius:10px;background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.25);color:rgba(165,180,252,.8);cursor:pointer;display:block;text-align:left;width:100%;box-sizing:border-box;"
+          <span style="font-size:11.5px;padding:7px 18px;border-radius:10px;background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.25);color:rgba(165,180,252,.8);cursor:pointer;display:inline-block;text-align:center;box-sizing:border-box;"
             onclick="document.getElementById('ql-topic-input').value=this.dataset.q;qlSyncTopic();"
             data-q="기후변화가 환경공학과 진로에 미치는 영향은?">기후변화가 환경공학 진로에 미치는 영향은?</span>
-          <span style="font-size:11.5px;padding:7px 14px;border-radius:10px;background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.25);color:rgba(165,180,252,.8);cursor:pointer;display:block;text-align:left;width:100%;box-sizing:border-box;"
+          <span style="font-size:11.5px;padding:7px 18px;border-radius:10px;background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.25);color:rgba(165,180,252,.8);cursor:pointer;display:inline-block;text-align:center;box-sizing:border-box;"
             onclick="document.getElementById('ql-topic-input').value=this.dataset.q;qlSyncTopic();"
             data-q="심리학과를 졸업하면 어떤 직업을 가질 수 있을까?">심리학과 졸업 후 어떤 직업을 가질 수 있을까?</span>
-        </div>
-        <div style="font-size:11px;color:rgba(240,244,255,.32);width:100%;margin-top:2px;">
         </div>
       </div>
 
@@ -6429,7 +6451,7 @@ function _openIqbot(question) {
   var errEl = document.getElementById('iqbotErr');
   if (errEl) errEl.style.display = 'none';
   var btn = document.getElementById('iqbotGenBtn');
-  if (btn) { btn.disabled = false; btn.textContent = '✨ AI로 탐구 계획 설계하기'; }
+  if (btn) { btn.disabled = false; btn.textContent = '탐구 계획 설계하기'; }
 
   // 질문 자동 입력
   if (question) {
@@ -7245,7 +7267,7 @@ var RQP_STEPS = [
   {key:'goal',     icon:'🎯', label:'탐구 목표',      badge:'STEP 2'},
   {key:'method',   icon:'🔬', label:'탐구 방법',      badge:'STEP 3'},
   {key:'schedule', icon:'📅', label:'탐구 일정',      badge:'STEP 4'},
-  {key:'material', icon:'📦', label:'필요한 재료',    badge:'STEP 5'},
+  {key:'material', icon:'📦', label:'필요한 자료',    badge:'STEP 5'},
   {key:'expected', icon:'💡', label:'예상 결과',      badge:'STEP 6'},
   {key:'summary',  icon:'📝', label:'결과 정리 방법', badge:'STEP 7'},
 ];
@@ -7884,13 +7906,48 @@ window.openPortfolioPopup = function(){
   var s4Html = sectionHead('🔵','전공 로드맵 탐험','#60a5fa', gz.s4||0, 10);
   var hasS4 = nepPickMajor || tlValues.some(function(v){return v.trim();}) || nepMajors.length;
   if(hasS4){
-    if(nepPickMajor) s4Html += field('탐색한 학과', nepPickMajor, '#60a5fa');
+    // ① AI 추천 학과 3개 (선택한 학과들)
     if(nepMajors.length){
-      s4Html += '<div style="margin-bottom:13px;"><div style="font-size:11px;letter-spacing:2px;color:rgba(96,165,250,.8);font-weight:700;margin-bottom:8px;">AI 추천 로드맵 학과</div>'+nepMajors.slice(0,3).map(function(m){return tag(m,'rgba(96,165,250,.1)','rgba(96,165,250,.3)');}).join('')+'</div>';
+      s4Html += '<div style="margin-bottom:16px;">';
+      s4Html += '<div style="font-size:11px;letter-spacing:2px;color:rgba(96,165,250,.8);font-weight:700;margin-bottom:10px;">🎓 선택한 추천 학과</div>';
+      s4Html += '<div style="display:flex;flex-wrap:wrap;gap:8px;">';
+      var pfIcons = ['⭐','✦','✧'];
+      nepMajors.slice(0,3).forEach(function(m,mi){
+        s4Html += '<span style="display:inline-block;padding:6px 16px;border-radius:999px;background:rgba(96,165,250,.15);border:1.5px solid rgba(96,165,250,.4);font-size:13px;font-weight:800;color:#93c5fd;">'+pfIcons[mi]+' '+m+'</span>';
+      });
+      s4Html += '</div></div>';
     }
+
+    // ② 각 추천 학과 카드 상세 (AI가 분석한 내용)
+    var nepCardData = window._nepCardCache || {};
+    if(nepMajors.length && Object.keys(nepCardData).length){
+      s4Html += '<div style="font-size:11px;letter-spacing:2px;color:rgba(96,165,250,.8);font-weight:700;margin-bottom:10px;">📋 학과 카드 정보</div>';
+      nepMajors.slice(0,3).forEach(function(m, mi){
+        var info = nepCardData[m];
+        if(!info) return;
+        s4Html += '<div style="margin-bottom:14px;border-radius:14px;overflow:hidden;border:1.5px solid rgba(96,165,250,.25);background:rgba(96,165,250,.05);">';
+        s4Html += '<div style="padding:10px 14px;background:rgba(96,165,250,.12);font-size:13px;font-weight:900;color:#93c5fd;">'+pfIcons[mi]+' '+m+'</div>';
+        s4Html += '<div style="padding:12px 14px;">';
+        if(info.overview) s4Html += '<div style="font-size:12px;color:rgba(240,244,255,.85);line-height:1.7;margin-bottom:8px;">'+info.overview+'</div>';
+        if(info.jobs&&info.jobs.length){
+          s4Html += '<div style="font-size:11px;color:rgba(96,165,250,.7);font-weight:700;margin-bottom:5px;">💼 관련 직업</div>';
+          s4Html += '<div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px;">'+info.jobs.slice(0,4).map(function(j){return tag(j,'rgba(96,165,250,.1)','rgba(96,165,250,.3)');}).join('')+'</div>';
+        }
+        if(info.subjects&&info.subjects.length){
+          s4Html += '<div style="font-size:11px;color:rgba(168,85,247,.7);font-weight:700;margin-bottom:5px;">📚 선택과목</div>';
+          s4Html += '<div style="display:flex;flex-wrap:wrap;gap:4px;">'+info.subjects.slice(0,4).map(function(s){return tag(s,'rgba(168,85,247,.1)','rgba(168,85,247,.3)');}).join('')+'</div>';
+        }
+        s4Html += '</div></div>';
+      });
+    }
+
+    // ③ 탐색한 학과 (nep-pick-major)
+    if(nepPickMajor) s4Html += field('로드맵 작성 학과', nepPickMajor, '#60a5fa');
+
+    // ④ 나의 성장 로드맵
     var tlFilled = tlValues.some(function(v){return v.trim();});
     if(tlFilled){
-      s4Html += '<div style="font-size:11px;letter-spacing:2px;color:rgba(96,165,250,.8);font-weight:700;margin-bottom:10px;">나의 성장 로드맵</div>';
+      s4Html += '<div style="font-size:11px;letter-spacing:2px;color:rgba(96,165,250,.8);font-weight:700;margin-bottom:10px;margin-top:4px;">🗺️ 나의 성장 로드맵</div>';
       tlValues.forEach(function(v,i){
         if(!v.trim()) return;
         s4Html += '<div style="display:flex;gap:12px;margin-bottom:10px;">'+
@@ -7898,6 +7955,9 @@ window.openPortfolioPopup = function(){
           '<div style="font-size:13px;color:rgba(240,244,255,.85);line-height:1.7;border-left:2px solid rgba(96,165,250,.3);padding-left:12px;">'+v+'</div>'+
           '</div>';
       });
+    }
+    if(!nepMajors.length && !nepPickMajor && !tlFilled){
+      s4Html += emptyNote('아직 전공 로드맵 탐험을 진행하지 않았어요.');
     }
   } else {
     s4Html += emptyNote('아직 전공 로드맵 탐험을 진행하지 않았어요.');
@@ -7958,6 +8018,36 @@ window.openPortfolioPopup = function(){
     rqHtml += emptyNote('아직 탐구 계획서를 생성하지 않았어요.');
   }
   html += card(rqHtml, 'rgba(52,211,153,.18)');
+
+  // ══════════════════════════════
+  // 📋 탐구 설계 계획서 (iqbot)
+  // ══════════════════════════════
+  var iqPopupData = window._iqbotPlan || null;
+  if(iqPopupData && iqPopupData.plan){
+    var iqpPlan = iqPopupData.plan;
+    var iqpFields = [
+      {key:'subject', label:'탐구 주제'},
+      {key:'goal',    label:'탐구 목표'},
+      {key:'method',  label:'탐구 방법'},
+      {key:'schedule',label:'탐구 일정'},
+      {key:'material',label:'필요한 자료'},
+      {key:'expected',label:'예상 결과'},
+      {key:'summary', label:'결과 정리'}
+    ];
+    var iqpColors = {subject:'rgba(190,24,93,.8)',goal:'rgba(29,78,216,.8)',method:'rgba(4,120,87,.8)',schedule:'rgba(180,83,9,.8)',material:'rgba(194,65,12,.8)',expected:'rgba(109,40,217,.8)',summary:'rgba(14,116,144,.8)'};
+    var iqpHtml = sectionHead('📋','탐구 설계 계획서','#f472b6');
+    iqpHtml += '<div style="margin-bottom:14px;padding:10px 14px;background:rgba(244,114,182,.06);border-radius:10px;border:1px solid rgba(244,114,182,.2);">';
+    iqpHtml += '<div style="font-size:11px;letter-spacing:2px;color:rgba(244,114,182,.8);font-weight:700;margin-bottom:5px;">탐구 질문</div>';
+    iqpHtml += '<div style="font-size:13.5px;color:rgba(240,244,255,.88);line-height:1.75;">'+(iqPopupData.q||'')+'</div>';
+    if(iqPopupData.type||iqPopupData.period) iqpHtml += '<div style="font-size:11px;color:rgba(240,244,255,.4);margin-top:6px;">방식: '+(iqPopupData.type||'-')+'  |  기간: '+(iqPopupData.period||'-')+'</div>';
+    iqpHtml += '</div>';
+    iqpFields.forEach(function(f){
+      var val = iqpPlan[f.key];
+      if(!val||!String(val).trim()) return;
+      iqpHtml += field(f.label, String(val).replace(/\\n/g,'\n'), iqpColors[f.key]||'rgba(244,114,182,.7)');
+    });
+    html += card(iqpHtml, 'rgba(244,114,182,.2)');
+  }
 
   // 아무 탐험도 안 했을 때
   if(totalStars === 0 && !hasIv && !hasRq && !hasS4 && !sgDoneList.length && !selectedOrbs.length){
@@ -8140,15 +8230,35 @@ window.downloadPortfolioPDF = function(){
   html += sec('#34d399','🔭','주제 탐구', rqStar, 20, rqbody);
 
   // ── 탐구 설계하기 결과 (iqbot) ──
-  var iqContent = (document.getElementById('iqbotContent')||{}).innerHTML||'';
+  var iqData = window._iqbotPlan || null;
   var iqQ = (document.getElementById('iqbotQuestion')||{}).value||'';
-  if(iqContent && iqQ){
-    var iqLevelEl = document.querySelector('input[name="iqbotLevel"]:checked');
-    var iqLevel = iqLevelEl&&iqLevelEl.value==='high'?'고등학교':'중학교';
-    html += sec('#f472b6','📋','탐구 설계 계획서', undefined, undefined,
-      '<div style="margin-bottom:10px;"><span style="font-size:11px;font-weight:700;color:#be185d;">탐구 질문</span><div style="font-size:13px;color:#374151;margin-top:4px;">'+iqQ+'</div></div>'
-      +'<div style="font-size:10px;font-weight:700;color:#be185d;margin-bottom:8px;">수준: '+iqLevel+'</div>'
-      +'<div style="font-size:13px;color:#374151;line-height:1.8;">'+iqContent+'</div>');
+  if(iqData && iqData.plan){
+    var iqPlan = iqData.plan;
+    var iqPlanFields = [
+      {key:'subject', label:'탐구 주제'},
+      {key:'goal',    label:'탐구 목표'},
+      {key:'method',  label:'탐구 방법'},
+      {key:'schedule',label:'탐구 일정'},
+      {key:'material',label:'필요한 자료'},
+      {key:'expected',label:'예상 결과'},
+      {key:'summary', label:'결과 정리'}
+    ];
+    var iqColors2 = {subject:'#be185d',goal:'#1d4ed8',method:'#047857',schedule:'#b45309',material:'#c2410c',expected:'#6d28d9',summary:'#0e7490'};
+    var iqBody = '<div style="margin-bottom:12px;padding:10px 14px;background:#fdf2f8;border-radius:8px;border:1px solid #fbcfe8;">'
+      +'<div style="font-size:11px;font-weight:700;color:#be185d;margin-bottom:4px;letter-spacing:1px;">탐구 질문</div>'
+      +'<div style="font-size:13px;color:#374151;line-height:1.7;">'+(iqData.q||iqQ)+'</div>'
+      +(iqData.type||iqData.period?'<div style="font-size:11px;color:#9ca3af;margin-top:6px;">방식: '+(iqData.type||'-')+'  |  기간: '+(iqData.period||'-')+'</div>':'')
+      +'</div>';
+    iqPlanFields.forEach(function(f){
+      var val = iqPlan[f.key];
+      if(!val||!String(val).trim()) return;
+      var c = iqColors2[f.key]||'#374151';
+      iqBody += '<div style="margin-bottom:10px;border-radius:8px;overflow:hidden;border:1.5px solid '+c+'33;">'
+        +'<div style="padding:7px 12px;background:'+c+'12;font-size:11px;font-weight:900;color:'+c+';letter-spacing:.5px;">'+f.label+'</div>'
+        +'<div style="padding:8px 12px;font-size:13px;color:#374151;line-height:1.8;white-space:pre-line;">'+String(val).replace(/\\n/g,'\n')+'</div>'
+        +'</div>';
+    });
+    html += sec('#f472b6','📋','탐구 설계 계획서', undefined, undefined, iqBody);
   }
 
   // ── 꼬리말 ──
@@ -8330,7 +8440,7 @@ window.downloadPortfolioPDF = function(){
     <div style="display:flex;flex-direction:column;gap:8px;" id="popup-star-list"></div>
   </div>
   <p class="footer-copy" style="position:relative;z-index:1;background:linear-gradient(90deg,#38bdf8,#60a5fa,#3b82f6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-weight:800;">질문하는 학교 · 인천공항중학교</p>
-  <p style="position:relative;z-index:1;margin-top:10px;font-size:12px;color:rgba(255,255,255,.5);letter-spacing:.3px;line-height:1.7;max-width:480px;margin-left:auto;margin-right:auto;text-align:center;">AI는 사용자 경험(UX)의 보조 수단으로,<span class="ai-br"> </span>작은 오차 범위로 오류가 있을 수 있습니다.</p>
+  <p style="position:relative;z-index:1;margin-top:10px;font-size:12px;color:rgba(255,255,255,.5);letter-spacing:.3px;line-height:1.7;max-width:480px;margin-left:auto;margin-right:auto;text-align:center;">AI는 사용자 경험(UX)을 돕는 도구로,<span class="ai-br"> </span>작은 오차 범위로 오류가 있을 수 있습니다.</p>
   <style>.ai-br{display:inline;}@media(max-width:600px){.ai-br{display:block;}}</style>
   <p style="position:relative;z-index:1;margin-top:10px;font-size:13px;font-weight:700;letter-spacing:1px;background:linear-gradient(90deg,#f472b6,#c084fc,#818cf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">AI-UX 디자이너 조유진</p>
 </footer>
@@ -10615,7 +10725,7 @@ var introSlide = 0;
         </div>
       </div>
       <button class="iqbot-gen-btn" id="iqbotGenBtn" onclick="generateIqbot()">
-        ✨ AI로 탐구 계획 설계하기
+        탐구 계획 설계하기
       </button>
       <div class="iqbot-result" id="iqbotResult">
         <div class="iqbot-result-hd">
@@ -10640,7 +10750,7 @@ function openIqbotModal() {
   var errEl = document.getElementById('iqbotErr');
   if (errEl) errEl.style.display = 'none';
   var btn = document.getElementById('iqbotGenBtn');
-  if (btn) { btn.disabled = false; btn.textContent = '✨ AI로 탐구 계획 설계하기'; }
+  if (btn) { btn.disabled = false; btn.textContent = '탐구 계획 설계하기'; }
   var rqTopic = document.getElementById('rq-topic');
   var iqInput = document.getElementById('iqbotQuestion');
   if (rqTopic && rqTopic.value && rqTopic.value.trim() && iqInput && !iqInput.value.trim()) {
@@ -10682,7 +10792,7 @@ async function generateIqbot() {
     { emoji:'🎯', label:'탐구 목표',   key:'goal',     hue:'220', tc:'#1d4ed8' },
     { emoji:'🔬', label:'탐구 방법',   key:'method',   hue:'160', tc:'#047857' },
     { emoji:'📅', label:'탐구 일정',   key:'schedule', hue:'40',  tc:'#b45309' },
-    { emoji:'🧰', label:'필요한 재료', key:'material', hue:'20',  tc:'#c2410c' },
+    { emoji:'🧰', label:'필요한 자료', key:'material', hue:'20',  tc:'#c2410c' },
     { emoji:'💡', label:'예상 결과',   key:'expected', hue:'270', tc:'#6d28d9' },
     { emoji:'📝', label:'결과 정리',   key:'summary',  hue:'190', tc:'#0e7490' },
   ];
@@ -10770,16 +10880,19 @@ async function generateIqbot() {
     var parsed = tryParseJSON(rawText);
     if (!parsed) throw new Error('JSON 파싱 실패');
 
+    window._iqbotPlan = { q: q, type: typeText, period: period, plan: parsed };
     box.innerHTML = renderSections(parsed);
     result.classList.add('show');
     result.scrollIntoView({ behavior: 'smooth', block: 'start' });
   } catch(e) {
-    box.innerHTML = renderSections(generateIqbotFallback(q, typeText, period));
+    var fallback = generateIqbotFallback(q, typeText, period);
+    window._iqbotPlan = { q: q, type: typeText, period: period, plan: fallback };
+    box.innerHTML = renderSections(fallback);
     result.classList.add('show');
     result.scrollIntoView({ behavior: 'smooth', block: 'start' });
   } finally {
     btn.disabled = false;
-    btn.textContent = '✨ AI로 탐구 계획 설계하기';
+    btn.textContent = '탐구 계획 설계하기';
   }
 }
 
