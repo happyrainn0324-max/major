@@ -1580,7 +1580,7 @@ footer::before{
   .hero-ring-1{width:360px;height:360px;}
   .hero-ring-2{width:260px;height:260px;}
   .hero-orb{display:none;}
-  header h1{font-size:clamp(3.4rem,12vw,5.5rem);letter-spacing:-2px;}
+  header h1{font-size:clamp(4.4rem,14vw,6.5rem);letter-spacing:-2px;}
   .tag-pill{font-size:12px;letter-spacing:2px;padding:9px 20px;margin-bottom:32px;}
   .hero-sub .sub-line1,.hero-sub .sub-line2{font-size:clamp(2.1rem,7.5vw,3.2rem);letter-spacing:2px;}
   .hero-cta{font-size:16px;padding:16px 36px;width:100%;justify-content:center;}
@@ -1613,9 +1613,9 @@ footer::before{
   /* ── 모바일 스테이지 헤더: 별 배지 숨김, 가로 레이아웃 ── */
   .stage-header{padding:14px 16px;gap:10px;flex-wrap:nowrap;align-items:center;}
   .stage-planet-emoji{width:36px;height:36px;flex-shrink:0;font-size:1.4rem;}
-  .stage-info{flex:1;min-width:0;display:flex;align-items:center;gap:8px;}
+  .stage-info{flex:1;min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:3px;}
   .stage-num{font-size:10px;letter-spacing:1px;margin-bottom:0;white-space:nowrap;color:#87ceeb;font-weight:700;flex-shrink:0;}
-  .stage-name{font-size:0.92rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.2;color:#f0f4ff;margin:0;}
+  .stage-name{font-size:0.92rem;font-weight:700;white-space:normal;overflow:visible;text-overflow:unset;line-height:1.35;color:#f0f4ff;margin:0;word-break:keep-all;}
   .stage-subtitle{display:none;}
   .stage-stars-badge{display:none!important;}
   .stage-toggle-btn{width:28px;height:28px;font-size:13px;flex-shrink:0;margin-left:auto;}
@@ -1729,7 +1729,7 @@ footer::before{
 /* 11. 푸터 */
 @media(max-width:600px){
   footer{padding:56px 20px 50px;}
-  .footer-q{font-size:clamp(1.3rem,5vw,1.8rem);line-height:1.6;}
+  .footer-q{font-size:clamp(1rem,4vw,1.4rem);line-height:1.6;}
   .footer-btn{width:90%;text-align:center;justify-content:center;margin:0 auto;}
   .footer-row-btns{gap:8px!important;}
   .footer-row-btns button{flex:1;justify-content:center;}
@@ -2693,6 +2693,8 @@ window.toggleStage = function(n){
 .nep-name-btn-text{}
 @media(max-width:480px){
   .nep-star-cards-row{grid-template-columns:1fr;}
+  .nep-result-cards-row{grid-template-columns:1fr !important;}
+  .wish-input-grid{grid-template-columns:1fr !important;}
 }
 
 /* nep-star-cards-row → 위 학과 이름 버튼 CSS로 대체됨 */
@@ -3112,7 +3114,7 @@ window.toggleStage = function(n){
         <!-- 희망 직업 & 희망 학과 (상단 고정) -->
         <div style="background:linear-gradient(135deg,rgba(29,78,216,.08),rgba(139,92,246,.06));border:1px solid rgba(99,102,241,.25);border-radius:20px;padding:20px;margin-bottom:24px;">
           <div style="font-size:13px;letter-spacing:3px;color:#a5b4fc;font-weight:800;margin-bottom:16px;text-align:center;">💼 희망 직업 &amp; 🎓 희망 학과</div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;" class="wish-input-grid">
             <!-- 왼쪽: 희망 직업 -->
             <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);border-radius:16px;padding:16px;">
               <div style="font-size:12px;letter-spacing:2px;color:rgba(240,244,255,.45);font-weight:700;margin-bottom:12px;">💼 희망 직업</div>
@@ -3275,7 +3277,7 @@ window.toggleStage = function(n){
         🎤 인터뷰를 시작해볼까?
       </h2>
       <p id="iv-desc" style="font-size:15px;color:rgba(240,244,255,.65);line-height:1.9;max-width:500px;margin:0 auto;">
-        가고 싶은 학과를 선택하고 인터뷰 대상을 골라봐요.<br>AI가 전공 관련 데이터를 자세히 분석해 학과의 모든 것을 알려줄 거예요 ✨
+        가고 싶은 학과를 선택하고 인터뷰 대상을 골라봐요.<br>전공 관련 데이터를 자세히 분석해 학과의 모든 것을 알려줄 거예요 ✨
       </p>
     </div>
 
@@ -5853,7 +5855,7 @@ function confirmMajorPickFromConstellation(){
         🔭 주제탐구를 시작해볼까?
       </h2>
       <p style="font-size:15px;color:rgba(240,244,255,.6);line-height:1.9;max-width:540px;margin:0 auto;">
-        질문을 배우고 → 탐구 질문을 만들고 → AI가 계획서를 설계해줘요 ✨
+        질문배우기 → 탐구 질문 만들기 → 탐구 설계하기
       </p>
     </div>
 
@@ -5991,54 +5993,16 @@ function confirmMajorPickFromConstellation(){
         </div>
       </div>
 
+      <!-- 희망 학과 + 탐구 기간 -->
+      <!-- 탐구 수준 선택 -->
+      <!-- 탐구 방식 칩 -->
+      <!-- (팝업 모달과 중복 — 삭제됨) -->
+
       <!-- 선택된 질문 뱃지 (STEP1에서 연계) -->
       <div id="rq-selected-q-badge" style="display:none;margin-bottom:20px;background:rgba(52,211,153,.07);border:1.5px solid rgba(52,211,153,.3);border-radius:14px;padding:14px 20px;">
         <div style="font-size:12px;letter-spacing:2px;color:#34d399;font-weight:700;margin-bottom:6px;">✅ STEP 1에서 선택된 질문</div>
         <div id="rq-selected-q-text" style="font-size:15px;color:#f0f4ff;font-weight:600;line-height:1.6;word-break:keep-all;"></div>
         <button onclick="qlClearSelected()" style="margin-top:10px;font-size:12px;color:rgba(240,244,255,.45);background:none;border:none;cursor:pointer;padding:0;font-family:'Pretendard','Noto Sans KR',sans-serif;">× 직접 입력하기</button>
-      </div>
-
-      <!-- 희망 학과 + 탐구 기간 -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;">
-        <div>
-          <label style="display:block;font-size:13px;letter-spacing:2px;color:rgba(240,244,255,.55);font-weight:600;margin-bottom:8px;">🎓 희망 학과</label>
-          <input id="rq-major" type="text" placeholder="예) 인공지능학과, 심리학과…"
-            style="width:100%;background:rgba(52,211,153,.04);border:1.5px solid rgba(52,211,153,.22);border-radius:12px;padding:13px 16px;color:#f0f4ff;font-family:'Pretendard','Noto Sans KR',sans-serif;font-size:15px;outline:none;transition:.25s;"
-            onfocus="this.style.borderColor='rgba(52,211,153,.7)';this.style.background='rgba(52,211,153,.08)'"
-            onblur="this.style.borderColor='rgba(52,211,153,.22)';this.style.background='rgba(52,211,153,.04)'"
-          />
-        </div>
-        <div>
-          <label style="display:block;font-size:13px;letter-spacing:2px;color:rgba(240,244,255,.55);font-weight:600;margin-bottom:8px;">📅 탐구 기간</label>
-          <select id="rq-period"
-            style="width:100%;background:rgba(52,211,153,.04);border:1.5px solid rgba(52,211,153,.22);border-radius:12px;padding:13px 16px;color:#f0f4ff;font-family:'Pretendard','Noto Sans KR',sans-serif;font-size:15px;outline:none;transition:.25s;cursor:pointer;appearance:none;"
-            onfocus="this.style.borderColor='rgba(52,211,153,.7)'"
-            onblur="this.style.borderColor='rgba(52,211,153,.22)'"
-          >
-            <option value="1" selected style="background:#0d1528;">1주일</option>
-            <option value="2" style="background:#0d1528;">2주일</option>
-            <option value="4" style="background:#0d1528;">한 달 (4주)</option>
-            <option value="12" style="background:#0d1528;">3개월 (12주)</option>
-          </select>
-        </div>
-      </div>
-
-      <!-- 탐구 수준 선택 -->
-      <div style="margin-bottom:20px;">
-        <label style="display:block;font-size:13px;letter-spacing:2px;color:rgba(240,244,255,.55);font-weight:600;margin-bottom:10px;">🎯 탐구 수준</label>
-        <div style="display:flex;gap:10px;">
-          <button id="rq-level-mid" onclick="setRqLevel('middle')"
-            style="flex:1;padding:12px 0;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;transition:.2s;font-family:'Pretendard','Noto Sans KR',sans-serif;border:2px solid rgba(52,211,153,.7);background:linear-gradient(135deg,rgba(52,211,153,.22),rgba(16,185,129,.15));color:#34d399;box-shadow:0 0 14px rgba(52,211,153,.25);">
-            📚 중학교
-          </button>
-          <button id="rq-level-high" onclick="setRqLevel('high')"
-            style="flex:1;padding:12px 0;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;transition:.2s;font-family:'Pretendard','Noto Sans KR',sans-serif;border:2px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);color:rgba(240,244,255,.45);">
-            🏫 고등학교
-          </button>
-        </div>
-        <div id="rq-level-desc" style="margin-top:10px;padding:9px 14px;border-radius:10px;font-size:12px;background:rgba(52,211,153,.08);border:1px solid rgba(52,211,153,.2);color:rgba(240,244,255,.65);line-height:1.6;">
-          📚 <strong style="color:#34d399;">중학교</strong> — 호기심 중심·관찰·비교 방법, 자유학기제 활동 연계
-        </div>
       </div>
 
       <!-- 탐구 질문 입력 (STEP1 미선택 시) -->
@@ -6051,21 +6015,6 @@ function confirmMajorPickFromConstellation(){
           onfocus="this.style.borderColor='rgba(52,211,153,.7)';this.style.background='rgba(52,211,153,.07)'"
           onblur="this.style.borderColor='rgba(52,211,153,.22)';this.style.background='rgba(52,211,153,.04)'"
         ></textarea>
-      </div>
-
-      <!-- 탐구 방식 칩 -->
-      <div style="margin-bottom:28px;">
-        <label style="display:block;font-size:13px;letter-spacing:2px;color:rgba(240,244,255,.55);font-weight:600;margin-bottom:10px;">🧪 탐구 방식 <span style="font-weight:400;letter-spacing:0;font-size:12px;color:rgba(240,244,255,.38);">(복수 선택 가능)</span></label>
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;justify-items:center;" id="rq-type-chips">
-          <span class="rq-chip" data-val="문헌조사" style="width:100%;justify-content:center;"><span class="rq-chip-emoji">📚</span><span class="rq-chip-label">문헌조사</span></span>
-          <span class="rq-chip" data-val="실험·관찰" style="width:100%;justify-content:center;"><span class="rq-chip-emoji">🧫</span><span class="rq-chip-label">실험·관찰</span></span>
-          <span class="rq-chip" data-val="설문조사" style="width:100%;justify-content:center;"><span class="rq-chip-emoji">📋</span><span class="rq-chip-label">설문조사</span></span>
-          <span class="rq-chip" data-val="데이터분석" style="width:100%;justify-content:center;"><span class="rq-chip-emoji">📊</span><span class="rq-chip-label">데이터분석</span></span>
-          <span class="rq-chip" data-val="비교분석" style="width:100%;justify-content:center;"><span class="rq-chip-emoji">⚖️</span><span class="rq-chip-label">비교분석</span></span>
-          <span class="rq-chip" data-val="사례연구" style="width:100%;justify-content:center;"><span class="rq-chip-emoji">🔍</span><span class="rq-chip-label">사례연구</span></span>
-          <span class="rq-chip" data-val="시뮬레이션" style="width:100%;justify-content:center;"><span class="rq-chip-emoji">💻</span><span class="rq-chip-label">시뮬레이션</span></span>
-          <span class="rq-chip" data-val="제작·메이킹" style="width:100%;justify-content:center;"><span class="rq-chip-emoji">🔧</span><span class="rq-chip-label">제작·메이킹</span></span>
-        </div>
       </div>
 
       <!-- ⭐ 별 바 -->
@@ -6088,14 +6037,7 @@ function confirmMajorPickFromConstellation(){
         </div>
       </div>
 
-      <!-- 계획서 생성 버튼 -->
-      <div style="text-align:center;">
-        <button id="rq-start-btn" onclick="openIqbotModal()"
-          style="padding:18px 64px;border-radius:999px;background:linear-gradient(135deg,#34d399,#059669,#1a6cf5);color:#fff;font-size:17px;font-weight:700;border:none;cursor:pointer;box-shadow:0 8px 32px rgba(52,211,153,.35);transition:.3s;font-family:'Pretendard','Noto Sans KR',sans-serif;letter-spacing:.3px;"
-          onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 16px 48px rgba(52,211,153,.5)'"
-          onmouseout="this.style.transform='';this.style.boxShadow='0 8px 32px rgba(52,211,153,.35)'"
-        >🔭 탐구 설계하기</button>
-      </div>
+      <!-- 탐구 설계하기 버튼은 팝업 모달에서 제공됩니다 -->
     </div>
 
     <!-- STEP 2→3 연결 화살표 -->
@@ -6466,18 +6408,17 @@ async function generateQSuggestions(params) {
     if (el) { el.innerHTML='<span style="opacity:.5;font-style:italic;">생성 중...</span>'; el.classList.remove('ql-has-content'); }
   });
 
-  var systemPrompt = '당신은 인천공항중학교 "질문하는 학교" 프로그램의 전문 질문 설계 코치입니다.\n각 질문 유형별 설계 원칙을 철저히 적용해 6개 질문이 완전히 다른 사고 과정을 유발하도록 만드세요.\n반드시 순수 JSON만 반환하세요 (마크다운 없이).';
-  var userPrompt = '탐구 주제 "'+mainTopic+'"에 대해 6가지 질문 유형별로 각각 1개의 구체적이고 탐구 가능한 질문을 설계해주세요.\n6개 질문이 모두 문장 구조, 시작 어구, 사고 방향이 달라야 합니다.\nJSON 형식으로만 반환:\n{"factual":"사실적 질문","inferential":"추론적 질문","critical":"비판적 질문","applied":"적용적 질문","reflective":"성찰적 질문","creative":"창의적 질문"}';
+  var userPrompt = '탐구 주제 "'+mainTopic+'"에 대해 6가지 질문 유형별로 각각 1개의 구체적이고 탐구 가능한 질문을 설계해주세요.\n6개 질문이 모두 문장 구조, 시작 어구, 사고 방향이 달라야 합니다.\n반드시 순수 JSON만 반환하세요 (마크다운, 코드블록 없이).\nJSON 형식:\n{"factual":"사실적 질문","inferential":"추론적 질문","critical":"비판적 질문","applied":"적용적 질문","reflective":"성찰적 질문","creative":"창의적 질문"}';
 
   var generated = null;
   try {
-    var res = await fetch('/.netlify/functions/claude', {
+    var res = await fetch('https://api.anthropic.com/v1/messages', {
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body: JSON.stringify({
         model:'claude-sonnet-4-20250514',
         max_tokens:1500,
-        system: systemPrompt,
+        system: '당신은 "질문하는 학교" 프로그램의 전문 질문 설계 코치입니다.\n각 질문 유형별 설계 원칙을 철저히 적용해 6개 질문이 완전히 다른 사고 과정을 유발하도록 만드세요.\n반드시 순수 JSON만 반환하세요 (마크다운 없이).',
         messages:[{role:'user', content: userPrompt}]
       })
     });
@@ -7806,147 +7747,191 @@ document.getElementById('portfolio-popup-overlay').addEventListener('click', fun
 });
 
 // ── PDF 다운로드 (포트폴리오 팝업에서) ──
-window.downloadPortfolioPDF = async function(){
+window.downloadPortfolioPDF = function(){
   var btn = document.getElementById('pf-pdf-btn');
   if(btn){ btn.disabled=true; btn.textContent='⏳ 생성 중...'; }
 
   var d = window._pfData || {};
-  var name = d.name||'탐험가';
-  var school = d.school||'';
-  var sid = d.sid||'';
-  var badge = d.badge||{icon:'🔴',name:'탐험 시작!'};
+  var name       = d.name||'탐험가';
+  var school     = d.school||'';
+  var sid        = d.sid||'';
+  var badge      = d.badge||{icon:'🔴',name:'탐험 시작!'};
   var totalStars = d.totalStars||0;
-  var starRows = d.starRows||[];
-  var major = d.major||d.ivMajorVal||'';
-  var topic = d.topic||'';
-  var rqPlan = d.rqPlan;
-  var filledDiary = d.filledDiary||[];
-  var filledPairs = d.filledPairs||[];
-  var aiMajors = d.aiMajors||[];
+  var dateStr    = d.dateStr||new Date().toLocaleDateString('ko-KR');
+  var gz         = d.gz||{s1:0,s2:0,s3:0,s4:0};
+  var ivStar     = d.ivStar||0;
+  var rqStar     = d.rqStar||0;
+
+  // ── 섹션 HTML 빌더 ──
+  function sec(color, emoji, title, stars, maxStars, bodyHtml){
+    var starBadge = stars!==undefined
+      ? '<span style="font-size:11px;font-weight:800;color:'+color+';background:'+color+'18;padding:3px 10px;border-radius:999px;margin-left:8px;">⭐ '+stars+' / '+maxStars+'</span>' : '';
+    return '<div style="margin-bottom:20px;border-radius:12px;overflow:hidden;border:1.5px solid '+color+'33;">'
+      +'<div style="padding:12px 18px;background:'+color+'14;border-bottom:1.5px solid '+color+'22;display:flex;align-items:center;gap:8px;">'
+      +'<span style="font-size:18px;">'+emoji+'</span>'
+      +'<span style="font-size:13px;font-weight:900;color:'+color+';letter-spacing:1px;">'+title+'</span>'
+      +starBadge+'</div>'
+      +'<div style="padding:14px 18px;">'+bodyHtml+'</div></div>';
+  }
+  function row(label, value, color){
+    if(!value||!String(value).trim()) return '';
+    return '<div style="margin-bottom:11px;">'
+      +'<div style="font-size:10px;letter-spacing:2px;color:'+(color||'#6b7280')+';font-weight:700;margin-bottom:4px;">'+label+'</div>'
+      +'<div style="font-size:13px;color:#1f2937;line-height:1.75;white-space:pre-line;">'+value+'</div></div>';
+  }
+  function tagEl(text, color){
+    return '<span style="display:inline-block;padding:4px 11px;border-radius:999px;background:'+color+'18;border:1px solid '+color+'44;font-size:11px;color:'+color+';margin:3px 3px 3px 0;">'+text+'</span>';
+  }
+  function emptyRow(text){
+    return '<div style="font-size:12px;color:#9ca3af;font-style:italic;">'+text+'</div>';
+  }
+
+  var html = '';
+
+  // ── 표지 ──
+  html += '<div style="background:linear-gradient(145deg,#0b1220,#0f1e3a);color:#fff;padding:60px 48px;text-align:center;page-break-after:always;">'
+    +'<div style="font-size:11px;letter-spacing:4px;color:rgba(0,229,255,.7);margin-bottom:20px;">전지적 전공시점 · 전공 탐구 포트폴리오</div>'
+    +'<div style="font-size:2.2rem;font-weight:900;letter-spacing:-1.5px;line-height:1.3;margin-bottom:12px;">'+name+'의<br>전공 탐구 포트폴리오</div>'
+    +(school||sid ? '<div style="font-size:13px;color:rgba(255,255,255,.45);margin-bottom:32px;">'+[school,sid].filter(Boolean).join(' · ')+'</div>' : '<div style="margin-bottom:32px;"></div>')
+    +'<div style="font-size:3rem;margin-bottom:10px;">'+badge.icon+'</div>'
+    +'<div style="font-size:1.2rem;font-weight:800;color:#fbbf24;margin-bottom:6px;">'+badge.name+'</div>'
+    +'<div style="font-size:13px;color:rgba(255,255,255,.45);margin-bottom:40px;">총 '+totalStars+' / 100 ⭐</div>'
+    +'<div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">'
+    +[{l:'전공 퀴즈',v:gz.s1||0,m:25,c:'#f97316'},{l:'적합성 탐험',v:gz.s2||0,m:20,c:'#fbbf24'},{l:'선택과목',v:gz.s3||0,m:10,c:'#a855f7'},{l:'전공 로드맵',v:gz.s4||0,m:10,c:'#60a5fa'},{l:'학과 인터뷰',v:ivStar,m:15,c:'#00e5ff'},{l:'주제 탐구',v:rqStar,m:20,c:'#34d399'}]
+    .map(function(r){return '<div style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:8px 14px;text-align:center;min-width:90px;">'
+      +'<div style="font-size:10px;color:rgba(255,255,255,.4);margin-bottom:4px;">'+r.l+'</div>'
+      +'<div style="font-size:1rem;font-weight:800;color:'+r.c+';">'+r.v+'<span style="font-size:10px;color:rgba(255,255,255,.3);"> /'+r.m+'</span></div></div>';}).join('')
+    +'</div>'
+    +'<div style="margin-top:40px;font-size:11px;color:rgba(255,255,255,.2);">'+dateStr+'</div></div>';
+
+  // ── 1. 전공 탐험 퀴즈 ──
+  var s1 = gz.s1||0;
+  html += sec('#f97316','🔴','전공 탐험 퀴즈', s1, 25,
+    s1>0 ? row('점수',s1+' / 25점','#f97316')+row('수준',s1>=20?'🏆 화성 마스터':s1>=15?'🌟 전공 박사':s1>=10?'🚀 절반 클리어':'🔴 도전 중','#f97316')
+         : emptyRow('아직 전공 퀴즈를 진행하지 않았어요.'));
+
+  // ── 2. 전공 적합성 ──
+  var dnaLabel   = d.dnaLabel||'';
+  var orbLabels  = [];
+  if(typeof FIELD_ORBS!=='undefined' && d.selectedOrbs){
+    d.selectedOrbs.forEach(function(key){
+      var o = FIELD_ORBS.find(function(x){return x.emoji+x.label===key||x.label===key;});
+      if(o) orbLabels.push(o.emoji+' '+o.label);
+    });
+  }
   var dnaMajors = d.dnaMajors||[];
-  var dateStr = d.dateStr||new Date().toLocaleDateString('ko-KR');
+  var aiMajors  = d.aiMajors||[];
+  var s2body = '';
+  if(dnaLabel||orbLabels.length||dnaMajors.length||aiMajors.length){
+    if(dnaLabel) s2body += row('나의 DNA 유형', dnaLabel, '#b45309');
+    if(orbLabels.length) s2body += '<div style="margin-bottom:10px;"><div style="font-size:10px;letter-spacing:2px;color:#b45309;font-weight:700;margin-bottom:6px;">선택한 활동 오브</div>'+orbLabels.map(function(l){return tagEl(l,'#f59e0b');}).join('')+'</div>';
+    if(dnaMajors.length) s2body += '<div style="margin-bottom:10px;"><div style="font-size:10px;letter-spacing:2px;color:#b45309;font-weight:700;margin-bottom:6px;">DNA 별자리 추천 학과</div>'+dnaMajors.slice(0,5).map(function(m){return tagEl(m,'#f59e0b');}).join('')+'</div>';
+    if(aiMajors.length) s2body += '<div style="margin-bottom:4px;"><div style="font-size:10px;letter-spacing:2px;color:#b45309;font-weight:700;margin-bottom:6px;">AI 추천 전공</div>'+aiMajors.map(function(m){return tagEl(m,'#a855f7');}).join('')+'</div>';
+  } else { s2body = emptyRow('아직 전공 적합성 탐험을 진행하지 않았어요.'); }
+  html += sec('#fbbf24','🟡','전공 적합성 탐험', gz.s2||0, 20, s2body);
 
-  // AI 리포트 생성
-  var prompt = '아래는 학생의 전공 탐구 포트폴리오 데이터입니다. 전문적이고 따뜻한 AI 코멘트를 각 섹션에 맞게 작성해주세요.\n\n'+
-    '[학생 정보]\n이름: '+name+'\n학교: '+school+'\n학번: '+sid+'\n뱃지: '+badge.icon+' '+badge.name+'\n총별: '+totalStars+'/100\n\n'+
-    '[희망 학과] '+major+'\n[탐구 주제] '+topic+'\n\n'+
-    (rqPlan ? '[탐구 계획]\n목표: '+(rqPlan.goal||'').substring(0,150)+'\n방법: '+(rqPlan.method||'').substring(0,150)+'\n' : '')+
-    (filledDiary.length ? '[탐험 일기]\n'+filledDiary.map(function(e){return e.q+'\n'+e.a;}).join('\n\n')+'\n' : '')+
-    (filledPairs.length ? '[인터뷰]\n'+filledPairs.slice(0,3).map(function(p,i){return 'Q'+(i+1)+': '+p.q+'\nA: '+p.a.substring(0,150);}).join('\n\n') : '')+
-    '\n\n### 탐험가 소개\n### 나의 탐험 여정\n### 희망 전공 탐구\n### 탐험 일기 요약\n### AI 응원 메시지 (2~3문장, 따뜻하고 구체적으로)';
+  // ── 3. 선택과목 ──
+  var sgDoneList = d.sgDoneList||[];
+  var s3body = '';
+  if(sgDoneList.length){
+    s3body = sgDoneList.map(function(s){
+      return '<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:#f5f3ff;border-radius:8px;margin-bottom:6px;">'
+        +'<span style="font-size:13px;color:#374151;">'+s.icon+' '+s.name+'</span>'
+        +'<span style="font-size:12px;font-weight:700;color:#7c3aed;">'+s.score+'/'+s.total+'점</span></div>';
+    }).join('');
+  } else { s3body = emptyRow('아직 선택과목 퀴즈를 진행하지 않았어요.'); }
+  html += sec('#a855f7','🟣','선택과목 탐험', gz.s3||0, 10, s3body);
 
-  var aiText = '';
-  try {
-    var resp = await fetch('/.netlify/functions/claude',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:2000,messages:[{role:'user',content:prompt}]})
-    });
-    var data = await resp.json();
-    aiText = data.content?.[0]?.text||'';
-  } catch(e){ aiText = ''; }
+  // ── 4. 전공 로드맵 ──
+  var tlLabels   = d.tlLabels||['중학교','고등학교','대학교','미래의 나'];
+  var tlValues   = d.tlValues||[];
+  var nepPickMajor = d.nepPickMajor||'';
+  var nepMajors  = d.nepMajors||[];
+  var s4body = '';
+  if(nepPickMajor||tlValues.some(function(v){return v&&v.trim();})||nepMajors.length){
+    if(nepPickMajor) s4body += row('탐색한 학과', nepPickMajor, '#1d4ed8');
+    if(nepMajors.length) s4body += '<div style="margin-bottom:10px;"><div style="font-size:10px;letter-spacing:2px;color:#1d4ed8;font-weight:700;margin-bottom:6px;">AI 추천 로드맵 학과</div>'+nepMajors.slice(0,3).map(function(m){return tagEl(m,'#3b82f6');}).join('')+'</div>';
+    var tlFilled = tlValues.some(function(v){return v&&v.trim();});
+    if(tlFilled){
+      s4body += '<div style="font-size:10px;letter-spacing:2px;color:#1d4ed8;font-weight:700;margin-bottom:10px;">나의 성장 로드맵</div>';
+      tlValues.forEach(function(v,i){
+        if(!v||!v.trim()) return;
+        s4body += '<div style="display:flex;gap:12px;margin-bottom:10px;">'
+          +'<div style="flex-shrink:0;width:68px;font-size:11px;font-weight:700;color:#3b82f6;padding-top:2px;">'+tlLabels[i]+'</div>'
+          +'<div style="font-size:13px;color:#374151;line-height:1.7;border-left:2px solid #93c5fd;padding-left:12px;">'+v+'</div></div>';
+      });
+    }
+  } else { s4body = emptyRow('아직 전공 로드맵 탐험을 진행하지 않았어요.'); }
+  html += sec('#60a5fa','🔵','전공 로드맵 탐험', gz.s4||0, 10, s4body);
 
-  function parseSection(text, heading){
-    var regex = new RegExp('### '+heading+'([\\s\\S]*?)(?=###|$)','i');
-    var m = text.match(regex);
-    return m ? m[1].trim() : '';
+  // ── 5. 학과 인터뷰 ──
+  var ivMajorVal   = d.ivMajorVal||'';
+  var ivUnivVal    = d.ivUnivVal||'';
+  var ivPersonaVal = d.ivPersonaVal||'';
+  var pLabel = {professor:'교수님',senior:'대학원 선배',undergrad:'학부생 선배',worker:'현직자',researcher:'연구원',counselor:'진로 선생님'};
+  var ivPairs = d.ivPairs||[];
+  var ivbody = '';
+  if(ivMajorVal||ivPairs.length){
+    var meta = [ivMajorVal, ivUnivVal, ivPersonaVal&&pLabel[ivPersonaVal]?pLabel[ivPersonaVal]+'와 인터뷰':''].filter(Boolean).join(' · ');
+    if(meta) ivbody += row('인터뷰 대상', meta, '#0369a1');
+    if(ivPairs.length){
+      ivbody += '<div style="font-size:10px;letter-spacing:2px;color:#0369a1;font-weight:700;margin-bottom:10px;">인터뷰 내용</div>';
+      ivPairs.slice(0,5).forEach(function(p,i){
+        ivbody += '<div style="margin-bottom:12px;"><div style="font-size:12px;font-weight:700;color:#0369a1;margin-bottom:4px;">Q'+(i+1)+'. '+p.q+'</div>'
+          +'<div style="font-size:13px;color:#374151;line-height:1.7;padding-left:10px;border-left:2px solid #7dd3fc;">'+p.a+'</div></div>';
+      });
+    }
+  } else { ivbody = emptyRow('아직 학과 인터뷰를 진행하지 않았어요.'); }
+  html += sec('#00e5ff','🎤','학과 인터뷰', ivStar, 15, ivbody);
+
+  // ── 6. 주제 탐구 ──
+  var rqTopic = d.rqTopic||'';
+  var rqMajor = d.rqMajor||'';
+  var rqWeeks = d.rqWeeks||'';
+  var rqTypes = d.rqTypes||'';
+  var rqPlan  = d.rqPlan||null;
+  var rqbody  = '';
+  if(rqTopic||rqPlan){
+    if(rqMajor) rqbody += row('희망 학과', rqMajor, '#059669');
+    if(rqTopic) rqbody += row('탐구 질문', rqTopic, '#059669');
+    if(rqWeeks) rqbody += row('탐구 기간', rqWeeks, '#059669');
+    if(rqTypes) rqbody += row('탐구 방식', rqTypes, '#059669');
+    if(rqPlan){
+      var rqFields = [{key:'subject',label:'탐구 주제'},{key:'goal',label:'탐구 목표'},{key:'method',label:'탐구 방법'},{key:'schedule',label:'탐구 일정'},{key:'material',label:'필요 자료'},{key:'expected',label:'예상 결과'},{key:'summary',label:'정리 방법'}];
+      rqFields.forEach(function(f){ if(rqPlan[f.key]) rqbody += row(f.label, rqPlan[f.key], '#059669'); });
+    }
+  } else { rqbody = emptyRow('아직 탐구 계획서를 생성하지 않았어요.'); }
+  html += sec('#34d399','🔭','주제 탐구', rqStar, 20, rqbody);
+
+  // ── 탐구 설계하기 결과 (iqbot) ──
+  var iqContent = (document.getElementById('iqbotContent')||{}).innerHTML||'';
+  var iqQ = (document.getElementById('iqbotQuestion')||{}).value||'';
+  if(iqContent && iqQ){
+    var iqLevelEl = document.querySelector('input[name="iqbotLevel"]:checked');
+    var iqLevel = iqLevelEl&&iqLevelEl.value==='high'?'고등학교':'중학교';
+    html += sec('#f472b6','📋','탐구 설계 계획서', undefined, undefined,
+      '<div style="margin-bottom:10px;"><span style="font-size:11px;font-weight:700;color:#be185d;">탐구 질문</span><div style="font-size:13px;color:#374151;margin-top:4px;">'+iqQ+'</div></div>'
+      +'<div style="font-size:10px;font-weight:700;color:#be185d;margin-bottom:8px;">수준: '+iqLevel+'</div>'
+      +'<div style="font-size:13px;color:#374151;line-height:1.8;">'+iqContent+'</div>');
   }
 
-  var starGridHtml = starRows.map(function(r){
-    return '<div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:12px;text-align:center;">'+
-      '<div style="font-size:12px;color:#6b7280;margin-bottom:4px;">'+r.label+'</div>'+
-      '<div style="font-size:1.2rem;font-weight:800;color:'+r.color+';">'+r.val+'<span style="font-size:11px;color:#9ca3af;"> /'+r.max+'</span></div></div>';
-  }).join('');
+  // ── 꼬리말 ──
+  html += '<div style="margin-top:32px;padding-top:16px;border-top:1px solid #e5e7eb;display:flex;justify-content:space-between;font-size:11px;color:#9ca3af;">'
+    +'<span>'+name+' 탐험가 · 전지적 전공시점</span>'
+    +'<span>'+[school,dateStr].filter(Boolean).join(' · ')+'</span></div>';
 
-  var rqFieldHtml = '';
-  if(rqPlan){
-    var rqFields2 = [{key:'subject',label:'탐구 주제'},{key:'goal',label:'탐구 목표'},{key:'method',label:'탐구 방법'},{key:'schedule',label:'탐구 일정'},{key:'material',label:'필요 자료'},{key:'expected',label:'예상 결과'},{key:'summary',label:'정리 방법'}];
-    rqFields2.forEach(function(f){
-      if(rqPlan[f.key]) rqFieldHtml += '<div style="margin-bottom:14px;"><div style="font-size:12px;font-weight:800;color:#059669;margin-bottom:4px;">'+f.label+'</div><div style="font-size:13px;color:#374151;line-height:1.7;white-space:pre-line;">'+rqPlan[f.key]+'</div></div>';
-    });
-  }
+  var pdfHtml = '<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"/>'
+    +'<style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:"Noto Sans KR",sans-serif;background:#fff;color:#111;padding:32px 40px;}@page{margin:12mm 16mm;size:A4;}@media print{.no-print{display:none;}}</style>'
+    +'<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&display=swap" rel="stylesheet"/>'
+    +'</head><body>'+html+'</body></html>';
 
-  var diaryHtml2 = filledDiary.map(function(e){
-    return '<div style="margin-bottom:14px;"><div style="font-size:12px;font-weight:800;color:#b45309;margin-bottom:4px;">Q. '+e.q+'</div>'+
-      '<div style="font-size:13px;color:#374151;line-height:1.7;padding-left:10px;border-left:3px solid #fbbf24;">'+e.a+'</div></div>';
-  }).join('');
-
-  var ivHtml2 = filledPairs.map(function(p,i){
-    return '<div style="margin-bottom:14px;"><div style="font-size:12px;font-weight:800;color:#0369a1;margin-bottom:4px;">Q'+(i+1)+'. '+p.q+'</div>'+
-      '<div style="font-size:13px;color:#374151;line-height:1.7;padding-left:10px;border-left:3px solid #00e5ff;">'+p.a+'</div></div>';
-  }).join('');
-
-  var aiSections = ['탐험가 소개','나의 탐험 여정','희망 전공 탐구','탐험 일기 요약','AI 응원 메시지'];
-  var aiColors  = ['#1a6cf5','#a855f7','#00bcd4','#f59e0b','#ec4899'];
-  var aiEmojis  = ['👤','🌟','🎓','📓','💌'];
-  var aiHtml = aiText ? aiSections.map(function(sec,i){
-    var content = parseSection(aiText,sec);
-    if(!content) return '';
-    var lines = content.split('\n').filter(function(l){return l.trim();});
-    return '<div style="margin-bottom:24px;padding:18px 20px;border:1px solid #e5e7eb;border-left:4px solid '+aiColors[i]+';border-radius:0 12px 12px 0;">'+
-      '<div style="font-size:13px;font-weight:800;color:'+aiColors[i]+';letter-spacing:2px;margin-bottom:10px;">'+aiEmojis[i]+' '+sec.toUpperCase()+'</div>'+
-      lines.map(function(l){return '<p style="font-size:13px;color:#374151;line-height:1.8;margin-bottom:6px;">'+l.replace(/\*\*/g,'').replace(/\*/g,'')+'</p>';}).join('')+'</div>';
-  }).join('') : '';
-
-  var pdfHtml = `<!DOCTYPE html>
-<html lang="ko"><head><meta charset="UTF-8"/>
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap');
-*{margin:0;padding:0;box-sizing:border-box;}
-body{font-family:'Noto Sans KR',sans-serif;background:#fff;color:#111;}
-@page{margin:15mm 18mm;size:A4;}
-.page-break{page-break-after:always;}
-h2{font-size:16px;font-weight:800;color:#1a1a2e;letter-spacing:-0.5px;border-bottom:2px solid #e8f0fe;padding-bottom:10px;margin-bottom:18px;}
-</style></head><body>
-
-<div class="page-break" style="background:linear-gradient(145deg,#0b1220,#0f1e3a);color:#fff;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:60px 40px;">
-  <div style="font-size:12px;letter-spacing:4px;color:rgba(0,229,255,.8);margin-bottom:24px;">전지적 전공시점 · AI 전공 탐구 포트폴리오</div>
-  <div style="font-size:2.4rem;font-weight:900;color:#fff;letter-spacing:-2px;line-height:1.3;margin-bottom:10px;">\${name}의<br>전공 탐구 포트폴리오</div>
-  <div style="font-size:14px;color:rgba(255,255,255,.5);margin-bottom:36px;">\${school} \${sid}</div>
-  <div style="font-size:3.5rem;margin-bottom:12px;">\${badge.icon}</div>
-  <div style="font-size:1.3rem;font-weight:800;color:#fbbf24;margin-bottom:6px;">\${badge.name}</div>
-  <div style="font-size:14px;color:rgba(255,255,255,.5);margin-bottom:36px;">총 \${totalStars} / 100 ⭐ 획득</div>
-  <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">\${starRows.map(function(r){return '<div style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:8px 14px;text-align:center;"><div style="font-size:10px;color:rgba(255,255,255,.45);margin-bottom:4px;">'+r.label+'</div><div style="font-size:1rem;font-weight:800;color:'+r.color+';"> '+r.val+' / '+r.max+'⭐</div></div>';}).join('')}</div>
-  <div style="margin-top:36px;font-size:12px;color:rgba(255,255,255,.25);">\${dateStr}</div>
-</div>
-
-<div style="padding:40px 48px;" class="page-break">
-  <h2>⭐ 탐험 별 현황</h2>
-  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px;">\${starGridHtml}</div>
-  <div style="background:linear-gradient(135deg,#1a6cf5,#6366f1);border-radius:14px;padding:18px;text-align:center;color:#fff;">
-    <div style="font-size:13px;color:rgba(255,255,255,.7);margin-bottom:6px;">총 획득 별</div>
-    <div style="font-size:2rem;font-weight:900;">\${totalStars} <span style="font-size:.9rem;color:rgba(255,255,255,.6);">/ 100 ⭐</span></div>
-    <div style="font-size:1rem;font-weight:700;margin-top:6px;">\${badge.icon} \${badge.name}</div>
-  </div>
-</div>
-
-\${major||topic ? '<div style="padding:40px 48px;" class="page-break"><h2>🎓 전공 탐구 기록</h2>'+
-  (major ? '<div style="font-size:15px;font-weight:700;color:#1a6cf5;margin-bottom:10px;">희망 학과: '+major+'</div>' : '')+
-  (topic ? '<div style="font-size:13px;color:#374151;margin-bottom:14px;">📌 탐구 주제: '+topic+'</div>' : '')+
-  (aiMajors.length ? '<div style="font-size:12px;color:#6b7280;margin-bottom:6px;">AI 추천 전공</div><div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;">'+aiMajors.map(function(m){return '<span style="padding:4px 12px;border-radius:999px;background:#ede9fe;font-size:12px;color:#7c3aed;">'+m+'</span>';}).join('')+'</div>' : '')+
-  '</div>' : ''}
-
-\${rqPlan ? '<div style="padding:40px 48px;" class="page-break"><h2>🔭 탐구 계획서</h2>'+rqFieldHtml+'</div>' : ''}
-
-\${filledDiary.length ? '<div style="padding:40px 48px;" class="page-break"><h2>📓 탐험 일기</h2>'+diaryHtml2+'</div>' : ''}
-
-\${filledPairs.length ? '<div style="padding:40px 48px;" class="page-break"><h2>🎤 학과 인터뷰 기록</h2>'+ivHtml2+'</div>' : ''}
-
-\${aiHtml ? '<div style="padding:40px 48px;"><h2>✨ AI 전공 탐구 리포트</h2>'+aiHtml+'</div>' : ''}
-
-<div style="padding:24px 48px;border-top:1px solid #e5e7eb;display:flex;align-items:center;gap:10px;font-size:12px;color:#9ca3af;">
-  <span>\${name} 탐험가</span><span>·</span><span>전지적 전공시점</span><span>·</span><span>\${school}</span><span>·</span><span>\${dateStr}</span>
-</div>
-
-</body></html>`;
-
-  var w = window.open('','_blank','width=1000,height=800');
+  var w = window.open('','_blank','width=1000,height=860');
   if(w){
     w.document.write(pdfHtml);
     w.document.close();
-    setTimeout(function(){ w.print(); }, 1200);
+    setTimeout(function(){ w.print(); }, 1000);
   } else {
-    alert('팝업이 차단되었어요. 팝업 허용 후 다시 시도해주세요.');
+    alert('팝업이 차단되어 있어요. 팝업 허용 후 다시 시도해주세요.');
   }
   if(btn){ btn.disabled=false; btn.textContent='⬇️ PDF 저장'; }
 };
@@ -7980,7 +7965,7 @@ h2{font-size:16px;font-weight:800;color:#1a1a2e;letter-spacing:-0.5px;border-bot
     <span class="sparkle">✦</span>미래를 <span class="kw-question">질문하는</span> 순간,<br><span class="kw-dream">꿈은</span> 시작된다!
   </p>
   <!-- 버튼 그룹 -->
-  <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:16px;margin-bottom:0;">
+  <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:48px;margin-bottom:0;">
 
     <!-- 내 별 + 탐험 뱃지 가로 나란히 -->
     <div class="footer-row-btns">
@@ -8027,7 +8012,7 @@ h2{font-size:16px;font-weight:800;color:#1a1a2e;letter-spacing:-0.5px;border-bot
       </button>
     </div>
 
-    <!-- 전공 탐구 포트폴리오 버튼 -->
+    <!-- 전공 탐구 포트폴리오 버튼 (맨 아래) -->
     <button class="footer-btn footer-report-btn" id="open-report-btn" onclick="openPortfolioPopup()" style="
       display:inline-flex;align-items:center;gap:12px;
       background:linear-gradient(135deg,#1a6cf5,#6366f1);
@@ -8108,8 +8093,9 @@ h2{font-size:16px;font-weight:800;color:#1a1a2e;letter-spacing:-0.5px;border-bot
     <!-- 섹션별 별 목록 -->
     <div style="display:flex;flex-direction:column;gap:8px;" id="popup-star-list"></div>
   </div>
-  <p class="footer-copy" style="position:relative;z-index:1;color:rgba(255,255,255,.35);">질문하는 학교 · 인천공항중학교</p>
-  <p style="position:relative;z-index:1;margin-top:16px;font-size:13px;color:#7dd3fc;letter-spacing:1px;">AI · UX 디자이너 조유진</p>
+  <p class="footer-copy" style="position:relative;z-index:1;color:rgba(255,255,255,.9);">질문하는 학교 · 인천공항중학교</p>
+  <p style="position:relative;z-index:1;margin-top:10px;font-size:12px;color:rgba(255,255,255,.5);letter-spacing:.3px;line-height:1.7;max-width:480px;margin-left:auto;margin-right:auto;text-align:center;">AI는 사용자 경험(UX)의 보조 수단으로, 작은 오차 범위로 오류가 있을 수 있습니다.</p>
+  <p style="position:relative;z-index:1;margin-top:10px;font-size:13px;font-weight:700;letter-spacing:1px;background:linear-gradient(90deg,#f472b6,#c084fc,#818cf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">AI-UX 디자이너 조유진</p>
 </footer>
 
 <style>
@@ -10373,6 +10359,9 @@ var introSlide = 0;
             <option value="관찰 탐구">👁️ 관찰 탐구</option>
             <option value="비교 탐구">⚖️ 비교 탐구</option>
             <option value="제작·창작 탐구">🛠️ 제작·창작 탐구</option>
+            <option value="설문·인터뷰 탐구">🗣️ 설문·인터뷰 탐구</option>
+            <option value="데이터 분석 탐구">📈 데이터 분석 탐구</option>
+            <option value="현장·체험 탐구">🏫 현장·체험 탐구</option>
           </select>
         </div>
         <div class="iqbot-field">
@@ -10385,6 +10374,19 @@ var introSlide = 0;
           </select>
         </div>
       </div>
+      <div class="iqbot-field">
+        <label>탐구 수준</label>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:10px 14px;border-radius:12px;border:1.5px solid rgba(52,211,153,.22);background:rgba(52,211,153,.04);transition:.2s;" id="iqbot-level-mid-wrap">
+            <input type="radio" name="iqbotLevel" id="iqbotLevelMid" value="middle" checked style="width:16px;height:16px;accent-color:#34d399;flex-shrink:0;" onchange="iqbotLevelChange()"/>
+            <span style="font-size:14px;font-weight:700;color:#f0f4ff;">📚 중학교</span>
+          </label>
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:10px 14px;border-radius:12px;border:1.5px solid rgba(99,102,241,.22);background:rgba(99,102,241,.04);transition:.2s;" id="iqbot-level-high-wrap">
+            <input type="radio" name="iqbotLevel" id="iqbotLevelHigh" value="high" style="width:16px;height:16px;accent-color:#6366f1;flex-shrink:0;" onchange="iqbotLevelChange()"/>
+            <span style="font-size:14px;font-weight:700;color:#f0f4ff;">🏫 고등학교</span>
+          </label>
+        </div>
+      </div>
       <button class="iqbot-gen-btn" id="iqbotGenBtn" onclick="generateIqbot()">
         ✨ AI로 탐구 계획 설계하기
       </button>
@@ -10392,8 +10394,7 @@ var introSlide = 0;
         <div class="iqbot-result-hd">
           <strong>📋 AI 탐구 설계 결과</strong>
           <div class="iqbot-result-actions">
-            <button onclick="copyIqbot()" style="border:1.5px solid rgba(52,211,153,.3);color:#34d399;background:rgba(52,211,153,.06);">📋 복사</button>
-            <button onclick="downloadIqbotTxt()" style="border:1.5px solid rgba(26,108,245,.3);color:#60a5fa;background:rgba(26,108,245,.06);">📄 TXT</button>
+            <button onclick="downloadIqbotPdf()" style="border:1.5px solid rgba(239,68,68,.35);color:#f87171;background:rgba(239,68,68,.08);display:flex;align-items:center;gap:5px;">📥 PDF 저장</button>
           </div>
         </div>
         <div class="iqbot-content" id="iqbotContent"></div>
@@ -10424,39 +10425,65 @@ function closeIqbotModal() {
   document.getElementById('iqbotOverlay').classList.remove('open');
   document.body.style.overflow = '';
 }
+function iqbotLevelChange() {
+  var isMid = document.getElementById('iqbotLevelMid').checked;
+  var midWrap  = document.getElementById('iqbot-level-mid-wrap');
+  var highWrap = document.getElementById('iqbot-level-high-wrap');
+  if (midWrap)  { midWrap.style.borderColor  = isMid  ? 'rgba(52,211,153,.7)'  : 'rgba(52,211,153,.22)';  midWrap.style.background  = isMid  ? 'rgba(52,211,153,.12)'  : 'rgba(52,211,153,.04)'; }
+  if (highWrap) { highWrap.style.borderColor = !isMid ? 'rgba(99,102,241,.7)'  : 'rgba(99,102,241,.22)';  highWrap.style.background = !isMid ? 'rgba(99,102,241,.12)' : 'rgba(99,102,241,.04)'; }
+}
+
 async function generateIqbot() {
   var q        = document.getElementById('iqbotQuestion').value.trim();
   if (!q) { alert('탐구 질문을 입력해주세요!'); document.getElementById('iqbotQuestion').focus(); return; }
   var typeText = document.getElementById('iqbotType').value;
   var period   = document.getElementById('iqbotPeriod').value;
-  var btn      = document.getElementById('iqbotGenBtn');
-  var result   = document.getElementById('iqbotResult');
-  var box      = document.getElementById('iqbotContent');
-  var err      = document.getElementById('iqbotErr');
+  var levelEl  = document.querySelector('input[name="iqbotLevel"]:checked');
+  var level    = levelEl ? levelEl.value : 'middle';
+  var isHigh   = level === 'high';
+  var levelLabel = isHigh ? '고등학생' : '중학생';
+
+  var btn    = document.getElementById('iqbotGenBtn');
+  var result = document.getElementById('iqbotResult');
+  var box    = document.getElementById('iqbotContent');
+  var err    = document.getElementById('iqbotErr');
 
   btn.disabled = true;
-  btn.textContent = '⏳ 설계 중...';
+  btn.textContent = '⏳ AI 설계 중...';
   result.classList.remove('show');
   err.style.display = 'none';
 
-  var prompt = '중학생 탐구 계획을 간결하게 작성해주세요.\n'
-    + '탐구 질문: "' + q + '" / 방법: ' + typeText + ' / 기간: ' + period + '\n\n'
-    + '각 항목을 아래 형식으로 2~3줄씩 짧게 작성하세요.\n\n'
-    + '📌 탐구 주제\n'
-    + '🎯 탐구 목표\n'
-    + '🔬 탐구 방법 (3단계)\n'
-    + '📅 탐구 일정\n'
-    + '🧰 필요한 재료\n'
-    + '💡 예상 결과\n'
-    + '📝 결과 정리 방법';
+  var prompt = isHigh
+    ? levelLabel + ' 탐구 계획서를 작성해주세요.\n'
+      + '탐구 질문: "' + q + '" / 탐구 방법: ' + typeText + ' / 기간: ' + period + '\n\n'
+      + '고등학생 수준에 맞게 학생부 세특 연계를 고려해 구체적이고 심화된 내용으로 작성하세요.\n'
+      + '각 항목을 아래 형식으로 3~4줄씩 작성하세요.\n\n'
+      + '📌 탐구 주제\n'
+      + '🎯 탐구 목표 및 가설\n'
+      + '🔬 탐구 방법 및 절차 (4단계)\n'
+      + '📅 탐구 일정 (주차별)\n'
+      + '🧰 필요한 자료 및 도구\n'
+      + '💡 예상 결과 및 가설 검증 방법\n'
+      + '📝 세특 연계 및 결과 정리 방법'
+    : levelLabel + ' 탐구 계획서를 쉽고 친근하게 작성해주세요.\n'
+      + '탐구 질문: "' + q + '" / 탐구 방법: ' + typeText + ' / 기간: ' + period + '\n\n'
+      + '중학생이 혼자 실천할 수 있는 수준으로 쉽게 작성하세요.\n'
+      + '각 항목을 아래 형식으로 2~3줄씩 짧게 작성하세요.\n\n'
+      + '📌 탐구 주제\n'
+      + '🎯 탐구 목표\n'
+      + '🔬 탐구 방법 (3단계)\n'
+      + '📅 탐구 일정\n'
+      + '🧰 필요한 재료\n'
+      + '💡 예상 결과\n'
+      + '📝 결과 정리 방법';
 
   try {
-    var res = await fetch('/.netlify/functions/claude', {
+    var res = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
-        max_tokens: 1200,
+        max_tokens: isHigh ? 1800 : 1200,
         messages: [{ role: 'user', content: prompt }]
       })
     });
@@ -10465,15 +10492,67 @@ async function generateIqbot() {
     var text = (data.content || []).map(function(c){ return c.text || ''; }).join('');
     if (!text) throw new Error('응답이 비어있습니다.');
     box.dataset.rawText = text;
-    box.innerHTML = text.split('\n').map(function(line) {
-      if (!line.trim()) return '';
-      if (/^#{1,3}\s/.test(line.trim()) || /^[📌🎯🔬📅🧰💡📝⚠️]/.test(line.trim())) {
-        var titleText = line.trim().replace(/^#{1,3}\s+/, '').replace(/\*\*(.+?)\*\*/g, '$1');
-        return '<div style="margin:16px 0 6px;font-size:15px;font-weight:900;color:#34d399;border-bottom:1.5px solid rgba(52,211,153,.25);padding-bottom:4px;">' + titleText + '</div>';
+
+    // 섹션별 색상 매핑 (이모지 → 색상)
+    var sectionColors = {
+      '📌': { color:'#f472b6', border:'rgba(244,114,182,.3)', bg:'rgba(244,114,182,.07)' }, // 핑크 — 탐구 주제
+      '🎯': { color:'#60a5fa', border:'rgba(96,165,250,.3)',  bg:'rgba(96,165,250,.07)'  }, // 블루 — 탐구 목표
+      '🔬': { color:'#34d399', border:'rgba(52,211,153,.3)',  bg:'rgba(52,211,153,.07)'  }, // 그린 — 탐구 방법
+      '📅': { color:'#fbbf24', border:'rgba(251,191,36,.3)',  bg:'rgba(251,191,36,.07)'  }, // 옐로 — 탐구 일정
+      '🧰': { color:'#fb923c', border:'rgba(251,146,60,.3)',  bg:'rgba(251,146,60,.07)'  }, // 오렌지 — 필요 재료
+      '💡': { color:'#a78bfa', border:'rgba(167,139,250,.3)', bg:'rgba(167,139,250,.07)' }, // 퍼플 — 예상 결과
+      '📝': { color:'#22d3ee', border:'rgba(34,211,238,.3)',  bg:'rgba(34,211,238,.07)'  }, // 시안 — 정리 방법
+      '⚠️': { color:'#f87171', border:'rgba(248,113,113,.3)', bg:'rgba(248,113,113,.07)' },
+    };
+
+    var currentEmoji = null;
+    var currentColor = null;
+    var sections = [];
+    var curLines = [];
+
+    function flushSection() {
+      if (currentEmoji && curLines.length) {
+        sections.push({ emoji: currentEmoji, color: currentColor, lines: curLines.slice() });
       }
-      var rendered = line.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
-      return '<div style="font-size:14px;color:rgba(240,244,255,.8);line-height:1.8;padding-left:4px;">' + rendered + '</div>';
-    }).join('');
+      curLines = [];
+    }
+
+    text.split('\n').forEach(function(line) {
+      var trimmed = line.trim();
+      if (!trimmed) return;
+      var headMatch = trimmed.match(/^(#{1,3}\s+)?([📌🎯🔬📅🧰💡📝⚠️])/);
+      if (headMatch) {
+        flushSection();
+        currentEmoji = headMatch[2];
+        currentColor = sectionColors[currentEmoji] || { color:'#f0f4ff', border:'rgba(255,255,255,.15)', bg:'rgba(255,255,255,.04)' };
+        var titleText = trimmed.replace(/^#{1,3}\s+/, '').replace(/\*\*(.+?)\*\*/g, '$1');
+        curLines.push({ type:'title', text: titleText });
+      } else {
+        var rendered = trimmed.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+        curLines.push({ type:'body', text: rendered });
+      }
+    });
+    flushSection();
+
+    var levelBadge = isHigh
+      ? '<div style="display:inline-flex;align-items:center;gap:6px;padding:4px 14px;border-radius:999px;background:rgba(99,102,241,.15);border:1px solid rgba(99,102,241,.35);color:#a5b4fc;font-size:12px;font-weight:700;margin-bottom:16px;">🏫 고등학교 수준</div>'
+      : '<div style="display:inline-flex;align-items:center;gap:6px;padding:4px 14px;border-radius:999px;background:rgba(52,211,153,.12);border:1px solid rgba(52,211,153,.3);color:#34d399;font-size:12px;font-weight:700;margin-bottom:16px;">📚 중학교 수준</div>';
+
+    var html = levelBadge;
+    sections.forEach(function(sec) {
+      var c = sec.color;
+      html += '<div style="margin-bottom:14px;border-radius:14px;overflow:hidden;border:1.5px solid '+c.border+';background:'+c.bg+';">';
+      sec.lines.forEach(function(l) {
+        if (l.type === 'title') {
+          html += '<div style="padding:10px 16px 9px;font-size:15px;font-weight:900;color:'+c.color+';border-bottom:1.5px solid '+c.border+';display:flex;align-items:center;gap:6px;">'+l.text+'</div>';
+        } else {
+          html += '<div style="padding:5px 16px;font-size:14px;color:rgba(240,244,255,.85);line-height:1.85;">'+l.text+'</div>';
+        }
+      });
+      html += '</div>';
+    });
+
+    box.innerHTML = html;
     result.classList.add('show');
     result.scrollIntoView({ behavior: 'smooth', block: 'start' });
   } catch(e) {
@@ -10484,17 +10563,66 @@ async function generateIqbot() {
     btn.textContent = '✨ AI로 탐구 계획 설계하기';
   }
 }
-function copyIqbot() {
-  var q = document.getElementById('iqbotQuestion').value.trim();
-  var c = document.getElementById('iqbotContent').textContent;
-  navigator.clipboard.writeText('[탐구 질문]\n' + q + '\n\n' + c).then(function(){ alert('복사되었습니다!'); });
-}
-function downloadIqbotTxt() {
-  var q = document.getElementById('iqbotQuestion').value.trim();
-  var c = document.getElementById('iqbotContent').textContent;
-  var blob = new Blob(['[탐구 질문]\n' + q + '\n\n' + c], { type: 'text/plain;charset=utf-8' });
-  var a = document.createElement('a'); a.href = URL.createObjectURL(blob);
-  a.download = '탐구계획_' + q.slice(0,20).replace(/\s/g,'_') + '.txt'; a.click();
+function downloadIqbotPdf() {
+  var q    = document.getElementById('iqbotQuestion').value.trim();
+  var box  = document.getElementById('iqbotContent');
+  var levelEl = document.querySelector('input[name="iqbotLevel"]:checked');
+  var isHigh  = levelEl && levelEl.value === 'high';
+  var levelLabel = isHigh ? '고등학교' : '중학교';
+  var date = new Date().toLocaleDateString('ko-KR');
+
+  // 섹션 색상 (PDF 인쇄용 밝은 팔레트)
+  var pdfColors = {
+    '📌': '#f472b6', '🎯': '#3b82f6', '🔬': '#10b981',
+    '📅': '#f59e0b', '🧰': '#f97316', '💡': '#8b5cf6',
+    '📝': '#06b6d4', '⚠️': '#ef4444'
+  };
+
+  // 현재 렌더된 섹션 카드를 PDF HTML로 변환
+  var cards = box.querySelectorAll('div[style*="border-radius:14px"]');
+  var sectionsHtml = '';
+  cards.forEach(function(card) {
+    var titleEl = card.querySelector('div[style*="font-weight:900"]');
+    var bodyEls = card.querySelectorAll('div[style*="font-size:14px"]');
+    if (!titleEl) return;
+    var titleTxt = titleEl.textContent.trim();
+    var emoji = titleTxt.match(/[📌🎯🔬📅🧰💡📝⚠️]/);
+    var color = emoji ? (pdfColors[emoji[0]] || '#1a6cf5') : '#1a6cf5';
+    var bodyHtml = '';
+    bodyEls.forEach(function(b){ bodyHtml += '<p style="margin:4px 0;font-size:13px;color:#374151;line-height:1.8;">'+b.innerHTML+'</p>'; });
+    sectionsHtml += '<div style="margin-bottom:14px;border-radius:10px;overflow:hidden;border:1.5px solid '+color+'44;">'
+      + '<div style="padding:10px 16px;background:'+color+'18;border-bottom:1.5px solid '+color+'44;font-size:14px;font-weight:900;color:'+color+';">'+titleTxt+'</div>'
+      + '<div style="padding:10px 16px;">'+bodyHtml+'</div>'
+      + '</div>';
+  });
+
+  var html = '<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"/>'
+    + '<title>탐구 계획서</title>'
+    + '<style>'
+    + 'body{font-family:"Pretendard","Noto Sans KR",sans-serif;margin:0;padding:32px 40px;color:#111;background:#fff;}'
+    + '.cover{text-align:center;padding:32px 0 24px;border-bottom:2px solid #e5e7eb;margin-bottom:28px;}'
+    + '.cover h1{font-size:22px;font-weight:900;color:#0f172a;margin:0 0 8px;}'
+    + '.cover .q-box{background:#f0fdf4;border:1.5px solid #86efac;border-radius:10px;padding:14px 20px;margin:16px auto;max-width:600px;font-size:14px;font-weight:700;color:#166534;line-height:1.7;}'
+    + '.cover .meta{font-size:12px;color:#6b7280;margin-top:10px;letter-spacing:.5px;}'
+    + '@media print{body{padding:20px 28px;}}'
+    + '</style></head><body>'
+    + '<div class="cover">'
+    + '<div style="font-size:12px;letter-spacing:3px;color:#6b7280;margin-bottom:8px;">AI 탐구 설계 계획서</div>'
+    + '<h1>📋 탐구 계획서</h1>'
+    + '<div class="q-box">❓ '+q+'</div>'
+    + '<div class="meta">수준: '+levelLabel+'　|　작성일: '+date+'</div>'
+    + '</div>'
+    + sectionsHtml
+    + '</body></html>';
+
+  var w = window.open('', '_blank', 'width=860,height=900');
+  if (w) {
+    w.document.write(html);
+    w.document.close();
+    setTimeout(function(){ w.print(); }, 800);
+  } else {
+    alert('팝업이 차단되어 있어요. 팝업 허용 후 다시 시도해주세요.');
+  }
 }
 </script>
 
