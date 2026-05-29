@@ -8012,7 +8012,23 @@ window.openPortfolioPopup = function(){
         }
         if(info.subjects&&info.subjects.length){
           s4Html += '<div style="font-size:11px;color:rgba(168,85,247,.7);font-weight:700;margin-bottom:5px;">📚 선택과목</div>';
-          s4Html += '<div style="display:flex;flex-wrap:wrap;gap:4px;">'+info.subjects.slice(0,4).map(function(s){return tag(s,'rgba(168,85,247,.1)','rgba(168,85,247,.3)');}).join('')+'</div>';
+          s4Html += '<div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px;">'+info.subjects.slice(0,4).map(function(s){return tag(s,'rgba(168,85,247,.1)','rgba(168,85,247,.3)');}).join('')+'</div>';
+        }
+        if(info.midActs&&info.midActs.length){
+          s4Html += '<div style="font-size:11px;color:rgba(52,211,153,.7);font-weight:700;margin-bottom:5px;margin-top:4px;">✅ 추천 활동</div>';
+          s4Html += '<div style="margin-bottom:8px;">';
+          info.midActs.slice(0,5).forEach(function(a,ai){
+            s4Html += '<div style="font-size:12px;color:rgba(240,244,255,.82);line-height:1.65;padding:3px 0 3px 8px;border-left:2px solid rgba(52,211,153,.3);">'+(ai+1)+'. '+a+'</div>';
+          });
+          s4Html += '</div>';
+        }
+        if(info.researchTopics&&info.researchTopics.length){
+          s4Html += '<div style="font-size:11px;color:rgba(251,191,36,.7);font-weight:700;margin-bottom:5px;margin-top:4px;">🔭 주제 탐구 아이디어</div>';
+          s4Html += '<div>';
+          info.researchTopics.slice(0,5).forEach(function(t,ti){
+            s4Html += '<div style="font-size:12px;color:rgba(240,244,255,.82);line-height:1.65;padding:3px 0 3px 8px;border-left:2px solid rgba(251,191,36,.3);">'+(ti+1)+'. '+t+'</div>';
+          });
+          s4Html += '</div>';
         }
         s4Html += '</div></div>';
       });
@@ -10807,9 +10823,9 @@ var introSlide = 0;
       <div class="iqbot-result" id="iqbotResult">
         <div class="iqbot-result-hd">
           <strong>📋 AI 탐구 설계 결과</strong>
-          <div class="iqbot-result-actions">
-            <button onclick="downloadIqbotPdf()" style="border:1.5px solid rgba(239,68,68,.35);color:#f87171;background:rgba(239,68,68,.08);display:flex;align-items:center;gap:5px;">📥 PDF 저장</button>
-          </div>
+        </div>
+        <div style="margin-bottom:14px;padding:9px 14px;background:rgba(52,211,153,.07);border:1px solid rgba(52,211,153,.22);border-radius:10px;font-size:12.5px;color:rgba(52,211,153,.85);line-height:1.6;">
+          💡 이 탐구 설계는 <strong style="color:#34d399;">전공 탐구 포트폴리오</strong>에 자동으로 저장됩니다. 포트폴리오에서 PDF로 다운받을 수 있어요!
         </div>
         <div class="iqbot-content" id="iqbotContent"></div>
       </div>
@@ -10875,28 +10891,31 @@ async function generateIqbot() {
   ];
 
   var systemPrompt =
-    '당신은 중·고등학생의 탐구 활동을 친절하게 도와주는 선생님입니다.\n' +
-    '학생이 스스로 실천할 수 있도록 쉽고 간결하게 탐구 계획을 작성합니다.\n\n' +
+    '당신은 중·고등학생의 탐구 활동을 따뜻하고 친절하게 도와주는 선생님입니다.\n' +
+    '학생이 스스로 자신감을 갖고 실천할 수 있도록 구체적이고 실용적인 탐구 계획을 작성합니다.\n\n' +
     '규칙:\n' +
     '1. 탐구 질문의 핵심 단어를 모든 항목에 자연스럽게 포함하세요.\n' +
-    '2. 어려운 전문 용어 없이 중학생도 이해할 수 있는 쉬운 말을 씁니다.\n' +
-    '3. 각 항목은 번호 목록(①②③)으로 2~3개 항목만 간결하게 작성합니다.\n' +
-    '4. 반드시 순수 JSON만 반환하세요. 마크다운, 코드블록 없이.\n' +
-    '5. 모든 키(subject, goal, method, schedule, material, expected, summary)를 빠짐없이 작성하세요.';
+    '2. 어려운 전문 용어 없이 중학생도 이해할 수 있는 쉬운 말을 쓰되, 충분히 구체적이어야 합니다.\n' +
+    '3. 각 항목은 번호 목록(①②③)으로 2~3개 항목을 작성하되, 각 항목은 충분히 설명적으로 서술하세요.\n' +
+    '4. 모든 문장은 반드시 명사형으로 끝내세요. (~함, ~기, ~임, ~것, ~결과, ~방법, ~단계 등으로 끝냄)\n' +
+    '   예) ✗ "자료를 조사한다" → ✓ "자료 조사 및 정리"\n' +
+    '   예) ✗ "결과를 분석할 것이다" → ✓ "결과 분석 및 패턴 도출"\n' +
+    '5. 반드시 순수 JSON만 반환하세요. 마크다운, 코드블록 없이.\n' +
+    '6. 모든 키(subject, goal, method, schedule, material, expected, summary)를 빠짐없이 작성하세요.';
 
   var userPrompt =
     '탐구 질문: "' + q + '"\n' +
     '탐구 방법: ' + typeText + '\n' +
     '탐구 기간: ' + period + '\n\n' +
-    '아래 JSON 형식으로만 답하세요. 각 값은 ①②③ 번호 목록 형식, 2~3줄로 간결하게.\n\n' +
+    '아래 JSON 형식으로만 답하세요. 각 항목은 ①②③ 번호 목록으로, 내용은 구체적이고 실용적으로, 모든 문장은 명사형으로 끝냄.\n\n' +
     '{\n' +
-    '  "subject": "① 이 탐구가 무엇을 알아보려는지 한 문장\\n② 왜 이 질문이 궁금한지 한 문장",\n' +
-    '  "goal": "① 탐구로 확인하고 싶은 것 첫 번째\\n② 탐구로 확인하고 싶은 것 두 번째\\n③ 예상: ~하면 ~할 것이다",\n' +
-    '  "method": "① ' + typeText + ' 방식 첫 번째 단계\\n② 두 번째 단계\\n③ 세 번째 단계",\n' +
-    '  "schedule": "' + period + ' 기간을 2~3단계로 나눠 간단히",\n' +
-    '  "material": "① 필요한 자료나 도구 첫 번째\\n② 두 번째\\n③ 세 번째",\n' +
-    '  "expected": "① 탐구 후 나올 것 같은 결과\\n② 결과로 알 수 있는 것",\n' +
-    '  "summary": "① 결과 정리 방법(보고서·발표 등)\\n② 관련 교과나 진로와의 연결"\n' +
+    '  "subject": "① 탐구가 다루는 핵심 주제와 배경 (학과·사회적 의미 포함)\\n② 이 탐구 질문이 중요한 이유와 탐구 범위 설명",\n' +
+    '  "goal": "① 탐구를 통해 확인하고자 하는 첫 번째 핵심 목표\\n② 탐구를 통해 확인하고자 하는 두 번째 핵심 목표\\n③ 탐구 가설: 예상되는 결과와 그 근거 제시",\n' +
+    '  "method": "① ' + typeText + ' 방식의 첫 번째 단계 (구체적 도구·방법 포함)\\n② 두 번째 단계 (수행 방법 상세 설명)\\n③ 세 번째 단계 (결과 기록 및 검증 방법)",\n' +
+    '  "schedule": "' + period + ' 기간을 3단계로 나눠 각 단계별 세부 일정과 목표 제시",\n' +
+    '  "material": "① 탐구 수행에 필요한 핵심 자료와 출처 (책·논문·사이트 등)\\n② 필요한 도구 또는 장비·소프트웨어\\n③ 데이터 수집·기록을 위한 양식이나 방법",\n' +
+    '  "expected": "① 탐구 후 도출될 것으로 예상되는 구체적 결과와 의미\\n② 결과가 나의 진로·관심 학과와 연결되는 방식 설명",\n' +
+    '  "summary": "① 결과 정리·발표 방법 (보고서 형식, 시각 자료 종류 등 구체적 제시)\\n② 이 탐구와 연결되는 관련 교과목 및 심화 탐구 방향"\n' +
     '}';
 
   function renderSections(data) {
@@ -10982,13 +11001,13 @@ function generateIqbotFallback(q, typeText, period) {
   else if (period==='한 달') sched = '① 1주차: 자료 조사\n② 2~3주차: 탐구 실행\n③ 4주차: 결과 정리 및 발표';
   else                       sched = '① 1~4주차: 자료 조사\n② 5~12주차: 탐구 실행\n③ 13~18주차: 분석·보고서 작성';
   return {
-    subject:  '① "' + kw + '"에 대해 직접 확인해보는 탐구입니다.\n② 이 질문이 왜 중요한지 생각하며 답을 찾아봐요.',
-    goal:     '① ' + kw + '에 대해 궁금한 점을 직접 확인합니다.\n② 관련 사례나 결과를 비교해봅니다.\n③ 예상: 조건이 달라지면 결과도 달라질 것입니다.',
-    method:   '① ' + kw + ' 관련 자료(책·기사·인터넷) 찾아보기\n② ' + typeText + ' 방식으로 직접 조사·관찰하기\n③ 결과를 표나 그래프로 정리하기',
+    subject:  '① "' + kw + '"의 개념과 현상을 직접 확인하는 탐구 주제 설정\n② 이 질문이 나의 관심 분야·진로와 연결되는 이유 및 탐구 범위 정의',
+    goal:     '① ' + kw + '에 대한 핵심 궁금증의 직접 확인 및 데이터 수집\n② 관련 사례·결과의 비교 분석을 통한 패턴 도출\n③ 탐구 가설: 조건 변화에 따른 결과 차이 예측 및 검증',
+    method:   '① ' + kw + ' 관련 신뢰할 수 있는 자료(책·논문·기사) 수집 및 정리\n② ' + typeText + ' 방식을 활용한 직접 조사·관찰·실행\n③ 수집한 결과의 표·그래프 등 시각 자료 변환 및 분석',
     schedule: sched,
-    material: '① ' + kw + ' 관련 책·기사·인터넷 자료\n② 기록지 또는 설문지\n③ 결과 정리용 노트·앱',
-    expected: '① ' + kw + '와 관련된 흥미로운 결과가 나올 것 같아요.\n② 결과가 예상과 다르면 이유를 찾아 새로운 질문을 만들어봐요.',
-    summary:  '① 결과를 표·그래프·보고서로 정리하고 발표해요.\n② 관련 교과 내용과 연결해 심화 학습으로 발전시킬 수 있어요.',
+    material: '① ' + kw + ' 관련 책·학술 자료·뉴스 기사 및 참고 사이트 목록\n② 데이터 기록용 관찰일지 또는 설문지 양식\n③ 결과 정리를 위한 스프레드시트·발표 프로그램 활용',
+    expected: '① ' + kw + '에 대한 구체적 데이터와 패턴 발견 및 분석 결과 도출\n② 탐구 결과와 관심 학과·진로의 연결 고리 확인 및 심화 탐구 방향 설정',
+    summary:  '① 탐구 과정과 결과를 담은 보고서 작성 및 표·그래프를 활용한 시각적 발표 자료 제작\n② 연계 교과목(과학·사회·국어 등) 수행평가 활용 및 심화 탐구 주제 발굴',
   };
 }
 
