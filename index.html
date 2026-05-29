@@ -8539,6 +8539,19 @@ window.downloadPortfolioPDF = function(){
         +'</div>';
     });
     html += sec('#f472b6','📋','탐구 설계 계획서', undefined, undefined, iqBody);
+
+    // 선택한 산출물
+    if(iqData.outputs && iqData.outputs.length > 0){
+      var outBody = '<div style="display:flex;flex-wrap:wrap;gap:8px;">';
+      iqData.outputs.forEach(function(o){
+        outBody += '<div style="display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:999px;background:#fefce8;border:1.5px solid #fbbf24;font-size:13px;font-weight:700;color:#b45309;">'
+          +o.emoji+' '+o.label
+          +'<span style="font-size:11px;color:#92400e;font-weight:400;margin-left:2px;">'+o.desc+'</span>'
+          +'</div>';
+      });
+      outBody += '</div>';
+      html += sec('#fbbf24','🎁','선택한 탐구 산출물', undefined, undefined, outBody);
+    }
   }
 
   // ── 꼬리말 ──
