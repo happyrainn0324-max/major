@@ -8316,6 +8316,17 @@ window.openPortfolioPopup = function(){
       iqpHtml += field(f.label, String(val).replace(/\\n/g,'\n'), iqpColors[f.key]||'rgba(244,114,182,.7)');
     });
     html += card(iqpHtml, 'rgba(244,114,182,.2)');
+
+    // 선택된 산출물 표시
+    if(iqPopupData.outputs && iqPopupData.outputs.length > 0){
+      var outHtml = sectionHead('🎁','선택한 탐구 산출물','#fbbf24');
+      outHtml += '<div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:4px;">';
+      iqPopupData.outputs.forEach(function(o){
+        outHtml += '<div style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:999px;background:rgba(251,191,36,.12);border:1.5px solid rgba(251,191,36,.35);font-size:13px;font-weight:700;color:#fbbf24;">'+o.emoji+' '+o.label+'<span style="font-size:11px;color:rgba(251,191,36,.55);font-weight:400;">'+o.desc+'</span></div>';
+      });
+      outHtml += '</div>';
+      html += card(outHtml, 'rgba(251,191,36,.2)');
+    }
   }
 
   // 아무 탐험도 안 했을 때
@@ -11344,55 +11355,28 @@ var introSlide = 0;
         </div>
         <div class="iqbot-content" id="iqbotContent"></div>
 
-        <!-- 산출물 기획 배너 -->
+        <!-- 산출물 기획 배너 (선택형) -->
         <div id="iqbotOutputBanner" style="display:none;margin-top:20px;border-radius:16px;overflow:hidden;border:1.5px solid rgba(251,191,36,.28);background:rgba(251,191,36,.05);">
           <div style="padding:11px 20px;text-align:center;font-size:14px;font-weight:900;color:#b45309;letter-spacing:.04em;background:rgba(251,191,36,.13);border-bottom:1.5px solid rgba(251,191,36,.22);">
             🎁 탐구 산출물 기획
           </div>
-          <div style="padding:14px 20px;display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;">
-            <div style="border-radius:12px;padding:12px 10px;text-align:center;background:rgba(251,191,36,.07);border:1px solid rgba(251,191,36,.2);">
-              <div style="font-size:22px;margin-bottom:6px;">📄</div>
-              <div style="font-size:12.5px;font-weight:700;color:rgba(240,244,255,.85);">탐구 보고서</div>
-              <div style="font-size:11px;color:rgba(240,244,255,.4);margin-top:3px;">A4 3~5쪽</div>
-            </div>
-            <div style="border-radius:12px;padding:12px 10px;text-align:center;background:rgba(99,102,241,.07);border:1px solid rgba(99,102,241,.2);">
-              <div style="font-size:22px;margin-bottom:6px;">📊</div>
-              <div style="font-size:12.5px;font-weight:700;color:rgba(240,244,255,.85);">프레젠테이션</div>
-              <div style="font-size:11px;color:rgba(240,244,255,.4);margin-top:3px;">슬라이드 10장</div>
-            </div>
-            <div style="border-radius:12px;padding:12px 10px;text-align:center;background:rgba(236,72,153,.07);border:1px solid rgba(236,72,153,.2);">
-              <div style="font-size:22px;margin-bottom:6px;">🖼️</div>
-              <div style="font-size:12.5px;font-weight:700;color:rgba(240,244,255,.85);">인포그래픽</div>
-              <div style="font-size:11px;color:rgba(240,244,255,.4);margin-top:3px;">결과 시각화</div>
-            </div>
-            <div style="border-radius:12px;padding:12px 10px;text-align:center;background:rgba(34,211,238,.07);border:1px solid rgba(34,211,238,.2);">
-              <div style="font-size:22px;margin-bottom:6px;">🎬</div>
-              <div style="font-size:12.5px;font-weight:700;color:rgba(240,244,255,.85);">영상 제작</div>
-              <div style="font-size:11px;color:rgba(240,244,255,.4);margin-top:3px;">3~5분 쇼츠</div>
-            </div>
-            <div style="border-radius:12px;padding:12px 10px;text-align:center;background:rgba(74,222,128,.07);border:1px solid rgba(74,222,128,.2);">
-              <div style="font-size:22px;margin-bottom:6px;">📱</div>
-              <div style="font-size:12.5px;font-weight:700;color:rgba(240,244,255,.85);">SNS 카드뉴스</div>
-              <div style="font-size:11px;color:rgba(240,244,255,.4);margin-top:3px;">4~6장 시리즈</div>
-            </div>
-            <div style="border-radius:12px;padding:12px 10px;text-align:center;background:rgba(251,146,60,.07);border:1px solid rgba(251,146,60,.2);">
-              <div style="font-size:22px;margin-bottom:6px;">📓</div>
-              <div style="font-size:12.5px;font-weight:700;color:rgba(240,244,255,.85);">탐구 일지</div>
-              <div style="font-size:11px;color:rgba(240,244,255,.4);margin-top:3px;">과정 기록 노트</div>
-            </div>
-            <div style="border-radius:12px;padding:12px 10px;text-align:center;background:rgba(168,85,247,.07);border:1px solid rgba(168,85,247,.2);">
-              <div style="font-size:22px;margin-bottom:6px;">🗺️</div>
-              <div style="font-size:12.5px;font-weight:700;color:rgba(240,244,255,.85);">마인드맵</div>
-              <div style="font-size:11px;color:rgba(240,244,255,.4);margin-top:3px;">개념 구조화</div>
-            </div>
-            <div style="border-radius:12px;padding:12px 10px;text-align:center;background:rgba(20,184,166,.07);border:1px solid rgba(20,184,166,.2);">
-              <div style="font-size:22px;margin-bottom:6px;">🗞️</div>
-              <div style="font-size:12.5px;font-weight:700;color:rgba(240,244,255,.85);">뉴스레터</div>
-              <div style="font-size:11px;color:rgba(240,244,255,.4);margin-top:3px;">탐구 결과 발간</div>
-            </div>
+          <div style="padding:10px 20px 4px;text-align:center;font-size:12px;color:rgba(240,244,255,.45);">
+            복수 선택 가능 · 선택하면 포트폴리오에 자동 반영됩니다
           </div>
-          <div style="padding:10px 20px 14px;text-align:center;font-size:12.5px;color:rgba(240,244,255,.4);">
-            위 산출물 중 하나를 선택해 탐구를 완성하고 포트폴리오에 담아보세요 🚀
+          <div id="iqbotOutputGrid" style="padding:12px 20px;display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;"></div>
+          <div id="iqbotOutputConfirm" style="display:none;padding:10px 20px 14px;text-align:center;">
+            <div id="iqbotOutputSelected" style="font-size:12.5px;color:#fbbf24;font-weight:700;margin-bottom:8px;"></div>
+            <button onclick="applyIqbotOutputs()" style="padding:9px 28px;border-radius:999px;background:linear-gradient(135deg,rgba(251,191,36,.25),rgba(251,191,36,.15));border:1.5px solid rgba(251,191,36,.5);color:#fbbf24;font-size:13px;font-weight:800;cursor:pointer;font-family:'Pretendard','Noto Sans KR',sans-serif;transition:.2s;"
+              onmouseover="this.style.background='rgba(251,191,36,.35)'"
+              onmouseout="this.style.background='linear-gradient(135deg,rgba(251,191,36,.25),rgba(251,191,36,.15))'">
+              ✅ 포트폴리오에 적용하기
+            </button>
+          </div>
+          <div id="iqbotOutputApplied" style="display:none;padding:10px 20px 14px;text-align:center;font-size:12.5px;color:#34d399;font-weight:700;">
+            ✅ 포트폴리오에 반영되었습니다!
+          </div>
+          <div style="padding:4px 20px 12px;text-align:center;font-size:11.5px;color:rgba(240,244,255,.3);">
+            산출물을 선택해 탐구를 완성하고 포트폴리오에 담아보세요 🚀
           </div>
         </div>
 
@@ -11558,7 +11542,7 @@ async function generateIqbot() {
     box.innerHTML = renderSections(parsed);
     result.classList.add('show');
     var banner = document.getElementById('iqbotOutputBanner');
-    if(banner) banner.style.display = 'block';
+    if(banner){ banner.style.display = 'block'; initIqbotOutputGrid(); }
     result.scrollIntoView({ behavior: 'smooth', block: 'start' });
   } catch(e) {
     var fallback = generateIqbotFallback(q, typeText, period);
@@ -11566,11 +11550,110 @@ async function generateIqbot() {
     box.innerHTML = renderSections(fallback);
     result.classList.add('show');
     var banner = document.getElementById('iqbotOutputBanner');
-    if(banner) banner.style.display = 'block';
+    if(banner){ banner.style.display = 'block'; initIqbotOutputGrid(); }
     result.scrollIntoView({ behavior: 'smooth', block: 'start' });
   } finally {
     btn.disabled = false;
     btn.textContent = '탐구 계획 설계하기';
+  }
+}
+
+// ── 산출물 선택 UI ──────────────────────────────────────────
+var IQBOT_OUTPUTS = [
+  { id:'report',   emoji:'📄', label:'탐구 보고서',    desc:'A4 3~5쪽',      rgb:'251,191,36' },
+  { id:'ppt',      emoji:'📊', label:'프레젠테이션',   desc:'슬라이드 10장', rgb:'99,102,241' },
+  { id:'info',     emoji:'🖼️', label:'인포그래픽',     desc:'결과 시각화',   rgb:'236,72,153' },
+  { id:'video',    emoji:'🎬', label:'영상 제작',      desc:'3~5분 쇼츠',    rgb:'34,211,238' },
+  { id:'sns',      emoji:'📱', label:'SNS 카드뉴스',   desc:'4~6장 시리즈',  rgb:'74,222,128' },
+  { id:'diary',    emoji:'📓', label:'탐구 일지',      desc:'과정 기록 노트',rgb:'251,146,60' },
+  { id:'mindmap',  emoji:'🗺️', label:'마인드맵',       desc:'개념 구조화',   rgb:'168,85,247' },
+  { id:'news',     emoji:'🗞️', label:'뉴스레터',       desc:'탐구 결과 발간',rgb:'20,184,166' },
+];
+window._iqbotSelectedOutputs = new Set();
+
+function initIqbotOutputGrid() {
+  window._iqbotSelectedOutputs = new Set();
+  var grid = document.getElementById('iqbotOutputGrid');
+  var confirm = document.getElementById('iqbotOutputConfirm');
+  var applied = document.getElementById('iqbotOutputApplied');
+  if(!grid) return;
+  if(confirm) confirm.style.display = 'none';
+  if(applied) applied.style.display = 'none';
+
+  grid.innerHTML = IQBOT_OUTPUTS.map(function(o){
+    return '<div id="iq-out-'+o.id+'" onclick="toggleIqbotOutput(\''+o.id+'\')" style="'+
+      'border-radius:12px;padding:12px 10px;text-align:center;cursor:pointer;'+
+      'background:rgba('+o.rgb+',.07);border:1.5px solid rgba('+o.rgb+',.2);'+
+      'transition:.18s;user-select:none;"'+
+      ' onmouseover="if(!window._iqbotSelectedOutputs.has(\''+o.id+'\'))this.style.background=\'rgba('+o.rgb+',.14)\'"'+
+      ' onmouseout="if(!window._iqbotSelectedOutputs.has(\''+o.id+'\'))this.style.background=\'rgba('+o.rgb+',.07)\'"'+
+    '>'+
+      '<div style="font-size:22px;margin-bottom:6px;">'+o.emoji+'</div>'+
+      '<div style="font-size:12.5px;font-weight:700;color:rgba(240,244,255,.85);">'+o.label+'</div>'+
+      '<div style="font-size:11px;color:rgba(240,244,255,.4);margin-top:3px;">'+o.desc+'</div>'+
+      '<div id="iq-out-ck-'+o.id+'" style="display:none;margin-top:6px;font-size:13px;font-weight:900;color:rgba('+o.rgb+',1);">✓</div>'+
+    '</div>';
+  }).join('');
+}
+
+function toggleIqbotOutput(id) {
+  var sel = window._iqbotSelectedOutputs;
+  var card = document.getElementById('iq-out-'+id);
+  var check = document.getElementById('iq-out-ck-'+id);
+  var o = IQBOT_OUTPUTS.find(function(x){ return x.id===id; });
+  if(!card || !o) return;
+
+  if(sel.has(id)){
+    sel.delete(id);
+    card.style.background = 'rgba('+o.rgb+',.07)';
+    card.style.border = '1.5px solid rgba('+o.rgb+',.2)';
+    if(check) check.style.display = 'none';
+  } else {
+    sel.add(id);
+    card.style.background = 'rgba('+o.rgb+',.22)';
+    card.style.border = '2px solid rgba('+o.rgb+',.7)';
+    if(check) check.style.display = 'block';
+  }
+
+  var confirm = document.getElementById('iqbotOutputConfirm');
+  var applied = document.getElementById('iqbotOutputApplied');
+  var selEl   = document.getElementById('iqbotOutputSelected');
+  if(applied) applied.style.display = 'none';
+
+  if(sel.size > 0){
+    if(confirm) confirm.style.display = 'block';
+    if(selEl){
+      var names = Array.from(sel).map(function(sid){
+        var oo = IQBOT_OUTPUTS.find(function(x){ return x.id===sid; });
+        return oo ? oo.emoji+' '+oo.label : sid;
+      });
+      selEl.textContent = '선택된 산출물: ' + names.join('  |  ');
+    }
+  } else {
+    if(confirm) confirm.style.display = 'none';
+  }
+}
+
+function applyIqbotOutputs() {
+  var sel = window._iqbotSelectedOutputs;
+  if(!sel || sel.size === 0) return;
+
+  var selected = Array.from(sel).map(function(sid){
+    var o = IQBOT_OUTPUTS.find(function(x){ return x.id===sid; });
+    return o ? { id:o.id, emoji:o.emoji, label:o.label, desc:o.desc } : null;
+  }).filter(Boolean);
+
+  // iqbotPlan에 산출물 정보 추가
+  if(window._iqbotPlan){
+    window._iqbotPlan.outputs = selected;
+  }
+
+  var confirm = document.getElementById('iqbotOutputConfirm');
+  var applied = document.getElementById('iqbotOutputApplied');
+  if(confirm) confirm.style.display = 'none';
+  if(applied){
+    applied.style.display = 'block';
+    applied.innerHTML = '✅ ' + selected.map(function(o){ return o.emoji+' '+o.label; }).join(' · ') + ' — 포트폴리오에 반영되었습니다!';
   }
 }
 
