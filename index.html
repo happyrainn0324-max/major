@@ -2979,7 +2979,7 @@ window.toggleStage = function(n){
           </div>
 
           <!-- 관심 분야 -->
-          <div class="ec-phase-label" id="phase2-label">🌀 관심 분야</div>
+          <div class="ec-phase-label" id="phase2-label">🌀 직업 관심 분야</div>
           <div class="orb-grid" id="orb-fields"></div>
 
           <!-- DNA 에너지 바 (6가지 전공 유형) -->
@@ -4871,7 +4871,7 @@ function onJobWishInput(){
 
 function updatePhaseText(){
   const phases = [
-    [0,'관심 분야 오브를 수집하세요','나와 맞는 분야를 클릭해서 선택!'],
+    [0,'직업 관심 분야 오브를 수집하세요','나와 맞는 직업 분야를 클릭해서 선택!'],
     [3,'분야 선택 중...','목성의 대기가 반응해요 🟠'],
     [5,'절반 선택!','DNA 패턴이 선명해지고 있어요 ✨'],
     [8,'거의 다 됐어요!','별자리가 곧 완성돼요 🌟'],
@@ -4995,7 +4995,7 @@ function launchAnalysis(){
   const ecSub = document.getElementById('ec-stars-sub');
   const s2badge= document.getElementById('stage2-badge');
   if(ecBig) ecBig.textContent = stars + '⭐';
-  if(ecSub) ecSub.textContent = `관심 분야 ${orbCollected}개 선택 → DNA 분석 완료! 🔭`;
+  if(ecSub) ecSub.textContent = `직업 관심 분야 ${orbCollected}개 선택 → DNA 분석 완료! 🔭`;
   gzStars.s2 = stars;
   if(s2badge) s2badge.textContent = `⭐ ${stars} / 20`;
   updateStarBar();
@@ -5066,39 +5066,59 @@ function showDnaMajorTags({topDna, selectedFields, major1, scoreEntries}){
   }
   if(!matchBox) return;
 
-  // 점수 있는 에너지 상위 1개만 (topDna 우선)
-  const activeEnergies = scoreEntries.filter(([,v])=>v>0).slice(0,1).map(([k])=>k);
+  // 점수 있는 에너지 상위 3개 (점수순)
+  let activeEnergies = scoreEntries.filter(([,v])=>v>0).slice(0,3).map(([k])=>k);
   if(!activeEnergies.length) activeEnergies.push(topDna);
+  // 3개 미만이면 topDna로 채우기
+  if(activeEnergies.length < 3) {
+    const allKeys = Object.keys(dnaColors);
+    for(const k of allKeys) {
+      if(activeEnergies.length >= 3) break;
+      if(!activeEnergies.includes(k)) activeEnergies.push(k);
+    }
+  }
+  activeEnergies = activeEnergies.slice(0,3);
 
-  const dna = activeEnergies[0];
-  const c   = dnaColors[dna] || '#a5b4fc';
-  const ic  = dnaIcons[dna]  || '✦';
-  const lb  = dnaLabel[dna]  || dna;
-  const list = (DNA_MAJORS[dna] || []).slice(0, 3); // 3개만
+  // 각 유형별 섹션 생성
+  let sectionsHtml = '';
+  const allMajorNames = [];
 
-  const html = `<div style="margin-top:20px;">
-    <div style="display:flex;align-items:center;gap:6px;margin-bottom:12px;">
-      <span style="font-size:13px;">${ic}</span>
-      <span style="font-size:12px;font-weight:800;color:${c};letter-spacing:.5px;">${lb} 에너지 추천 학과</span>
-      <div style="flex:1;height:1px;background:${c}33;margin-left:4px;"></div>
-    </div>
-    <div class="dna-major-grid">
-      ${list.map(m => `
-        <div style="
-          padding:12px 14px;border-radius:14px;text-align:center;
-          background:${c}0e;border:1.5px solid ${c}40;
-          transition:.2s;cursor:default;box-sizing:border-box;"
-          onmouseover="this.style.background='${c}20';this.style.borderColor='${c}90';this.style.transform='translateY(-2px)'"
-          onmouseout="this.style.background='${c}0e';this.style.borderColor='${c}40';this.style.transform=''">
-          <div style="font-size:13px;font-weight:900;color:${c};letter-spacing:.2px;word-break:keep-all;">${m.name}</div>
-          <div style="font-size:10px;color:rgba(200,210,225,.5);line-height:1.4;margin-top:4px;word-break:keep-all;">${m.univ||''}</div>
-        </div>`).join('')}
-    </div>
-  </div>`;
+  activeEnergies.forEach((dna, rank) => {
+    const c  = dnaColors[dna] || '#a5b4fc';
+    const ic = dnaIcons[dna]  || '✦';
+    const lb = dnaLabel[dna]  || dna;
+    const list = (DNA_MAJORS[dna] || []).slice(0, 3);
+    list.forEach(m => { if(!allMajorNames.includes(m.name)) allMajorNames.push(m.name); });
+    const rankBadge = ['1위','2위','3위'][rank] || '';
+
+    sectionsHtml += `
+    <div style="margin-bottom:20px;">
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:10px;">
+        <span style="font-size:13px;">${ic}</span>
+        <span style="font-size:12px;font-weight:800;color:${c};letter-spacing:.5px;">${lb} 에너지 추천 학과</span>
+        <span style="font-size:10px;font-weight:700;color:${c}88;padding:1px 6px;border:1px solid ${c}44;border-radius:999px;">${rankBadge}</span>
+        <div style="flex:1;height:1px;background:${c}33;margin-left:2px;"></div>
+      </div>
+      <div class="dna-major-grid">
+        ${list.map(m => `
+          <div style="
+            padding:12px 14px;border-radius:14px;text-align:center;
+            background:${c}0e;border:1.5px solid ${c}40;
+            transition:.2s;cursor:default;box-sizing:border-box;"
+            onmouseover="this.style.background='${c}20';this.style.borderColor='${c}90';this.style.transform='translateY(-2px)'"
+            onmouseout="this.style.background='${c}0e';this.style.borderColor='${c}40';this.style.transform=''">
+            <div style="font-size:13px;font-weight:900;color:${c};letter-spacing:.2px;word-break:keep-all;">${m.name}</div>
+            <div style="font-size:10px;color:rgba(200,210,225,.5);line-height:1.4;margin-top:4px;word-break:keep-all;">${m.univ||''}</div>
+          </div>`).join('')}
+      </div>
+    </div>`;
+  });
+
+  const html = `<div style="margin-top:20px;">${sectionsHtml}</div>`;
 
   matchBox.innerHTML = html;
   // 포트폴리오용 DNA 추천 학과 저장
-  window._dnaRecommendedMajors = list.map(function(m){ return m.name; });
+  window._dnaRecommendedMajors = allMajorNames;
 }
 function buildMajorRecommendations(topDna, selectedFields, wishMajor){
   // DNA 유형별 기본 추천 학과 풀
