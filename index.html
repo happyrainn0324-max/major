@@ -168,6 +168,13 @@ header{
   top:-4px;left:50%;transform:translateX(-50%);
   box-shadow:0 0 12px var(--cyan),0 0 24px var(--cyan);
 }
+.hero-ring-1::after{
+  content:'';position:absolute;
+  width:6px;height:6px;border-radius:50%;
+  background:var(--purple);
+  bottom:-3px;left:25%;transform:translateX(-50%);
+  box-shadow:0 0 10px var(--purple),0 0 20px var(--purple);
+}
 .hero-ring-2{
   width:480px;height:480px;
   top:50%;left:50%;
@@ -181,6 +188,42 @@ header{
   background:var(--purple);
   bottom:-3px;left:50%;transform:translateX(-50%);
   box-shadow:0 0 10px var(--purple),0 0 20px var(--purple);
+}
+.hero-ring-2::after{
+  content:'';position:absolute;
+  width:7px;height:7px;border-radius:50%;
+  background:var(--cyan);
+  top:-3px;left:75%;transform:translateX(-50%);
+  box-shadow:0 0 11px var(--cyan),0 0 22px var(--cyan);
+}
+/* 링 위 왼쪽 상단 추가 점 */
+.hero-ring-extra{
+  position:absolute;border-radius:50%;pointer-events:none;
+  top:50%;left:50%;
+}
+.hero-ring-extra-1{
+  width:680px;height:680px;
+  margin-top:-340px;margin-left:-340px;
+  animation:rotateSlow 28s linear infinite;
+}
+.hero-ring-extra-1::before{
+  content:'';position:absolute;
+  width:7px;height:7px;border-radius:50%;
+  background:var(--purple);
+  top:9%;left:9%;
+  box-shadow:0 0 10px var(--purple),0 0 22px var(--purple);
+}
+.hero-ring-extra-2{
+  width:480px;height:480px;
+  margin-top:-240px;margin-left:-240px;
+  animation:rotateSlow 18s linear infinite reverse;
+}
+.hero-ring-extra-2::before{
+  content:'';position:absolute;
+  width:6px;height:6px;border-radius:50%;
+  background:var(--cyan);
+  top:9%;left:9%;
+  box-shadow:0 0 10px var(--cyan),0 0 22px var(--cyan);
 }
 
 /* 태그 뱃지 */
@@ -1785,10 +1828,14 @@ window.toggleStage = function(n){
   <div class="hero-orb" style="width:220px;height:220px;background:radial-gradient(circle,rgba(168,85,247,.18),transparent 70%);bottom:15%;right:6%;animation:orbFloat4 13s ease-in-out infinite;"></div>
   <div class="hero-orb" style="width:180px;height:180px;background:radial-gradient(circle,rgba(0,229,255,.18),transparent 70%);top:45%;left:2%;animation:orbFloat5 15s ease-in-out infinite;"></div>
   <div class="hero-orb" style="width:240px;height:240px;background:radial-gradient(circle,rgba(168,85,247,.16),transparent 70%);top:35%;right:3%;animation:orbFloat6 12s ease-in-out infinite;"></div>
+  <div class="hero-orb" style="width:160px;height:160px;background:radial-gradient(circle,rgba(168,85,247,.22),transparent 70%);top:68%;left:22%;animation:orbFloat3 16s ease-in-out infinite 2s;"></div>
+  <div class="hero-orb" style="width:140px;height:140px;background:radial-gradient(circle,rgba(0,229,255,.2),transparent 70%);top:25%;right:28%;animation:orbFloat5 13s ease-in-out infinite 4s;"></div>
   <div class="hero-grid"></div>
   <div class="hero-glow"></div>
   <div class="hero-ring hero-ring-1"></div>
   <div class="hero-ring hero-ring-2"></div>
+  <div class="hero-ring-extra hero-ring-extra-1"></div>
+  <div class="hero-ring-extra hero-ring-extra-2"></div>
 
   <div class="tag-pill">
     <div class="dot-blink"></div>
@@ -2597,6 +2644,25 @@ window.toggleStage = function(n){
 .sg-star-msg{font-size:14px;color:rgba(240,244,255,.62);}
 .sg-star-br{display:none;}
 @media(max-width:500px){.sg-star-br{display:inline;}}
+
+.ql-example-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:7px;
+}
+.ql-example-chip{
+  font-size:11.5px;padding:8px 10px;border-radius:10px;
+  background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.25);
+  color:rgba(165,180,252,.8);cursor:pointer;
+  text-align:center;box-sizing:border-box;
+  display:block;line-height:1.5;
+  transition:background .18s,border-color .18s;
+}
+.ql-example-chip:hover{background:rgba(99,102,241,.22);border-color:rgba(99,102,241,.5);}
+@media(max-width:600px){
+  .ql-example-grid{grid-template-columns:1fr;}
+  .ql-example-desktop{display:none;}
+}
 
 /* 퀴즈 패널 */
 .sg-quiz-panel{
@@ -6239,26 +6305,29 @@ function confirmMajorPickFromConstellation(){
       </div>
 
       <!-- 입력 안내 설명 -->
-      <div style="
-        display:flex;flex-wrap:wrap;gap:8px;margin-bottom:22px;
-        padding:13px 18px;border-radius:14px;
-        background:rgba(99,102,241,.06);
-        border:1px solid rgba(99,102,241,.18);
-        text-align:center;
-      ">
-        <div style="font-size:12px;color:rgba(240,244,255,.55);line-height:1.7;width:100%;text-align:center;">
+      <div style="margin-bottom:22px;padding:13px 18px;border-radius:14px;background:rgba(99,102,241,.06);border:1px solid rgba(99,102,241,.18);text-align:center;">
+        <div style="font-size:12px;color:rgba(240,244,255,.55);line-height:1.7;margin-bottom:10px;">
           💡 <strong style="color:rgba(165,180,252,.8);">이렇게 써보세요</strong>
         </div>
-        <div style="display:flex;flex-direction:column;gap:6px;width:100%;align-items:center;">
-          <span style="font-size:11.5px;padding:7px 18px;border-radius:10px;background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.25);color:rgba(165,180,252,.8);cursor:pointer;display:inline-block;text-align:center;box-sizing:border-box;"
+        <div class="ql-example-grid">
+          <span class="ql-example-chip"
             onclick="document.getElementById('ql-topic-input').value=this.dataset.q;qlSyncTopic();"
             data-q="AI가 발전하면 의사라는 직업은 어떻게 변할까?">AI가 발전하면 의사 직업은 어떻게 변할까?</span>
-          <span style="font-size:11.5px;padding:7px 18px;border-radius:10px;background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.25);color:rgba(165,180,252,.8);cursor:pointer;display:inline-block;text-align:center;box-sizing:border-box;"
+          <span class="ql-example-chip"
             onclick="document.getElementById('ql-topic-input').value=this.dataset.q;qlSyncTopic();"
             data-q="기후변화가 환경공학과 진로에 미치는 영향은?">기후변화가 환경공학 진로에 미치는 영향은?</span>
-          <span style="font-size:11.5px;padding:7px 18px;border-radius:10px;background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.25);color:rgba(165,180,252,.8);cursor:pointer;display:inline-block;text-align:center;box-sizing:border-box;"
+          <span class="ql-example-chip"
             onclick="document.getElementById('ql-topic-input').value=this.dataset.q;qlSyncTopic();"
             data-q="심리학과를 졸업하면 어떤 직업을 가질 수 있을까?">심리학과 졸업 후 어떤 직업을 가질 수 있을까?</span>
+          <span class="ql-example-chip ql-example-desktop"
+            onclick="document.getElementById('ql-topic-input').value=this.dataset.q;qlSyncTopic();"
+            data-q="경영학과에서 배우는 핵심 역량은 무엇일까?">경영학과에서 배우는 핵심 역량은 무엇일까?</span>
+          <span class="ql-example-chip ql-example-desktop"
+            onclick="document.getElementById('ql-topic-input').value=this.dataset.q;qlSyncTopic();"
+            data-q="소프트웨어 개발자가 되려면 무엇을 준비해야 할까?">소프트웨어 개발자가 되려면 무엇을 준비할까?</span>
+          <span class="ql-example-chip ql-example-desktop"
+            onclick="document.getElementById('ql-topic-input').value=this.dataset.q;qlSyncTopic();"
+            data-q="생명공학과를 선택하면 어떤 미래가 열릴까?">생명공학과를 선택하면 어떤 미래가 열릴까?</span>
         </div>
       </div>
 
