@@ -1034,6 +1034,7 @@ footer::before{
   line-height:1.5;
   letter-spacing:-0.5px;
   text-align:center;
+  white-space:nowrap;
 }
 .footer-q .sparkle{font-size:clamp(1.4rem,3.5vw,2.2rem);margin-right:8px;}
 .footer-q .kw-question{
@@ -2651,7 +2652,7 @@ window.toggleStage = function(n){
   gap:7px;
 }
 .ql-example-chip{
-  font-size:11.5px;padding:8px 10px;border-radius:10px;
+  font-size:13.5px;padding:9px 12px;border-radius:10px;
   background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.25);
   color:rgba(165,180,252,.8);cursor:pointer;
   text-align:center;box-sizing:border-box;
@@ -2802,13 +2803,13 @@ window.toggleStage = function(n){
 .nep-result-card::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 20% 10%,var(--rc) 0%,transparent 60%);pointer-events:none;opacity:.18;}
 .nrc-header{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
 .nrc-icon{font-size:2rem;line-height:1;}
-.nrc-name{font-size:1rem;font-weight:800;color:#f0f4ff;}
-.nrc-sub{font-size:11px;color:rgba(240,244,255,.5);margin-top:2px;letter-spacing:1px;}
+.nrc-name{font-size:1.15rem;font-weight:800;color:#f0f4ff;}
+.nrc-sub{font-size:12.5px;color:rgba(240,244,255,.5);margin-top:2px;letter-spacing:1px;}
 .nrc-constellation{width:100%;height:70px;margin-bottom:12px;}
 .nrc-section{margin-bottom:10px;}
-.nrc-label{font-size:10px;letter-spacing:2px;color:rgba(240,244,255,.4);font-weight:700;margin-bottom:5px;}
+.nrc-label{font-size:11.5px;letter-spacing:2px;color:rgba(240,244,255,.4);font-weight:700;margin-bottom:5px;}
 .nrc-tags{display:flex;flex-wrap:wrap;gap:4px;}
-.nrc-tag{font-size:11px;padding:3px 8px;border-radius:999px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);color:rgba(240,244,255,.8);}
+.nrc-tag{font-size:12.5px;padding:4px 10px;border-radius:999px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);color:rgba(240,244,255,.8);}
 .nep-pick-btn:hover{background:rgba(99,102,241,.18)!important;border-color:rgba(99,102,241,.5)!important;transform:translateY(-2px)!important;}
 @keyframes nepShake{0%,100%{transform:translateX(0);}25%{transform:translateX(-5px);}75%{transform:translateX(5px);}}
 .nep-mcard{
@@ -3165,9 +3166,7 @@ window.toggleStage = function(n){
               style="width:100%;padding:14px;border-radius:999px;background:linear-gradient(135deg,#a855f7,#7c3aed);border:none;color:white;font-size:15px;font-weight:800;cursor:pointer;font-family:'Pretendard','Noto Sans KR',sans-serif;opacity:.45;transition:.25s;letter-spacing:.04em;">
               ✨ AI 과목 추천받기
             </button>
-            <div style="margin-top:10px;font-size:12px;color:rgba(240,244,255,.35);text-align:center;line-height:1.6;">
-              유명 대학이 아니거나 전문대여도 괜찮아요!<br>학과 특성 기반으로 추천해드려요 🪐
-            </div>
+
           </div>
 
           <!-- 로딩 -->
@@ -3232,14 +3231,6 @@ window.toggleStage = function(n){
                 <div id="sg-univ-tags" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;"></div>
                 <div id="sg-progress-bars" style="display:flex;flex-direction:column;gap:7px;"></div>
               </div>
-            </div>
-
-            <!-- 별 획득 + 다시하기 -->
-            <div style="display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;">
-              <div id="sg-star-earned" style="font-size:14px;color:#fbbf24;font-weight:700;"></div>
-              <button onclick="sgReset()" style="padding:9px 22px;border-radius:999px;border:1px solid rgba(168,85,247,.4);background:rgba(168,85,247,.1);color:#c084fc;font-size:13px;font-weight:700;cursor:pointer;font-family:'Pretendard','Noto Sans KR',sans-serif;transition:.2s;">
-                🔄 다른 학과 탐험하기
-              </button>
             </div>
 
           </div>
@@ -3349,7 +3340,7 @@ window.toggleStage = function(n){
             align-items:center;
             gap:8px;
           ">✨ AI 학과 추천하기</button>
-          <div style="margin-top:10px;font-size:12px;color:rgba(240,244,255,.4);">희망 직업·학과를 입력하면 AI가 밀접도 순으로 학과 8개를 추천해줘요</div>
+
         </div>
 
         <!-- AI 전공 로드맵 -->
@@ -4731,7 +4722,7 @@ async function generateSgReco(){
 function renderSgResult(major, univ, d){
   var noticeBar = document.getElementById('sg-notice-bar');
   var univLabel = univ ? univ+' ' : '';
-  noticeBar.innerHTML = univLabel+major+' 기준 · 2022 개정교육과정 과목 추천이에요.<br>학교별 공식 홈페이지에서 확인해보세요.';
+  noticeBar.innerHTML = univLabel+major+' 기준 · 2022 개정교육과정 과목 추천이에요.<br>보다 정확한 정보는 학교별 공식 홈페이지에서 확인해보세요.';
 
   var reqEl = document.getElementById('sg-required-list');
   reqEl.innerHTML = (d.required||[]).map(function(s){ return sgSubjectItem(s.name, s.desc, '#60a5fa'); }).join('');
@@ -4765,7 +4756,6 @@ function renderSgResult(major, univ, d){
   document.getElementById('stage3-badge').textContent = '⭐ 10 / 10';
   updateStarBar();
 
-  document.getElementById('sg-star-earned').textContent = '⭐ 10개 획득! 선택과목 탐험 완료!';
   var r1 = document.getElementById('sg-star-row-1');
   var r2 = document.getElementById('sg-star-row-2');
   if(r1) r1.textContent = '⭐⭐⭐⭐⭐';
@@ -5757,7 +5747,7 @@ ${dnaInfo ? '학생 성향 데이터: '+dnaInfo : ''}
 - jobs: "${name}" 졸업생이 실제로 가장 많이 종사하는 직업 4개 (구체적 직함으로)
 - subjects: 2022 개정 교육과정 기준, "${name}" 입시와 전공 학습에 실제로 유리한 고교 선택과목 3~4개
 - midActs: 중고등학생이 "${name}"을 준비하며 지금 당장 실천할 수 있는 구체적 활동 5개 (막연한 활동 금지, 예: "XX 분야 관련 온라인 강의 OO 수강", "XX 체험 프로그램 신청")
-- researchTopics: "${name}" 학과와 직접 연결된 중고등학생 수행평가·탐구활동 주제 5개, 각각 "~를 분석하다/비교하다/조사하다/탐구하다" 형식으로, 학과 핵심 키워드 포함
+- researchTopics: "${name}" 학과와 직접 연결된 중고등학생 수행평가·탐구활동 주제 5개, 각각 "~의 분석/비교/조사/탐구/연구" 형식의 명사형으로 끝내기, 학과 핵심 키워드 포함. (~하다 로 끝나지 않도록 반드시 명사형으로 끝낼 것)
 
 형식(순수 JSON만, 키 순서 동일):
 {"overview":"2문장","aptitude":"1문장","jobs":["직업1","직업2","직업3","직업4"],"subjects":["선택과목1","과목2","과목3","과목4"],"midActs":["활동1","활동2","활동3","활동4","활동5"],"researchTopics":["탐구주제1","탐구주제2","탐구주제3","탐구주제4","탐구주제5"]}`
@@ -5795,10 +5785,10 @@ ${dnaInfo ? '학생 성향 데이터: '+dnaInfo : ''}
         midActs: db.midActs,
         researchTopics: [
           `${name} 졸업생의 실제 취업 경로와 주요 직군 분석`,
-          `${name}에서 배우는 핵심 교과목이 실무에 적용되는 방식 탐구`,
+          `${name}에서 배우는 핵심 교과목의 실무 적용 방식 탐구`,
           `${name} 관련 국내외 최신 연구 동향 조사`,
-          `${name} 전공자가 취득하는 주요 자격증 종류와 취득 방법 비교`,
-          `${name}과 인접 학과 간 교과목·진로 차이점 비교 분석`
+          `${name} 전공자의 주요 자격증 종류와 취득 방법 비교`,
+          `${name}과 인접 학과 간 교과목·진로 차이점 비교`
         ]
       } : {
         // DB에 없는 학과: 학과명을 기반으로 의미있게 구성 (더미 텍스트 완전 금지)
@@ -5815,7 +5805,7 @@ ${dnaInfo ? '학생 성향 데이터: '+dnaInfo : ''}
         ],
         researchTopics: [
           `${name} 졸업생의 실제 취업 현황과 주요 직업군 조사`,
-          `${name} 학과 개설 대학별 커리큘럼 비교 분석`,
+          `${name} 학과 개설 대학별 커리큘럼 비교`,
           `${name} 관련 자격증의 실무 활용도와 취득 난이도 분석`,
           `${name} 분야의 최근 산업 트렌드와 미래 전망 탐구`,
           `${name}과 인접 학과 간 진로 차이점 비교`
@@ -5839,31 +5829,31 @@ function renderNepCardBody(bodyEl, info, name, i){
   const topicsHtml = (info.researchTopics||[]).length > 0
     ? (info.researchTopics||[]).map((t,ti)=>`
         <div style="display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.05);">
-          <span style="min-width:18px;height:18px;border-radius:50%;background:${th.color}22;border:1px solid ${th.color}55;color:${th.color};font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;">${ti+1}</span>
-          <span style="font-size:12px;color:rgba(240,244,255,.8);line-height:1.55;">${t}</span>
+          <span style="min-width:18px;height:18px;border-radius:50%;background:${th.color}22;border:1px solid ${th.color}55;color:${th.color};font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;">${ti+1}</span>
+          <span style="font-size:13.5px;color:rgba(240,244,255,.8);line-height:1.55;">${t.replace(/분석하다$/,'분석').replace(/조사하다$/,'조사').replace(/비교하다$/,'비교').replace(/탐구하다$/,'탐구').replace(/연구하다$/,'연구').replace(/살펴보다$/,'탐구').replace(/알아보다$/,'조사').replace(/파악하다$/,'파악').replace(/규명하다$/,'규명').replace(/검토하다$/,'검토').replace(/측정하다$/,'측정').replace(/평가하다$/,'평가').replace(/제안하다$/,'제안').replace(/도출하다$/,'도출').replace(/확인하다$/,'확인').replace(/관찰하다$/,'관찰').replace(/수집하다$/,'수집').replace(/정리하다$/,'정리').replace(/개발하다$/,'개발').replace(/설계하다$/,'설계').replace(/예측하다$/,'예측').replace(/검증하다$/,'검증')}</span>
         </div>`).join('')
     : '<div style="font-size:12px;color:rgba(240,244,255,.3);padding:4px 0;">탐구 주제를 불러오는 중...</div>';
 
   bodyEl.innerHTML = `
     <div class="nep-info-grid" style="gap:10px;">
       <div class="nep-info-block full" style="padding:12px 14px;">
-        <div class="nep-info-label" style="font-size:11px;margin-bottom:6px;">📖 학과 소개</div>
-        <div class="nep-info-text" style="font-size:12px;line-height:1.65;">${info.overview||''}</div>
+        <div class="nep-info-label" style="font-size:12.5px;margin-bottom:6px;">📖 학과 소개</div>
+        <div class="nep-info-text" style="font-size:13.5px;line-height:1.65;">${info.overview||''}</div>
       </div>
       <div class="nep-info-block" style="padding:12px 14px;">
-        <div class="nep-info-label" style="font-size:11px;margin-bottom:6px;">💼 관련 직업</div>
-        <div class="nep-tags" style="gap:4px;">${(info.jobs||[]).map(j=>'<span class="nep-tag nep-tag-blue" style="font-size:11px;padding:3px 9px;">'+j+'</span>').join('')}</div>
+        <div class="nep-info-label" style="font-size:12.5px;margin-bottom:6px;">💼 관련 직업</div>
+        <div class="nep-tags" style="gap:4px;">${(info.jobs||[]).map(j=>'<span class="nep-tag nep-tag-blue" style="font-size:12.5px;padding:4px 10px;">'+j+'</span>').join('')}</div>
       </div>
       <div class="nep-info-block" style="padding:12px 14px;">
-        <div class="nep-info-label" style="font-size:11px;margin-bottom:6px;">📚 선택과목</div>
-        <div class="nep-tags" style="gap:4px;">${(info.subjects||[]).map(s=>'<span class="nep-tag nep-tag-purple" style="font-size:11px;padding:3px 9px;">'+s+'</span>').join('')}</div>
+        <div class="nep-info-label" style="font-size:12.5px;margin-bottom:6px;">📚 선택과목</div>
+        <div class="nep-tags" style="gap:4px;">${(info.subjects||[]).map(s=>'<span class="nep-tag nep-tag-purple" style="font-size:12.5px;padding:4px 10px;">'+s+'</span>').join('')}</div>
       </div>
       <div class="nep-info-block full" style="padding:12px 14px;">
-        <div class="nep-info-label" style="font-size:11px;margin-bottom:6px;">🎯 추천 활동</div>
-        <div style="display:flex;flex-direction:column;gap:3px;">${(info.midActs||[]).map(a=>`<div style="font-size:12px;color:rgba(240,244,255,.75);line-height:1.5;">• ${a}</div>`).join('')}</div>
+        <div class="nep-info-label" style="font-size:12.5px;margin-bottom:6px;">🎯 추천 활동</div>
+        <div style="display:flex;flex-direction:column;gap:3px;">${(info.midActs||[]).map(a=>`<div style="font-size:13.5px;color:rgba(240,244,255,.75);line-height:1.5;">• ${a}</div>`).join('')}</div>
       </div>
       <div class="nep-info-block full" style="padding:12px 14px;border-color:${th.color}33;">
-        <div class="nep-info-label" style="font-size:11px;margin-bottom:8px;color:${th.color};">🔬 주제 탐구</div>
+        <div class="nep-info-label" style="font-size:12.5px;margin-bottom:8px;color:${th.color};">🔬 주제 탐구</div>
         ${topicsHtml}
       </div>
     </div>`;
@@ -8049,6 +8039,33 @@ window.openPortfolioPopup = function(){
   function emptyNote(text){
     return '<div style="font-size:13px;color:rgba(240,244,255,.28);font-style:italic;padding:4px 0;">'+text+'</div>';
   }
+  function trimHada(text){
+    return (text||'')
+      .replace(/분석하다$/,'분석')
+      .replace(/조사하다$/,'조사')
+      .replace(/비교하다$/,'비교')
+      .replace(/탐구하다$/,'탐구')
+      .replace(/연구하다$/,'연구')
+      .replace(/살펴보다$/,'탐구')
+      .replace(/알아보다$/,'탐구')
+      .replace(/알아보다$/,'조사')
+      .replace(/파악하다$/,'파악')
+      .replace(/규명하다$/,'규명')
+      .replace(/검토하다$/,'검토')
+      .replace(/측정하다$/,'측정')
+      .replace(/평가하다$/,'평가')
+      .replace(/제안하다$/,'제안')
+      .replace(/도출하다$/,'도출')
+      .replace(/확인하다$/,'확인')
+      .replace(/관찰하다$/,'관찰')
+      .replace(/수집하다$/,'수집')
+      .replace(/정리하다$/,'정리')
+      .replace(/개발하다$/,'개발')
+      .replace(/설계하다$/,'설계')
+      .replace(/구성하다$/,'구성')
+      .replace(/예측하다$/,'예측')
+      .replace(/검증하다$/,'검증');
+  }
 
   var html = '';
 
@@ -8171,7 +8188,23 @@ window.openPortfolioPopup = function(){
         }
         if(info.subjects&&info.subjects.length){
           s4Html += '<div style="font-size:11px;color:rgba(168,85,247,.7);font-weight:700;margin-bottom:5px;">📚 선택과목</div>';
-          s4Html += '<div style="display:flex;flex-wrap:wrap;gap:4px;">'+info.subjects.slice(0,4).map(function(s){return tag(s,'rgba(168,85,247,.1)','rgba(168,85,247,.3)');}).join('')+'</div>';
+          s4Html += '<div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px;">'+info.subjects.slice(0,4).map(function(s){return tag(s,'rgba(168,85,247,.1)','rgba(168,85,247,.3)');}).join('')+'</div>';
+        }
+        if(info.midActs&&info.midActs.length){
+          s4Html += '<div style="font-size:11px;color:rgba(52,211,153,.7);font-weight:700;margin-bottom:5px;margin-top:2px;">✅ 추천 활동</div>';
+          s4Html += '<div style="display:flex;flex-direction:column;gap:4px;margin-bottom:8px;">';
+          info.midActs.slice(0,5).forEach(function(a,ai){
+            s4Html += '<div style="font-size:12px;color:rgba(240,244,255,.8);line-height:1.6;padding:3px 0 3px 10px;border-left:2px solid rgba(52,211,153,.3);">'+(ai+1)+'. '+a+'</div>';
+          });
+          s4Html += '</div>';
+        }
+        if(info.researchTopics&&info.researchTopics.length){
+          s4Html += '<div style="font-size:11px;color:rgba(251,191,36,.7);font-weight:700;margin-bottom:5px;margin-top:2px;">🔭 주제 탐구 아이디어</div>';
+          s4Html += '<div style="display:flex;flex-direction:column;gap:4px;">';
+          info.researchTopics.slice(0,5).forEach(function(t,ti){
+            s4Html += '<div style="font-size:12px;color:rgba(240,244,255,.8);line-height:1.6;padding:3px 0 3px 10px;border-left:2px solid rgba(251,191,36,.3);">'+(ti+1)+'. '+trimHada(t)+'</div>';
+          });
+          s4Html += '</div>';
         }
         s4Html += '</div></div>';
       });
@@ -8544,7 +8577,7 @@ window.downloadPortfolioPDF = function(){
 <footer style="position:relative;overflow:hidden;">
   <div class="star-canvas" id="footer-star-canvas" style="position:absolute;inset:0;pointer-events:none;z-index:0;overflow:hidden;"></div>
   <p class="footer-q" style="position:relative;z-index:1;">
-    <span class="sparkle">✦</span>미래를 <span class="kw-question">질문하는</span> 순간,<br><span class="kw-dream">꿈은</span> 시작된다!
+    <span class="sparkle">✦</span>미래를 <span class="kw-question">질문</span>하는 순간, <span class="kw-dream">꿈</span>은 시작된다 ✦
   </p>
   <!-- 버튼 그룹 -->
   <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:48px;margin-bottom:0;">
@@ -11041,7 +11074,8 @@ async function generateIqbot() {
     '2. 어려운 전문 용어 없이 중학생도 이해할 수 있는 쉬운 말을 씁니다.\n' +
     '3. 각 항목은 번호 목록(①②③)으로 2~3개 항목만 간결하게 작성합니다.\n' +
     '4. 반드시 순수 JSON만 반환하세요. 마크다운, 코드블록 없이.\n' +
-    '5. 모든 키(subject, goal, method, schedule, material, expected, summary)를 빠짐없이 작성하세요.';
+    '5. 모든 키(subject, goal, method, schedule, material, expected, summary)를 빠짐없이 작성하세요.\n' +
+    '6. 매우 중요: 모든 항목의 문장 끝맺음은 반드시 명사형으로 작성하세요. "~한다", "~하다", "~봐요", "~해요", "~입니다", "~습니다", "~것이다", "~됩니다" 등의 서술형·종결형 어미를 절대 사용하지 마세요. 반드시 "~분석", "~비교", "~조사", "~정리", "~연결", "~확인", "~도출" 등 명사 또는 명사형으로 끝내세요.';
 
   var userPrompt =
     '탐구 질문: "' + q + '"\n' +
@@ -11049,12 +11083,12 @@ async function generateIqbot() {
     '탐구 기간: ' + period + '\n\n' +
     '아래 JSON 형식으로만 답하세요. 각 값은 ①②③ 번호 목록 형식, 2~3줄로 간결하게.\n\n' +
     '{\n' +
-    '  "subject": "① 이 탐구가 무엇을 알아보려는지 한 문장\\n② 왜 이 질문이 궁금한지 한 문장",\n' +
-    '  "goal": "① 탐구로 확인하고 싶은 것 첫 번째\\n② 탐구로 확인하고 싶은 것 두 번째\\n③ 예상: ~하면 ~할 것이다",\n' +
+    '  "subject": "① 이 탐구가 알아보려는 내용 한 문장\\n② 이 질문이 중요한 이유 한 문장",\n' +
+    '  "goal": "① 탐구로 확인하고 싶은 첫 번째 내용\\n② 탐구로 확인하고 싶은 두 번째 내용\\n③ 예상: ~조건에 따른 ~결과 차이",\n' +
     '  "method": "① ' + typeText + ' 방식 첫 번째 단계\\n② 두 번째 단계\\n③ 세 번째 단계",\n' +
     '  "schedule": "' + period + ' 기간을 2~3단계로 나눠 간단히",\n' +
     '  "material": "① 필요한 자료나 도구 첫 번째\\n② 두 번째\\n③ 세 번째",\n' +
-    '  "expected": "① 탐구 후 나올 것 같은 결과\\n② 결과로 알 수 있는 것",\n' +
+    '  "expected": "① 탐구 후 예상되는 결과\\n② 결과를 통해 알 수 있는 내용",\n' +
     '  "summary": "① 결과 정리 방법(보고서·발표 등)\\n② 관련 교과나 진로와의 연결"\n' +
     '}';
 
@@ -11141,13 +11175,13 @@ function generateIqbotFallback(q, typeText, period) {
   else if (period==='한 달') sched = '① 1주차: 자료 조사\n② 2~3주차: 탐구 실행\n③ 4주차: 결과 정리 및 발표';
   else                       sched = '① 1~4주차: 자료 조사\n② 5~12주차: 탐구 실행\n③ 13~18주차: 분석·보고서 작성';
   return {
-    subject:  '① "' + kw + '"에 대해 직접 확인해보는 탐구입니다.\n② 이 질문이 왜 중요한지 생각하며 답을 찾아봐요.',
-    goal:     '① ' + kw + '에 대해 궁금한 점을 직접 확인합니다.\n② 관련 사례나 결과를 비교해봅니다.\n③ 예상: 조건이 달라지면 결과도 달라질 것입니다.',
-    method:   '① ' + kw + ' 관련 자료(책·기사·인터넷) 찾아보기\n② ' + typeText + ' 방식으로 직접 조사·관찰하기\n③ 결과를 표나 그래프로 정리하기',
+    subject:  '① "' + kw + '"에 대한 직접 확인 탐구\n② 이 질문의 중요성과 탐구 필요성',
+    goal:     '① ' + kw + '에 대한 궁금한 점 직접 확인\n② 관련 사례나 결과 비교·분석\n③ 예상: 조건 변화에 따른 결과 차이 도출',
+    method:   '① ' + kw + ' 관련 자료(책·기사·인터넷) 수집\n② ' + typeText + ' 방식으로 직접 조사·관찰 실행\n③ 결과를 표나 그래프로 시각화 정리',
     schedule: sched,
     material: '① ' + kw + ' 관련 책·기사·인터넷 자료\n② 기록지 또는 설문지\n③ 결과 정리용 노트·앱',
-    expected: '① ' + kw + '와 관련된 흥미로운 결과가 나올 것 같아요.\n② 결과가 예상과 다르면 이유를 찾아 새로운 질문을 만들어봐요.',
-    summary:  '① 결과를 표·그래프·보고서로 정리하고 발표해요.\n② 관련 교과 내용과 연결해 심화 학습으로 발전시킬 수 있어요.',
+    expected: '① ' + kw + '와 관련된 흥미로운 결과 도출\n② 예상과 다른 결과에 대한 원인 분석 및 새로운 질문 발견',
+    summary:  '① 결과를 표·그래프·보고서로 정리 후 발표\n② 관련 교과 내용과의 연결을 통한 심화 학습 발전',
   };
 }
 
