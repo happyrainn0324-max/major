@@ -1885,8 +1885,23 @@ window.toggleStage = function(n){
 <script>
 (function(){
   var PW = atob('YWkyMDI2');
-  var SESSION_KEY = 'admin_auth_ok';
+  var STORAGE_KEY = 'admin_auth_expire';
   var _pendingCallback = null;
+
+  // 페이지 로드 시 무조건 인증 초기화
+  try { localStorage.removeItem(STORAGE_KEY); } catch(e){}
+
+  function isAuthed(){
+    try {
+      return localStorage.getItem(STORAGE_KEY) === '1';
+    } catch(e){ return false; }
+  }
+
+  function setAuthed(){
+    try {
+      localStorage.setItem(STORAGE_KEY, '1');
+    } catch(e){}
+  }
 
   window._pwModalCancel = function(){
     document.getElementById('pw-modal-overlay').style.display = 'none';
@@ -1898,7 +1913,7 @@ window.toggleStage = function(n){
   window._pwModalConfirm = function(){
     var val = document.getElementById('pw-modal-input').value;
     if(val === PW){
-      sessionStorage.setItem(SESSION_KEY, '1');
+      setAuthed();
       document.getElementById('pw-modal-overlay').style.display = 'none';
       document.getElementById('pw-modal-input').value = '';
       document.getElementById('pw-modal-error').textContent = '';
@@ -1915,7 +1930,7 @@ window.toggleStage = function(n){
   };
 
   window._requireAdminAuth = function(callback){
-    if(sessionStorage.getItem(SESSION_KEY) === '1'){
+    if(isAuthed()){
       callback();
       return;
     }
@@ -4265,24 +4280,9 @@ async function sendIvMessage(){
   const text = inp.value.trim();
   if(!text) return;
 
-  // ── 6회 대화 제한 ──
+  // ── 6회 제한 사전 차단 ──
   const userMsgCount = ivHistory.filter(m=>m.role==='user').length;
-  if(userMsgCount >= 6){
-    const box = document.getElementById('iv-chat-box');
-    if(!document.getElementById('iv-limit-msg')){
-      const limitDiv = document.createElement('div');
-      limitDiv.id = 'iv-limit-msg';
-      limitDiv.style.cssText = 'text-align:center;padding:14px 20px;margin:12px 0;background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.25);border-radius:14px;font-size:13px;color:rgba(251,191,36,.9);';
-      limitDiv.innerHTML = '💬 인터뷰 횟수(6회)를 모두 사용했어요!<br><span style="font-size:12px;opacity:.7;">다른 페르소나로 새 인터뷰를 시작해보세요.</span>';
-      box.appendChild(limitDiv);
-      box.scrollTop = box.scrollHeight;
-    }
-    const sendBtn = document.getElementById('iv-send-btn');
-    if(sendBtn){ sendBtn.disabled = true; sendBtn.style.opacity = '0.4'; }
-    inp.disabled = true;
-    inp.placeholder = '인터뷰 횟수를 모두 사용했어요.';
-    return;
-  }
+  if(userMsgCount >= 6){ return; }
 
   inp.value = '';
   inp.style.height = '';
@@ -4404,7 +4404,26 @@ async function sendIvMessage(){
   if(ivHistory.filter(m=>m.role==='user').length % 4 === 0) renderChips();
 
   ivIsLoading = false;
-  document.getElementById('iv-send-btn').style.opacity = '1';
+
+  // ── AI 답변 후 6회 제한 체크 ──
+  const usedCount = ivHistory.filter(m=>m.role==='user').length;
+  if(usedCount >= 6){
+    const sendBtn = document.getElementById('iv-send-btn');
+    const inp2 = document.getElementById('iv-user-input');
+    if(sendBtn){ sendBtn.disabled = true; sendBtn.style.opacity = '0.4'; }
+    if(inp2){ inp2.disabled = true; inp2.placeholder = '인터뷰 횟수를 모두 사용했어요.'; }
+    const box = document.getElementById('iv-chat-box');
+    if(box && !document.getElementById('iv-limit-msg')){
+      const limitDiv = document.createElement('div');
+      limitDiv.id = 'iv-limit-msg';
+      limitDiv.style.cssText = 'text-align:center;padding:14px 20px;margin:16px 0 4px;background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.25);border-radius:14px;font-size:13px;color:rgba(251,191,36,.9);line-height:1.7;';
+      limitDiv.innerHTML = '💬 인터뷰 횟수(6회)를 모두 사용했어요!<br><span style="font-size:12px;opacity:.7;">다른 페르소나로 새 인터뷰를 시작해보세요.</span>';
+      box.appendChild(limitDiv);
+      box.scrollTop = box.scrollHeight;
+    }
+  } else {
+    document.getElementById('iv-send-btn').style.opacity = '1';
+  }
 }
 
 function appendAiMsg(text){
@@ -4776,7 +4795,7 @@ function sgProgressBar(label, pct, color){
 }
 
 async function generateSgReco(){
-  if(sessionStorage.getItem('admin_auth_ok') !== '1'){
+  if(localStorage.getItem('admin_auth_expire') !== '1'){
     window._requireAdminAuth(function(){ generateSgReco(); });
     return;
   }
@@ -5949,7 +5968,7 @@ function confirmNepSelection(){
 }
 
 function loadNepCardInfo(name, i, retryCount){
-  if(sessionStorage.getItem('admin_auth_ok') !== '1'){
+  if(localStorage.getItem('admin_auth_expire') !== '1'){
     window._requireAdminAuth(function(){ loadNepCardInfo(name, i, retryCount); });
     return;
   }
@@ -6129,7 +6148,7 @@ window.retryNepCard = function(name, i){
 
 
 function startNepRecommend(){
-  if(sessionStorage.getItem('admin_auth_ok') !== '1'){
+  if(localStorage.getItem('admin_auth_expire') !== '1'){
     window._requireAdminAuth(function(){ startNepRecommend(); });
     return;
   }
@@ -6314,7 +6333,7 @@ function renderNep10Grid(majors){ renderNep8Grid(majors); }
 
 
 function submitNepRoadmap(){
-  if(sessionStorage.getItem('admin_auth_ok') !== '1'){
+  if(localStorage.getItem('admin_auth_expire') !== '1'){
     window._requireAdminAuth(function(){ submitNepRoadmap(); });
     return;
   }
@@ -7132,7 +7151,7 @@ function tryParseJSON(raw) {
 
 // 1. 버튼 클릭 진입점
 async function onClickGenerateBtn() {
-  if(sessionStorage.getItem('admin_auth_ok') !== '1'){
+  if(localStorage.getItem('admin_auth_expire') !== '1'){
     window._requireAdminAuth(function(){ onClickGenerateBtn(); });
     return;
   }
@@ -8242,7 +8261,7 @@ rqRenderStars(0);
 <script>
 // ── 포트폴리오 팝업 열기 ──
 window.openPortfolioPopup = function(){
-  if(sessionStorage.getItem('admin_auth_ok') !== '1'){
+  if(localStorage.getItem('admin_auth_expire') !== '1'){
     window._requireAdminAuth(function(){ openPortfolioPopup(); });
     return;
   }
