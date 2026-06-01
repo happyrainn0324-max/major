@@ -4235,9 +4235,10 @@ function startInterview(){
   document.getElementById('iv-persona-title').textContent = `${p.title} | ${major}`;
   document.getElementById('iv-persona-subtitle').textContent = p.subtitle(major, ivUniv);
 
-  // 채팅 창 초기화
+  // 채팅 창 초기화 + 제한 상태 리셋
   document.getElementById('iv-chat-box').innerHTML = '';
   document.getElementById('iv-chips-wrap').innerHTML = '';
+  resetIvLimit();
 
   // 화면 전환
   document.getElementById('iv-setup-card').style.display = 'none';
@@ -4281,8 +4282,10 @@ async function sendIvMessage(){
   if(!text) return;
 
   // ── 6회 제한 사전 차단 ──
-  const userMsgCount = ivHistory.filter(m=>m.role==='user').length;
-  if(userMsgCount >= 6){ return; }
+  if(ivHistory.filter(m=>m.role==='user').length >= 6){
+    applyIvLimit();
+    return;
+  }
 
   inp.value = '';
   inp.style.height = '';
@@ -4406,23 +4409,35 @@ async function sendIvMessage(){
   ivIsLoading = false;
 
   // ── AI 답변 후 6회 제한 체크 ──
-  const usedCount = ivHistory.filter(m=>m.role==='user').length;
-  if(usedCount >= 6){
-    const sendBtn = document.getElementById('iv-send-btn');
-    const inp2 = document.getElementById('iv-user-input');
-    if(sendBtn){ sendBtn.disabled = true; sendBtn.style.opacity = '0.4'; }
-    if(inp2){ inp2.disabled = true; inp2.placeholder = '인터뷰 횟수를 모두 사용했어요.'; }
-    const box = document.getElementById('iv-chat-box');
-    if(box && !document.getElementById('iv-limit-msg')){
-      const limitDiv = document.createElement('div');
-      limitDiv.id = 'iv-limit-msg';
-      limitDiv.style.cssText = 'text-align:center;padding:14px 20px;margin:16px 0 4px;background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.25);border-radius:14px;font-size:13px;color:rgba(251,191,36,.9);line-height:1.7;';
-      limitDiv.innerHTML = '💬 인터뷰 횟수(6회)를 모두 사용했어요!<br><span style="font-size:12px;opacity:.7;">다른 페르소나로 새 인터뷰를 시작해보세요.</span>';
-      box.appendChild(limitDiv);
-      box.scrollTop = box.scrollHeight;
-    }
+  if(ivHistory.filter(m=>m.role==='user').length >= 6){
+    applyIvLimit();
   } else {
     document.getElementById('iv-send-btn').style.opacity = '1';
+  }
+}
+
+function resetIvLimit(){
+  var sendBtn = document.getElementById('iv-send-btn');
+  var inp = document.getElementById('iv-user-input');
+  if(sendBtn){ sendBtn.disabled = false; sendBtn.style.opacity = '1'; sendBtn.style.cursor = ''; }
+  if(inp){ inp.disabled = false; inp.placeholder = '궁금한 걸 자유롭게 물어보세요...'; inp.style.opacity = ''; }
+  var limitMsg = document.getElementById('iv-limit-msg');
+  if(limitMsg) limitMsg.remove();
+}
+
+function applyIvLimit(){
+  const sendBtn = document.getElementById('iv-send-btn');
+  const inp = document.getElementById('iv-user-input');
+  if(sendBtn){ sendBtn.disabled = true; sendBtn.style.opacity = '0.4'; sendBtn.style.cursor = 'not-allowed'; }
+  if(inp){ inp.disabled = true; inp.placeholder = '인터뷰 횟수를 모두 사용했어요.'; inp.style.opacity = '0.5'; }
+  const box = document.getElementById('iv-chat-box');
+  if(box && !document.getElementById('iv-limit-msg')){
+    const limitDiv = document.createElement('div');
+    limitDiv.id = 'iv-limit-msg';
+    limitDiv.style.cssText = 'text-align:center;padding:14px 20px;margin:16px 0 4px;background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.25);border-radius:14px;font-size:13px;color:rgba(251,191,36,.9);line-height:1.7;';
+    limitDiv.innerHTML = '💬 인터뷰 횟수(6회)를 모두 사용했어요!<br><span style="font-size:12px;opacity:.7;">다른 페르소나로 새 인터뷰를 시작해보세요.</span>';
+    box.appendChild(limitDiv);
+    box.scrollTop = box.scrollHeight;
   }
 }
 
@@ -4490,11 +4505,7 @@ function resetInterview(){
   }, 400);
   ivPersona = null;
   document.querySelectorAll('.iv-persona-card').forEach(c=>c.classList.remove('selected'));
-  // 제한 상태 리셋
-  const sendBtn = document.getElementById('iv-send-btn');
-  const inp = document.getElementById('iv-user-input');
-  if(sendBtn){ sendBtn.disabled = false; sendBtn.style.opacity = '1'; }
-  if(inp){ inp.disabled = false; inp.placeholder = '궁금한 걸 자유롭게 물어보세요...'; }
+  resetIvLimit();
 }
 
 function startFreshTopic(){
