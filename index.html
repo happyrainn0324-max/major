@@ -4265,6 +4265,25 @@ async function sendIvMessage(){
   const text = inp.value.trim();
   if(!text) return;
 
+  // ── 6회 대화 제한 ──
+  const userMsgCount = ivHistory.filter(m=>m.role==='user').length;
+  if(userMsgCount >= 6){
+    const box = document.getElementById('iv-chat-box');
+    if(!document.getElementById('iv-limit-msg')){
+      const limitDiv = document.createElement('div');
+      limitDiv.id = 'iv-limit-msg';
+      limitDiv.style.cssText = 'text-align:center;padding:14px 20px;margin:12px 0;background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.25);border-radius:14px;font-size:13px;color:rgba(251,191,36,.9);';
+      limitDiv.innerHTML = '💬 인터뷰 횟수(6회)를 모두 사용했어요!<br><span style="font-size:12px;opacity:.7;">다른 페르소나로 새 인터뷰를 시작해보세요.</span>';
+      box.appendChild(limitDiv);
+      box.scrollTop = box.scrollHeight;
+    }
+    const sendBtn = document.getElementById('iv-send-btn');
+    if(sendBtn){ sendBtn.disabled = true; sendBtn.style.opacity = '0.4'; }
+    inp.disabled = true;
+    inp.placeholder = '인터뷰 횟수를 모두 사용했어요.';
+    return;
+  }
+
   inp.value = '';
   inp.style.height = '';
 
@@ -4452,6 +4471,11 @@ function resetInterview(){
   }, 400);
   ivPersona = null;
   document.querySelectorAll('.iv-persona-card').forEach(c=>c.classList.remove('selected'));
+  // 제한 상태 리셋
+  const sendBtn = document.getElementById('iv-send-btn');
+  const inp = document.getElementById('iv-user-input');
+  if(sendBtn){ sendBtn.disabled = false; sendBtn.style.opacity = '1'; }
+  if(inp){ inp.disabled = false; inp.placeholder = '궁금한 걸 자유롭게 물어보세요...'; }
 }
 
 function startFreshTopic(){
@@ -5937,6 +5961,22 @@ function loadNepCardInfo(name, i, retryCount){
   bodyEl.innerHTML = '<div style="text-align:center;padding:16px;font-size:13px;color:rgba(240,244,255,.4);"><span style="animation:floatY 1s ease-in-out infinite;display:inline-block;">🔭</span> AI가 학과 정보를 분석 중...</div>';
 
   (async () => {
+    // ── localStorage 캐시 체크 ──
+    try {
+      const cacheKey = 'nep_card_v1_' + name;
+      const cached = localStorage.getItem(cacheKey);
+      if(cached){
+        const { data: cachedData, ts } = JSON.parse(cached);
+        const EXPIRE = 7 * 24 * 60 * 60 * 1000; // 7일
+        if(Date.now() - ts < EXPIRE && cachedData && cachedData.overview){
+          if(!window._nepCardCache) window._nepCardCache = {};
+          window._nepCardCache[name] = cachedData;
+          renderNepCardBody(bodyEl, cachedData, name, i);
+          return;
+        }
+      }
+    } catch(e) { /* 캐시 읽기 실패 시 무시하고 API 호출 */ }
+
     try {
       const resp = await fetch('/.netlify/functions/claude', {
         method: 'POST',
@@ -5979,9 +6019,13 @@ ${dnaInfo ? '학생 성향 데이터: '+dnaInfo : ''}
       const jsonMatch = cleaned.match(/\{[\s\S]*\}/);
       const info = JSON.parse(jsonMatch ? jsonMatch[0] : cleaned);
       if(!info.overview) throw new Error('invalid JSON structure');
-      // 포트폴리오용 캐시 저장
+      // 세션 캐시 저장
       if(!window._nepCardCache) window._nepCardCache = {};
       window._nepCardCache[name] = info;
+      // localStorage 캐시 저장 (7일)
+      try {
+        localStorage.setItem('nep_card_v1_' + name, JSON.stringify({ data: info, ts: Date.now() }));
+      } catch(e) { /* 저장 실패 시 무시 */ }
       renderNepCardBody(bodyEl, info, name, i);
     } catch(e) {
       if(retryCount < 4){
@@ -6126,6 +6170,22 @@ function _initNepMajorCardsCore(){
   const majorStr = [major1,major2].filter(Boolean).join(', ') || '없음';
 
   (async () => {
+    // ── localStorage 캐시 체크 ──
+    try {
+      const cacheKey = 'nep_card_v1_' + name;
+      const cached = localStorage.getItem(cacheKey);
+      if(cached){
+        const { data: cachedData, ts } = JSON.parse(cached);
+        const EXPIRE = 7 * 24 * 60 * 60 * 1000; // 7일
+        if(Date.now() - ts < EXPIRE && cachedData && cachedData.overview){
+          if(!window._nepCardCache) window._nepCardCache = {};
+          window._nepCardCache[name] = cachedData;
+          renderNepCardBody(bodyEl, cachedData, name, i);
+          return;
+        }
+      }
+    } catch(e) { /* 캐시 읽기 실패 시 무시하고 API 호출 */ }
+
     try {
       const resp = await fetch('/.netlify/functions/claude', {
         method: 'POST',
