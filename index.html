@@ -3221,10 +3221,10 @@ window.toggleStage = function(n){
             </div>
 
             <!-- 하단 2칸: 추천 이유 + 입시 요약 -->
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;" class="sg-bottom-row">
+            <div style="display:grid;grid-template-columns:3fr 2fr;gap:12px;margin-bottom:14px;" class="sg-bottom-row">
               <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:16px 18px;">
                 <div style="font-size:11px;letter-spacing:2px;color:rgba(240,244,255,.4);font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:6px;">💡 AI 추천 이유</div>
-                <div id="sg-reason-text" style="font-size:13px;color:rgba(240,244,255,.82);line-height:1.8;"></div>
+                <div id="sg-reason-text" style="font-size:13.5px;color:rgba(240,244,255,.85);line-height:1.9;word-break:keep-all;"></div>
               </div>
               <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:16px 18px;">
                 <div style="font-size:11px;letter-spacing:2px;color:rgba(240,244,255,.4);font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:6px;">🏫 입시 포인트</div>
@@ -4620,11 +4620,11 @@ function sgCheckReady(){
 }
 
 function sgSubjectItem(name, desc, dotColor){
-  return '<div style="display:flex;align-items:flex-start;gap:8px;">'
-    +'<div style="width:7px;height:7px;border-radius:50%;background:'+dotColor+';flex-shrink:0;margin-top:6px;"></div>'
-    +'<div>'
-    +'<div style="font-size:14px;color:rgba(240,244,255,.92);font-weight:600;line-height:1.4;">'+name+'</div>'
-    +(desc?'<div style="font-size:12px;color:rgba(240,244,255,.7);line-height:1.5;margin-top:2px;">'+desc+'</div>':'')
+  return '<div style="display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.05);">'
+    +'<div style="width:8px;height:8px;border-radius:50%;background:'+dotColor+';flex-shrink:0;margin-top:7px;box-shadow:0 0 6px '+dotColor+'88;"></div>'
+    +'<div style="flex:1;">'
+    +'<div style="font-size:14px;color:rgba(240,244,255,.95);font-weight:700;line-height:1.5;margin-bottom:5px;">'+name+'</div>'
+    +(desc?'<div style="font-size:13px;color:rgba(240,244,255,.72);line-height:1.75;word-break:keep-all;">'+desc+'</div>':'')
     +'</div></div>';
 }
 
@@ -4650,31 +4650,39 @@ async function generateSgReco(){
   document.getElementById('sg-error').style.display='none';
 
   var systemPrompt =
-    '당신은 2022 개정교육과정 전문가입니다. 학생의 희망 학과에 맞는 고교 선택과목을 추천합니다.\n\n' +
-    '규칙:\n' +
-    '1. 2022 개정교육과정의 실제 과목명만 사용하세요.\n' +
-    '2. required: 입시·전공 학습에 필수적인 과목 3~4개\n' +
-    '3. recommended: 들으면 유리한 권장 과목 3~4개\n' +
-    '4. optional: 관심 있을 때 추가할 심화 과목 2~3개\n' +
-    '5. 각 과목마다 name(과목명)과 desc(15자 이내 핵심 이유)를 제공하세요.\n' +
-    '6. reason: 왜 이 과목들을 추천했는지 2~3문장으로 설명 (학과 특성 중심)\n' +
-    '7. admissionTags: 입시 포인트 태그 3~4개 (예: "수학 비중 높음", "수시 학종 중심")\n' +
-    '8. importance: 수학/과학/인문사회/예체능 중요도 0~100 숫자 4개\n' +
-    '9. 전문대나 비수도권 대학도 학과 특성 기반으로 동일하게 추천하세요.\n' +
-    '10. 순수 JSON만 반환하세요. 마크다운, 코드블록 없이.';
+    '당신은 2022 개정교육과정 전문가이자 대입 진학 컨설턴트입니다.\n\n' +
+    '[핵심 원칙]\n' +
+    '- 2022 개정교육과정의 실제 과목명만 사용하세요.\n' +
+    '- 각 과목마다 왜 이 과목인가를 학과 전공과 직접 연결하여 구체적으로 설명합니다.\n' +
+    '- 단순 나열이 아닌, 전공 커리큘럼·직무·입시 전략과 연결된 실질적 이유를 제시합니다.\n' +
+    '- 전문대나 비수도권 대학도 학과 특성 기반으로 동일하게 추천하세요.\n' +
+    '- 순수 JSON만 반환하세요. 마크다운, 코드블록 없이.\n\n' +
+    '[각 카테고리 기준]\n' +
+    '- required(필수 이수): 이 과목 없이는 전공 기초 학습과 입시 경쟁력 확보가 어려운 과목 3~4개\n' +
+    '- recommended(강력 권장): 이수하면 입시와 전공 이해에 명확한 유리함이 생기는 과목 3~4개\n' +
+    '- optional(선택 심화): 심화 관심이 있는 학생에게 추가로 추천하는 과목 2~3개\n\n' +
+    '[각 과목 desc 작성 기준 - 반드시 아래 내용을 포함해 구체적으로 작성]\n' +
+    '① 전공 연결: 이 과목의 어떤 개념·역량이 해당 학과의 어떤 전공 과목·직무와 연결되는지\n' +
+    '② 입시 전략: 세특 작성에 어떻게 활용할 수 있는지, 학종에서 어떤 이점이 있는지\n' +
+    '③ 실제 활용: 해당 학과 진학 후 또는 관련 직업에서 이 과목 지식이 실제로 어떻게 쓰이는지\n\n' +
+    '[reason 필드 - 3~5문장, 단순 요약 금지]\n' +
+    '① 이 학과의 핵심 역량과 전공 특성 설명\n' +
+    '② 추천 과목들이 그 역량을 어떻게 뒷받침하는지\n' +
+    '③ 입시(학종·수능) 전략 관점에서의 구체적 포인트\n\n' +
+    '[admissionTags]: 입시 포인트 태그 3~4개\n' +
+    '[importance]: 수학/과학/인문사회/예체능 중요도 0~100';
 
   var univInfo = univ ? ('희망 대학: '+univ+'\n') : '(희망 대학 미입력 — 학과 일반 추천)\n';
   var userPrompt =
     univInfo +
     '희망 학과: '+major+'\n\n' +
-    'JSON 형식:\n' +
-    '{"required":[{"name":"과목명","desc":"핵심이유"}],' +
-    '"recommended":[{"name":"과목명","desc":"핵심이유"}],' +
-    '"optional":[{"name":"과목명","desc":"핵심이유"}],' +
-    '"reason":"추천 이유 2~3문장",' +
+    'JSON 형식으로만 출력하세요:\n' +
+    '{"required":[{"name":"과목명","desc":"전공연결·세특활용·실제활용을 포함한 구체적 이유 2~3문장"}],' +
+    '"recommended":[{"name":"과목명","desc":"전공연결·세특활용·실제활용을 포함한 구체적 이유 2~3문장"}],' +
+    '"optional":[{"name":"과목명","desc":"전공연결·세특활용·실제활용을 포함한 구체적 이유 2~3문장"}],' +
+    '"reason":"이 학과의 핵심 역량·추천 과목 조합의 이유·입시 전략을 담은 3~5문장",' +
     '"admissionTags":["태그1","태그2","태그3"],' +
     '"importance":{"math":0~100,"science":0~100,"social":0~100,"art":0~100}}';
-
   function tryParse(raw){
     try{return JSON.parse(raw);}catch(e){}
     var s=raw.replace(/```[\w]*/g,'').replace(/```/g,'').trim();
@@ -4690,7 +4698,7 @@ async function generateSgReco(){
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({
         model:'claude-sonnet-4-20250514',
-        max_tokens:1200,
+        max_tokens:2500,
         system:systemPrompt,
         messages:[{role:'user',content:userPrompt}]
       })
@@ -4795,26 +4803,59 @@ function sgFallback(major, univ){
   var isSocial = /경영|경제|법|사회|심리|교육|국제|행정|정치|복지|언론|언어|문학|역사/.test(major);
   var req, rec, opt, imp;
   if(isScience){
-    req=[{name:'수학Ⅱ',desc:'전공 수학의 기초'},{name:'과학 탐구 과목',desc:'전공 연계 필수'},{name:'정보',desc:'디지털 역량'}];
-    rec=[{name:'미적분',desc:'공학 수학 핵심'},{name:'확률과 통계',desc:'데이터 분석'},{name:'영어Ⅱ',desc:'논문·기술문서'}];
-    opt=[{name:'심화수학',desc:'수학 역량 강화'},{name:'화법과 언어',desc:'발표·소통'}];
-    imp={math:85,science:80,social:30,art:15};
+    req=[
+      {name:'수학Ⅱ',desc:kw+' 전공의 핵심 수학 개념(극한·미분·적분)을 다루며, 1학년 전공 필수 과목의 기초가 됩니다. 수업 중 공학·과학 현상에 적용한 탐구 보고서를 세특에 기록하면 학종에서 유리합니다.'},
+      {name:'물리학Ⅰ 또는 화학Ⅰ',desc:kw+' 전공과 직결되는 자연 현상의 원리를 배웁니다. 수업 실험 결과를 바탕으로 전공 연계 탐구 주제를 설정하면 세특과 탐구 포트폴리오 모두 활용 가능합니다.'},
+      {name:'정보',desc:'알고리즘·프로그래밍 기초를 익혀 '+kw+' 분야의 데이터 처리·자동화 역량을 기릅니다. 코딩 프로젝트를 세특에 담으면 공학 계열 학종에서 차별화 포인트가 됩니다.'}
+    ];
+    rec=[
+      {name:'미적분',desc:'공학·이공계 전공에서 반드시 쓰이는 심화 수학으로, 수능 이공계 선택에서도 필수입니다. '+kw+' 관련 미적분 응용 문제를 자체 탐구하면 세특 소재로 활용할 수 있습니다.'},
+      {name:'확률과 통계',desc:'실험 데이터 분석·연구 결과 해석에 직접 활용됩니다. '+kw+' 관련 통계 자료를 직접 수집·분석한 내용을 세특에 기록하면 연구 역량을 어필할 수 있습니다.'},
+      {name:'영어Ⅱ',desc:'해외 논문·기술 문서 독해 및 국제 학술 커뮤니케이션에 필수입니다. '+kw+' 관련 영어 원서나 논문을 읽고 요약한 내용을 독서 활동으로 연결하면 학종에 유리합니다.'}
+    ];
+    opt=[
+      {name:'심화수학Ⅰ·Ⅱ',desc:kw+' 상위권 대학 진학 목표라면 수학 역량을 더 높이는 데 효과적입니다. 수학올림피아드 준비나 심화 탐구 프로젝트와 연계하면 세특에 강점을 부여할 수 있습니다.'},
+      {name:'과학Ⅱ 계열 (물리학Ⅱ·화학Ⅱ 등)',desc:kw+' 전공 심화 개념을 미리 접하는 과목으로, 대학 입학 후 전공 적응력을 높입니다. 고난도 실험 보고서를 세특에 기록하면 전공 열의를 명확히 보여줄 수 있습니다.'}
+    ];
+    imp={math:85,science:80,social:25,art:10};
   } else if(isArt){
-    req=[{name:'미술 또는 음악',desc:'전공 기초 실기'},{name:'화법과 언어',desc:'기획·발표'},{name:'정보',desc:'디지털 툴 활용'}];
-    rec=[{name:'사회문화',desc:'트렌드 분석'},{name:'영어Ⅱ',desc:'글로벌 감각'},{name:'문학',desc:'스토리텔링'}];
-    opt=[{name:'기하',desc:'공간 감각'},{name:'심화미술',desc:'실기 심화'}];
-    imp={math:30,science:20,social:50,art:85};
+    req=[
+      {name:'미술·음악 (전공 실기 관련)',desc:kw+' 전공의 핵심 실기 역량을 쌓는 과목으로, 포트폴리오 작품 제작과 직접 연결됩니다. 수업 중 제작한 작품 과정을 기록한 과정 포트폴리오를 세특에 담으면 실기 역량을 입증할 수 있습니다.'},
+      {name:'화법과 언어',desc:kw+' 분야의 기획안 작성·발표·비평 능력을 기릅니다. 전공 관련 작품 기획안을 발표한 경험을 세특에 기록하면 창의적 사고력과 소통 능력을 어필할 수 있습니다.'},
+      {name:'정보',desc:'디지털 디자인 툴·미디어 편집 소프트웨어 활용의 기초가 됩니다. '+kw+' 관련 디지털 작업물을 세특 프로젝트로 연결하면 현대 예술 역량을 보여줄 수 있습니다.'}
+    ];
+    rec=[
+      {name:'사회문화',desc:'사회 트렌드·문화 현상을 분석하는 시각을 길러 '+kw+' 작품의 사회적 맥락 이해를 돕습니다. 트렌드 분석 보고서를 세특에 기록하면 기획력을 어필할 수 있습니다.'},
+      {name:'영어Ⅱ',desc:'글로벌 예술·디자인 트렌드와 해외 작품을 원어로 접하는 데 필요합니다. 해외 작가 작품을 분석한 영어 감상문을 독서 활동으로 연결하면 국제적 안목을 보여줄 수 있습니다.'},
+      {name:'문학',desc:'스토리텔링·서사 구성 능력을 길러 '+kw+' 작품에 깊이를 더합니다. 문학 작품을 시각·음악적으로 재해석한 탐구 활동을 세특에 담으면 융합 역량을 어필할 수 있습니다.'}
+    ];
+    opt=[
+      {name:'기하',desc:'공간 감각과 도형 원리를 익혀 건축·입체 디자인 계열에 도움이 됩니다. 기하 개념을 작품에 적용한 탐구를 세특에 기록하면 수학적 사고력을 추가로 어필할 수 있습니다.'},
+      {name:'진로선택 실기 심화 과목',desc:kw+' 관련 심화 실기 역량을 집중적으로 쌓는 과목입니다. 심화 작품 제작 과정을 기록하면 전공 적합성을 더욱 명확히 보여줄 수 있습니다.'}
+    ];
+    imp={math:25,science:20,social:50,art:90};
   } else {
-    req=[{name:'사회문화',desc:'전공 기초'},{name:'화법과 언어',desc:'논리적 표현'},{name:'영어Ⅱ',desc:'글로벌 역량'}];
-    rec=[{name:'확률과 통계',desc:'데이터 분석'},{name:'생활과 윤리',desc:'실천 윤리'},{name:'정치와 법',desc:'사회제도 이해'}];
-    opt=[{name:'경제',desc:'시장 원리'},{name:'심화 영어',desc:'고급 독해'}];
-    imp={math:40,science:30,social:85,art:25};
+    req=[
+      {name:'사회문화',desc:kw+' 전공의 핵심인 사회 현상·제도·문화를 체계적으로 분석하는 능력을 기릅니다. 시사 이슈를 전공과 연결한 보고서를 세특에 기록하면 전공 적합성을 강하게 어필할 수 있습니다.'},
+      {name:'화법과 언어',desc:'논리적 말하기·글쓰기 역량을 길러 '+kw+' 분야의 보고서 작성·발표·토론에 직접 활용됩니다. 주제 토론·발표 활동을 세특에 상세히 기록하면 의사소통 능력을 입증할 수 있습니다.'},
+      {name:'영어Ⅱ',desc:'국제 자료 독해·글로벌 이슈 분석에 필수이며, '+kw+' 관련 해외 사례를 영어로 조사하면 세특 소재로 활용 가능합니다. 영어권 학술 자료를 활용한 탐구는 학종에서 차별화 요소가 됩니다.'}
+    ];
+    rec=[
+      {name:'확률과 통계',desc:'여론조사·사회 데이터 분석에 필수적이며, '+kw+' 분야 연구의 기초가 됩니다. 사회 현상을 통계로 분석한 탐구 보고서를 세특에 기록하면 데이터 기반 사고력을 어필할 수 있습니다.'},
+      {name:'생활과 윤리',desc:kw+' 분야에서 다루는 사회 윤리·가치 판단 역량을 기릅니다. 전공 관련 사회 윤리 이슈를 심층 탐구한 내용을 세특에 담으면 비판적 사고력을 보여줄 수 있습니다.'},
+      {name:'정치와 법',desc:'사회 제도·법·정책에 대한 이해를 높여 '+kw+' 전공 학습의 배경 지식을 풍부하게 합니다. 시사 법률·정책 이슈 분석을 세특에 기록하면 전공 연계 탐구 역량을 어필할 수 있습니다.'}
+    ];
+    opt=[
+      {name:'경제',desc:'시장 원리·경제 현상 이해로 경영·사회 계열 전공의 실용 지식을 보완합니다. 경제 현상을 전공과 연결한 탐구를 세특에 기록하면 융합적 사고를 보여줄 수 있습니다.'},
+      {name:'심화 영어 독해와 작문',desc:'영어 학술 자료 심화 독해 역량을 길러 '+kw+' 관련 해외 연구를 폭넓게 접하는 데 유리합니다. 영어 원서 탐구 활동을 세특에 담으면 자기주도 학습력을 어필할 수 있습니다.'}
+    ];
+    imp={math:40,science:25,social:88,art:22};
   }
   var univNote = univ ? univ+'의 '+major : major;
   return {
     required:req, recommended:rec, optional:opt,
-    reason: univNote+'을(를) 목표로 한다면, '+kw+' 분야의 핵심 역량을 키우는 과목을 중심으로 선택하는 것이 중요해요. 학과 특성에 맞는 기초 역량을 쌓고, 세부 특기사항(세특)에서 연결고리를 만들어두세요.',
-    admissionTags:['학과 연계 세특 중요','기초 역량 과목 필수','진로 독서 활동 연계'],
+    reason: univNote+'를 목표로 한다면, '+kw+' 분야의 핵심 역량을 직접적으로 키우는 과목부터 우선 이수해야 합니다. 필수 과목에서 쌓은 개념을 바탕으로 전공 연계 탐구 주제를 설정하고, 그 과정을 세특에 기록하는 것이 학종 전략의 핵심입니다. 학과 특성에 맞게 수학·과학·인문사회 중 어느 영역에 비중을 둘지 먼저 파악한 뒤, 해당 영역 과목을 중심으로 선택과목을 구성하고 각 과목에서의 탐구 활동이 유기적으로 연결되도록 계획하세요.',
+    admissionTags:['전공 연계 세특 필수','탐구 보고서 소재 확보','학종 전략 과목 구성','수능 선택과목 연계'],
     importance:imp
   };
 }
@@ -5713,6 +5754,10 @@ function confirmNepSelection(){
 }
 
 function loadNepCardInfo(name, i, retryCount){
+  if(sessionStorage.getItem('admin_auth_ok') !== '1'){
+    window._requireAdminAuth(function(){ loadNepCardInfo(name, i, retryCount); });
+    return;
+  }
   retryCount = retryCount || 0;
   const bodyEl = document.getElementById('nep-rcard-body-'+i);
   if(!bodyEl) return;
@@ -5886,6 +5931,9 @@ function startNepRecommend(){
 }
 
 function initNepMajorCards(){
+  window._requireAdminAuth(function(){ _initNepMajorCardsCore(); });
+}
+function _initNepMajorCardsCore(){
   // 로딩 표시
   const loadingEl = document.getElementById('nep-select-loading');
   const sectionEl = document.getElementById('nep-select-section');
@@ -7639,6 +7687,9 @@ function setRqLevel(level) {
 
 /* ── 7. 메인 함수 ── */
 function startResearch(){
+  window._requireAdminAuth(function(){ _startResearchCore(); });
+}
+function _startResearchCore(){
   var major = document.getElementById('rq-major').value.trim();
   var topic = document.getElementById('rq-topic').value.trim();
   var weeks = document.getElementById('rq-period').value;
@@ -8539,19 +8590,6 @@ window.downloadPortfolioPDF = function(){
         +'</div>';
     });
     html += sec('#f472b6','📋','탐구 설계 계획서', undefined, undefined, iqBody);
-
-    // 선택한 산출물
-    if(iqData.outputs && iqData.outputs.length > 0){
-      var outBody = '<div style="display:flex;flex-wrap:wrap;gap:8px;">';
-      iqData.outputs.forEach(function(o){
-        outBody += '<div style="display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:999px;background:#fefce8;border:1.5px solid #fbbf24;font-size:13px;font-weight:700;color:#b45309;">'
-          +o.emoji+' '+o.label
-          +'<span style="font-size:11px;color:#92400e;font-weight:400;margin-left:2px;">'+o.desc+'</span>'
-          +'</div>';
-      });
-      outBody += '</div>';
-      html += sec('#fbbf24','🎁','선택한 탐구 산출물', undefined, undefined, outBody);
-    }
   }
 
   // ── 꼬리말 ──
@@ -9289,7 +9327,10 @@ document.addEventListener('click', function(e){
 window.toggleBadgePopup = toggleBadgePopup;
 
 // ── AI 전공 탐구 포트폴리오 PDF 다운로드 ──
-window.openAiPortfolio = async function(){
+window.openAiPortfolio = function(){
+  window._requireAdminAuth(function(){ window._openAiPortfolioCore(); });
+};
+window._openAiPortfolioCore = async function(){
   // 데이터 수집
   var info = window.explorerInfo || {};
   var name = info.name || '탐험가';
@@ -11811,6 +11852,116 @@ function downloadIqbotPdf() {
     alert('팝업이 차단되어 있어요. 팝업 허용 후 다시 시도해주세요.');
   }
 }
+</script>
+
+<!-- ════════════════════════════════════════════════════════
+     🔒 관리자 비밀번호 모달
+════════════════════════════════════════════════════════ -->
+<div id="pw-modal-overlay" style="
+  display:none;position:fixed;inset:0;z-index:999999;
+  background:rgba(6,8,15,.88);backdrop-filter:blur(16px);
+  align-items:center;justify-content:center;
+">
+  <div style="
+    width:min(400px,90vw);
+    background:linear-gradient(145deg,#0a1520,#0d1a2e);
+    border:1.5px solid rgba(26,108,245,.35);
+    border-radius:24px;
+    padding:36px 32px 28px;
+    box-shadow:0 32px 80px rgba(0,0,0,.7);
+    text-align:center;
+  ">
+    <div style="font-size:2rem;margin-bottom:12px;">🔒</div>
+    <div style="font-size:1.15rem;font-weight:900;color:#f0f4ff;margin-bottom:8px;">관리자 인증</div>
+    <div style="font-size:13px;color:rgba(240,244,255,.5);margin-bottom:24px;line-height:1.7;">
+      AI 기능은 비용이 발생합니다.<br>관리자 비밀번호를 입력해주세요.
+    </div>
+    <input id="pw-modal-input" type="password" placeholder="비밀번호 입력"
+      style="
+        width:100%;padding:12px 16px;border-radius:12px;
+        background:rgba(255,255,255,.06);
+        border:1.5px solid rgba(255,255,255,.12);
+        color:#f0f4ff;font-size:15px;
+        font-family:'Pretendard','Noto Sans KR',sans-serif;
+        outline:none;text-align:center;margin-bottom:10px;
+        box-sizing:border-box;
+      "
+      onkeydown="if(event.key==='Enter')window._pwModalConfirm()"
+    />
+    <div id="pw-modal-error" style="
+      font-size:13px;color:#f87171;margin-bottom:14px;
+      min-height:20px;
+    "></div>
+    <div style="display:flex;gap:10px;justify-content:center;">
+      <button onclick="window._pwModalCancel()" style="
+        padding:11px 24px;border-radius:999px;
+        background:rgba(255,255,255,.06);
+        border:1.5px solid rgba(255,255,255,.12);
+        color:rgba(240,244,255,.5);font-size:14px;font-weight:700;
+        cursor:pointer;font-family:'Pretendard','Noto Sans KR',sans-serif;
+        transition:.2s;
+      "
+        onmouseover="this.style.background='rgba(255,255,255,.12)'"
+        onmouseout="this.style.background='rgba(255,255,255,.06)'"
+      >취소</button>
+      <button onclick="window._pwModalConfirm()" style="
+        padding:11px 32px;border-radius:999px;
+        background:linear-gradient(135deg,#1a6cf5,#6366f1);
+        border:none;color:#fff;font-size:14px;font-weight:700;
+        cursor:pointer;font-family:'Pretendard','Noto Sans KR',sans-serif;
+        transition:.2s;
+      "
+        onmouseover="this.style.opacity='.85'"
+        onmouseout="this.style.opacity='1'"
+      >확인</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var PW = atob('YWkyMDI2');
+  var SESSION_KEY = 'admin_auth_ok';
+  var _pendingCallback = null;
+
+  window._pwModalCancel = function(){
+    document.getElementById('pw-modal-overlay').style.display = 'none';
+    document.getElementById('pw-modal-input').value = '';
+    document.getElementById('pw-modal-error').textContent = '';
+    _pendingCallback = null;
+  };
+
+  window._pwModalConfirm = function(){
+    var val = document.getElementById('pw-modal-input').value;
+    if(val === PW){
+      sessionStorage.setItem(SESSION_KEY, '1');
+      document.getElementById('pw-modal-overlay').style.display = 'none';
+      document.getElementById('pw-modal-input').value = '';
+      document.getElementById('pw-modal-error').textContent = '';
+      if(typeof _pendingCallback === 'function'){
+        var cb = _pendingCallback;
+        _pendingCallback = null;
+        cb();
+      }
+    } else {
+      document.getElementById('pw-modal-error').textContent = '❌ 비밀번호가 올바르지 않습니다.';
+      document.getElementById('pw-modal-input').value = '';
+      document.getElementById('pw-modal-input').focus();
+    }
+  };
+
+  window._requireAdminAuth = function(callback){
+    if(sessionStorage.getItem(SESSION_KEY) === '1'){
+      callback();
+      return;
+    }
+    _pendingCallback = callback;
+    document.getElementById('pw-modal-error').textContent = '';
+    document.getElementById('pw-modal-input').value = '';
+    document.getElementById('pw-modal-overlay').style.display = 'flex';
+    setTimeout(function(){ document.getElementById('pw-modal-input').focus(); }, 100);
+  };
+})();
 </script>
 
 </body>
