@@ -5313,42 +5313,96 @@ function showDnaMajorTags({topDna, selectedFields, major1, scoreEntries}){
   // 에너지별 실제 학과 4개
   const DNA_MAJORS = {
     explore: [
-      {name:'생명과학과',     univ:'서울대·연세대·고려대'},
+      {name:'생명과학과',         univ:'서울대·연세대·고려대'},
       {name:'데이터사이언스학과', univ:'KAIST·성균관대·한양대'},
-      {name:'천문우주학과',   univ:'연세대·경희대·충북대'},
-      {name:'통계학과',       univ:'서울대·고려대·이화여대'},
+      {name:'천문우주학과',       univ:'연세대·경희대·충북대'},
+      {name:'통계학과',           univ:'서울대·고려대·이화여대'},
+      {name:'물리학과',           univ:'서울대·POSTECH·KAIST'},
+      {name:'화학과',             univ:'서울대·연세대·고려대'},
+      {name:'수학과',             univ:'서울대·KAIST·포항공대'},
+      {name:'지구환경과학과',     univ:'서울대·연세대·부산대'},
+      {name:'뇌과학과',           univ:'KAIST·고려대·성균관대'},
+      {name:'의생명공학과',       univ:'연세대·성균관대·한양대'},
+      {name:'인지과학과',         univ:'서울대·고려대·이화여대'},
+      {name:'과학기술학과',       univ:'KAIST·전북대·서울시립대'},
     ],
     create: [
-      {name:'시각디자인학과', univ:'홍익대·국민대·서울여대'},
-      {name:'미디어콘텐츠학과',univ:'한양대·중앙대·숭실대'},
-      {name:'게임학과',       univ:'세종대·청강문화산업대·동양미래대'},
-      {name:'산업디자인학과', univ:'홍익대·국민대·건국대'},
+      {name:'시각디자인학과',     univ:'홍익대·국민대·서울여대'},
+      {name:'미디어콘텐츠학과',   univ:'한양대·중앙대·숭실대'},
+      {name:'게임학과',           univ:'세종대·청강문화산업대·동양미래대'},
+      {name:'산업디자인학과',     univ:'홍익대·국민대·건국대'},
+      {name:'영상학과',           univ:'중앙대·한양대·동국대'},
+      {name:'패션디자인학과',     univ:'연세대·이화여대·서울예대'},
+      {name:'만화애니메이션학과', univ:'세종대·공주대·청강문화산업대'},
+      {name:'공간디자인학과',     univ:'국민대·홍익대·건국대'},
+      {name:'광고홍보학과',       univ:'한양대·중앙대·성균관대'},
+      {name:'문예창작학과',       univ:'서울예대·한양대·중앙대'},
+      {name:'음악학과',           univ:'서울대·연세대·한양대'},
+      {name:'연극영화학과',       univ:'중앙대·동국대·단국대'},
     ],
     connect: [
-      {name:'심리학과',       univ:'서울대·연세대·성균관대'},
-      {name:'사회복지학과',   univ:'이화여대·중앙대·숭실대'},
-      {name:'간호학과',       univ:'서울대·연세대·가톨릭대'},
-      {name:'상담심리학과',   univ:'고려대·광운대·한국상담대학원대'},
+      {name:'심리학과',           univ:'서울대·연세대·성균관대'},
+      {name:'사회복지학과',       univ:'이화여대·중앙대·숭실대'},
+      {name:'간호학과',           univ:'서울대·연세대·가톨릭대'},
+      {name:'상담심리학과',       univ:'고려대·광운대·한국상담대학원대'},
+      {name:'사회학과',           univ:'서울대·연세대·고려대'},
+      {name:'아동학과',           univ:'이화여대·중앙대·숙명여대'},
+      {name:'언론정보학과',       univ:'서울대·연세대·고려대'},
+      {name:'교육학과',           univ:'서울대·연세대·이화여대'},
+      {name:'의료관광학과',       univ:'경희대·가천대·한양대'},
+      {name:'특수교육학과',       univ:'이화여대·단국대·공주대'},
+      {name:'스포츠사이언스학과', univ:'연세대·한국체대·성균관대'},
+      {name:'국제개발협력학과',   univ:'이화여대·한국외대·경희대'},
     ],
     build: [
-      {name:'컴퓨터공학과',   univ:'KAIST·서울대·POSTECH'},
-      {name:'인공지능학과',   univ:'KAIST·고려대·성균관대'},
-      {name:'로봇공학과',     univ:'KAIST·한양대·UNIST'},
-      {name:'전기전자공학과', univ:'서울대·연세대·한양대'},
+      {name:'컴퓨터공학과',       univ:'KAIST·서울대·POSTECH'},
+      {name:'인공지능학과',       univ:'KAIST·고려대·성균관대'},
+      {name:'로봇공학과',         univ:'KAIST·한양대·UNIST'},
+      {name:'전기전자공학과',     univ:'서울대·연세대·한양대'},
+      {name:'소프트웨어학과',     univ:'고려대·숭실대·아주대'},
+      {name:'기계공학과',         univ:'서울대·KAIST·한양대'},
+      {name:'반도체공학과',       univ:'성균관대·한양대·KAIST'},
+      {name:'화학공학과',         univ:'서울대·연세대·POSTECH'},
+      {name:'산업공학과',         univ:'서울대·KAIST·연세대'},
+      {name:'건설환경공학과',     univ:'서울대·한양대·고려대'},
+      {name:'항공우주공학과',     univ:'KAIST·서울대·한양대'},
+      {name:'신소재공학과',       univ:'KAIST·POSTECH·서울대'},
     ],
     nature: [
-      {name:'수의학과',       univ:'서울대·건국대·전북대'},
-      {name:'식품영양학과',   univ:'이화여대·연세대·중앙대'},
-      {name:'생태환경학과',   univ:'고려대·서울시립대·강원대'},
-      {name:'동물자원학과',   univ:'건국대·강원대·충남대'},
+      {name:'수의학과',           univ:'서울대·건국대·전북대'},
+      {name:'식품영양학과',       univ:'이화여대·연세대·중앙대'},
+      {name:'생태환경학과',       univ:'고려대·서울시립대·강원대'},
+      {name:'동물자원학과',       univ:'건국대·강원대·충남대'},
+      {name:'원예학과',           univ:'서울대·고려대·충남대'},
+      {name:'산림과학과',         univ:'서울대·강원대·충북대'},
+      {name:'해양학과',           univ:'부산대·제주대·인하대'},
+      {name:'환경공학과',         univ:'서울대·한양대·고려대'},
+      {name:'농생물학과',         univ:'서울대·고려대·전남대'},
+      {name:'조경학과',           univ:'서울대·고려대·서울시립대'},
+      {name:'지질학과',           univ:'연세대·부산대·강원대'},
+      {name:'대기과학과',         univ:'연세대·부산대·공주대'},
     ],
     lead: [
-      {name:'경영학과',       univ:'서울대·연세대·고려대'},
-      {name:'정치외교학과',   univ:'서울대·연세대·성균관대'},
-      {name:'법학과',         univ:'서울대·연세대·고려대'},
-      {name:'국제관계학과',   univ:'한국외대·연세대·이화여대'},
+      {name:'경영학과',           univ:'서울대·연세대·고려대'},
+      {name:'정치외교학과',       univ:'서울대·연세대·성균관대'},
+      {name:'법학과',             univ:'서울대·연세대·고려대'},
+      {name:'국제관계학과',       univ:'한국외대·연세대·이화여대'},
+      {name:'행정학과',           univ:'서울대·연세대·성균관대'},
+      {name:'경제학과',           univ:'서울대·연세대·고려대'},
+      {name:'무역학과',           univ:'한국외대·성균관대·고려대'},
+      {name:'군사학과',           univ:'육사·해사·공사'},
+      {name:'공공정책학과',       univ:'서울대·고려대·성균관대'},
+      {name:'인사조직학과',       univ:'서울대·연세대·고려대'},
+      {name:'창업학과',           univ:'한양대·중앙대·성균관대'},
+      {name:'금융학과',           univ:'연세대·고려대·성균관대'},
     ],
   };
+
+  // 12개 중 랜덤 3개 추출 함수
+  function pickRandom3(arr) {
+    var shuffled = arr.slice().sort(function(){ return Math.random() - 0.5; });
+    return shuffled.slice(0, 3);
+  }
 
   // major-pick-section 완전히 숨기기
   const pickSection = document.getElementById('major-pick-section');
@@ -5387,7 +5441,7 @@ function showDnaMajorTags({topDna, selectedFields, major1, scoreEntries}){
     const c  = dnaColors[dna] || '#a5b4fc';
     const ic = dnaIcons[dna]  || '✦';
     const lb = dnaLabel[dna]  || dna;
-    const list = (DNA_MAJORS[dna] || []).slice(0, 3);
+    const list = pickRandom3(DNA_MAJORS[dna] || []);
     list.forEach(m => { if(!allMajorNames.includes(m.name)) allMajorNames.push(m.name); });
     const rankBadge = ['1위','2위','3위'][rank] || '';
 
