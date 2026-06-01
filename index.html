@@ -4282,7 +4282,7 @@ async function sendIvMessage(){
   if(!text) return;
 
   // ── 6회 제한 사전 차단 ──
-  if(ivHistory.filter(m=>m.role==='user').length >= 6){
+  if(ivHistory.filter(m=>m.role==='user').length >= 3){
     applyIvLimit();
     return;
   }
@@ -4409,7 +4409,7 @@ async function sendIvMessage(){
   ivIsLoading = false;
 
   // ── AI 답변 후 6회 제한 체크 ──
-  if(ivHistory.filter(m=>m.role==='user').length >= 6){
+  if(ivHistory.filter(m=>m.role==='user').length >= 3){
     applyIvLimit();
   } else {
     document.getElementById('iv-send-btn').style.opacity = '1';
@@ -4435,7 +4435,7 @@ function applyIvLimit(){
     const limitDiv = document.createElement('div');
     limitDiv.id = 'iv-limit-msg';
     limitDiv.style.cssText = 'text-align:center;padding:14px 20px;margin:16px 0 4px;background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.25);border-radius:14px;font-size:13px;color:rgba(251,191,36,.9);line-height:1.7;';
-    limitDiv.innerHTML = '💬 인터뷰 횟수(6회)를 모두 사용했어요!<br><span style="font-size:12px;opacity:.7;">다른 페르소나로 새 인터뷰를 시작해보세요.</span>';
+    limitDiv.innerHTML = '💬 인터뷰 횟수(3회)를 모두 사용했어요!<br><span style="font-size:12px;opacity:.7;">다른 멘토와 새 인터뷰를 시작해보세요.</span>';
     box.appendChild(limitDiv);
     box.scrollTop = box.scrollHeight;
   }
