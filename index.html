@@ -1746,9 +1746,32 @@ footer::before{
   .rq-star-count-num{font-size:1.2rem!important;}
   .rq-star-bar-max{font-size:12px!important;}
 }
+.rq-placeholder-dim::placeholder{
+  color:rgba(240,244,255,.22);
+}
 @media(max-width:620px){
   #rq-setup-card{padding:24px 14px!important;}
   #rq-setup-card>div:first-child{grid-template-columns:1fr!important;}
+  /* 탐구 방법 입력 칸 모바일 최적화 */
+  #rq-method-wrap textarea{
+    font-size:14px!important;
+    padding:12px 13px!important;
+    line-height:1.75!important;
+  }
+  #rq-method-wrap label{
+    font-size:12px!important;
+    letter-spacing:1.5px!important;
+  }
+  #rq-method-wrap > div:nth-child(2){
+    font-size:12.5px!important;
+    line-height:1.75!important;
+    word-break:keep-all!important;
+    overflow-wrap:break-word!important;
+  }
+  #rq-topic-wrap textarea{
+    font-size:14px!important;
+    padding:12px 13px!important;
+  }
 }
 
 /* 7. 명함 게임 */
@@ -1929,7 +1952,25 @@ window.toggleStage = function(n){
     }
   };
 
+  function _isMob(){
+    return /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
+  }
+
+  // 일반 인증: 모바일은 비번 없이 바로 실행
   window._requireAdminAuth = function(callback){
+    if(_isMob() || isAuthed()){
+      callback();
+      return;
+    }
+    _pendingCallback = callback;
+    document.getElementById('pw-modal-error').textContent = '';
+    document.getElementById('pw-modal-input').value = '';
+    document.getElementById('pw-modal-overlay').style.display = 'flex';
+    setTimeout(function(){ document.getElementById('pw-modal-input').focus(); }, 100);
+  };
+
+  // 엄격 인증: 모바일 포함 항상 비번 요구 (포트폴리오 전용)
+  window._requireAdminAuthStrict = function(callback){
     if(isAuthed()){
       callback();
       return;
@@ -4829,10 +4870,6 @@ function sgProgressBar(label, pct, color){
 }
 
 async function generateSgReco(){
-  if(localStorage.getItem('admin_auth_expire') !== '1'){
-    window._requireAdminAuth(function(){ generateSgReco(); });
-    return;
-  }
   var major = ((document.getElementById('sg-major-input')||{}).value||'').trim();
   var univ  = ((document.getElementById('sg-univ-input')||{}).value||'').trim();
   if(!major){ alert('희망 학과를 입력해주세요!'); return; }
@@ -6001,10 +6038,56 @@ function confirmNepSelection(){
   setTimeout(()=>{ cardsEl.scrollIntoView({behavior:'smooth', block:'start'}); }, 200);
 }
 
+// 비번 잠금 카드 UI (학과 추천 2·3번 카드, 모바일 포함)
+function _showNepCardLocked(name, i, retryCount){
+  var bodyEl = document.getElementById('nep-rcard-body-'+i);
+  if(!bodyEl) return;
+  var rankLabel = ['🥈 2번째 추천', '🥉 3번째 추천'][i-1] || '';
+  bodyEl.innerHTML =
+    '<div style="text-align:center;padding:28px 16px 24px;">' +
+      '<div style="font-size:2.4rem;margin-bottom:12px;">🔒</div>' +
+      '<div style="font-size:15px;font-weight:800;color:#f0f4ff;margin-bottom:6px;">' + rankLabel + ' 학과 카드</div>' +
+      '<div style="font-size:13px;color:rgba(240,244,255,.5);line-height:1.7;margin-bottom:20px;">' +
+        '이 카드는 비밀번호 입력 후 공개됩니다.<br>' +
+        '<span style="color:rgba(240,244,255,.35);font-size:12px;">AI 기능은 비용이 발생합니다</span>' +
+      '</div>' +
+      '<button onclick="_nepUnlockCard(\''+name+'\','+i+','+(retryCount||0)+')" style="' +
+        'padding:12px 28px;border-radius:999px;' +
+        'background:linear-gradient(135deg,#1a6cf5,#a855f7);' +
+        'border:none;color:#fff;font-size:14px;font-weight:800;cursor:pointer;' +
+        'font-family:\'Pretendard\',\'Noto Sans KR\',sans-serif;' +
+        'box-shadow:0 4px 20px rgba(26,108,245,.4);' +
+        'transition:.2s;' +
+      '" onmouseover="this.style.opacity=\'.85\'" onmouseout="this.style.opacity=\'1\'">' +
+        '🔓 비밀번호 입력하고 카드 열기' +
+      '</button>' +
+    '</div>';
+}
+
+window._nepUnlockCard = function(name, i, retryCount){
+  window._requireAdminAuthStrict(function(){
+    loadNepCardInfo(name, i, retryCount||0);
+  });
+};
+
 function loadNepCardInfo(name, i, retryCount){
-  if(localStorage.getItem('admin_auth_expire') !== '1'){
-    window._requireAdminAuth(function(){ loadNepCardInfo(name, i, retryCount); });
-    return;
+  var _isMobNep = /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)||window.innerWidth<=768;
+  var _authed = localStorage.getItem('admin_auth_expire') === '1';
+  // 카드 0번: 모바일·데스크탑 모두 비번 없이 공개
+  // 카드 1,2번: 데스크탑은 원래대로 비번 필요, 모바일도 비번 필요
+  if(i === 0){
+    // 첫 번째 카드: 모바일·데스크탑 모두 비번 체크
+    if(!_authed){
+      window._requireAdminAuthStrict(function(){ loadNepCardInfo(name, i, retryCount); });
+      return;
+    }
+  } else {
+    // 두 번째·세 번째 카드: 모바일 포함 항상 비번 필요
+    if(!_authed){
+      // 비번 없으면 잠금 카드 UI 표시 후 return
+      _showNepCardLocked(name, i, retryCount);
+      return;
+    }
   }
   retryCount = retryCount || 0;
   const bodyEl = document.getElementById('nep-rcard-body-'+i);
@@ -6183,7 +6266,7 @@ window.retryNepCard = function(name, i){
 
 function startNepRecommend(){
   if(localStorage.getItem('admin_auth_expire') !== '1'){
-    window._requireAdminAuth(function(){ startNepRecommend(); });
+    window._requireAdminAuthStrict(function(){ startNepRecommend(); });
     return;
   }
   var job1 = (document.getElementById('job-wish-1')||{}).value||'';
@@ -6203,7 +6286,11 @@ function startNepRecommend(){
 }
 
 function initNepMajorCards(){
-  window._requireAdminAuth(function(){ _initNepMajorCardsCore(); });
+  if(localStorage.getItem('admin_auth_expire') === '1'){
+    _initNepMajorCardsCore();
+  } else {
+    window._requireAdminAuthStrict(function(){ _initNepMajorCardsCore(); });
+  }
 }
 function _initNepMajorCardsCore(){
   // 로딩 표시
@@ -6367,7 +6454,7 @@ function renderNep10Grid(majors){ renderNep8Grid(majors); }
 
 
 function submitNepRoadmap(){
-  if(localStorage.getItem('admin_auth_expire') !== '1'){
+  if(!(/Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)||window.innerWidth<=768) && localStorage.getItem('admin_auth_expire') !== '1'){
     window._requireAdminAuth(function(){ submitNepRoadmap(); });
     return;
   }
@@ -6758,6 +6845,22 @@ function confirmMajorPickFromConstellation(){
           style="width:100%;background:rgba(52,211,153,.04);border:1.5px solid rgba(52,211,153,.22);border-radius:12px;padding:14px 16px;color:#f0f4ff;font-family:'Pretendard','Noto Sans KR',sans-serif;font-size:15px;outline:none;resize:none;line-height:1.7;transition:.25s;"
           onfocus="this.style.borderColor='rgba(52,211,153,.7)';this.style.background='rgba(52,211,153,.07)'"
           onblur="this.style.borderColor='rgba(52,211,153,.22)';this.style.background='rgba(52,211,153,.04)'"
+          oninput="rqUpdateStarsFromInputs()"
+          class="rq-placeholder-dim"
+        ></textarea>
+      </div>
+
+      <!-- 탐구 방법 직접 입력 -->
+      <div id="rq-method-wrap" style="margin-bottom:20px;">
+        <label style="display:block;font-size:13px;letter-spacing:2px;color:rgba(240,244,255,.55);font-weight:600;margin-bottom:6px;">🔬 탐구 방법</label>
+        <div style="font-size:13px;color:rgba(240,244,255,.38);margin-bottom:8px;line-height:1.7;word-break:keep-all;">AI가 생성해준 탐구 계획을 참고하여 나만의 탐구 방법을 구체적으로 기록해보세요.</div>
+        <textarea id="rq-method-input" rows="4"
+          placeholder="예) 1단계: 관련 논문 5편 수집 → 2단계: 설문지 제작(20문항) → 3단계: 학급 친구 30명 대상 조사 → 4단계: 결과를 막대그래프로 시각화하여 비교 분석"
+          style="width:100%;background:rgba(168,85,247,.04);border:1.5px solid rgba(168,85,247,.22);border-radius:12px;padding:14px 16px;color:#f0f4ff;font-family:'Pretendard','Noto Sans KR',sans-serif;font-size:15px;outline:none;resize:none;line-height:1.7;transition:.25s;"
+          onfocus="this.style.borderColor='rgba(168,85,247,.7)';this.style.background='rgba(168,85,247,.07)'"
+          onblur="this.style.borderColor='rgba(168,85,247,.22)';this.style.background='rgba(168,85,247,.04)'"
+          oninput="rqUpdateStarsFromInputs()"
+          class="rq-placeholder-dim"
         ></textarea>
       </div>
 
@@ -6776,8 +6879,8 @@ function confirmMajorPickFromConstellation(){
           </div>
         </div>
         <div class="rq-star-prog-bg"><div class="rq-star-prog-fill" id="rq-star-fill" style="width:0%"></div></div>
-        <div style="text-align:center;margin-top:8px;font-size:12px;color:rgba(240,244,255,.38);letter-spacing:.5px;">
-          💡 탐구 질문의 구체성·창의성에 따라 ⭐ 자동 부여
+        <div style="text-align:center;margin-top:8px;font-size:12px;color:rgba(240,244,255,.38);letter-spacing:.5px;line-height:1.7;word-break:keep-all;">
+          탐구 질문, 탐구 방법의 구체성과 창의성에 따라 ⭐ 부여
         </div>
       </div>
 
@@ -6828,6 +6931,10 @@ function confirmMajorPickFromConstellation(){
             <div class="rqp-question-box">
               <div class="rqp-q-label">🔍 탐구 질문</div>
               <div class="rqp-q-text" id="rqp-q-text"></div>
+            </div>
+            <div id="rqp-method-box" style="display:none;margin-top:12px;background:rgba(168,85,247,.07);border:1.5px solid rgba(168,85,247,.25);border-radius:12px;padding:14px 18px;">
+              <div style="font-size:11px;letter-spacing:2px;color:rgba(168,85,247,.9);font-weight:700;margin-bottom:7px;">🔬 나의 탐구 방법</div>
+              <div id="rqp-method-text" style="font-size:14px;color:rgba(240,244,255,.85);line-height:1.75;white-space:pre-line;word-break:keep-all;"></div>
             </div>
             <div class="rqp-meta"><span id="rqp-meta-date"></span></div>
           </div>
@@ -7085,7 +7192,7 @@ window.qlSyncTopic = function(){
   // rq-topic 동기화
   var rqTopic = document.getElementById('rq-topic');
   if (rqTopic) rqTopic.value = q;
-  // 별 바 실시간 업데이트 (질문 기준)
+  // 별 바 실시간 업데이트 (질문 + 방법 합산)
   if (q.length >= 3 && typeof rqEvalStars === 'function' && typeof rqRenderStars === 'function') {
     var stars = rqEvalStars('', q, [], 0);
     rqRenderStars(stars);
@@ -7185,11 +7292,6 @@ function tryParseJSON(raw) {
 
 // 1. 버튼 클릭 진입점
 async function onClickGenerateBtn() {
-  var _mob = /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
-  if(!_mob && localStorage.getItem('admin_auth_expire') !== '1'){
-    window._requireAdminAuth(function(){ onClickGenerateBtn(); });
-    return;
-  }
   var inputEl = document.getElementById('ql-topic-input');
   var inputTopic = inputEl ? inputEl.value.trim() : '';
   if (inputTopic) {
@@ -7640,17 +7742,16 @@ function selectQSuggestCard(cardEl, cardId, label) {
 var RQ_MAX_STARS = 20;
 var rqStars = 0;
 
-function rqEvalStars(major, topic, types, weeks){
-  var q = topic.trim();
+// 질문 점수 (최대 10점)
+function rqEvalQuestionScore(topic){
+  var q = (topic||'').trim();
   var score = 0;
-
   // ① 구체성: 질문 길이 (최대 4점)
   var len = q.length;
   if(len >= 35)      score += 4;
   else if(len >= 22) score += 3;
   else if(len >= 13) score += 2;
   else if(len >= 6)  score += 1;
-
   // ② 창의성·사고력: 고차원 키워드 (최대 3점)
   var creative = ['영향','비교','관계','원인','분석','융합','설계','개발','해결','예측','변화','개선',
                   '왜','어떻게','만약','미래','차이','연결','가능','대안','한계','의미'];
@@ -7658,18 +7759,59 @@ function rqEvalStars(major, topic, types, weeks){
   if(hits >= 4)      score += 3;
   else if(hits >= 2) score += 2;
   else if(hits >= 1) score += 1;
-
   // ③ 질문 형식: 물음표 또는 의문형 어미 (최대 1점)
   if(/[?？]|할까|일까|는가|을까|인가|될까|는지|는데/.test(q)) score += 1;
-
   // ④ 숫자·데이터·기간 등 구체적 요소 포함 (최대 1점)
   if(/\d+|년|개월|배|%|명|건|회|배율|몇/.test(q)) score += 1;
+  // ⑤ 탐구 방식 선택 여부 (최대 1점) — 하위 호환용
+  return Math.min(10, Math.max(0, Math.round(score)));
+}
 
-  // ⑤ 탐구 방식 다양성 (최대 0.5점)
-  if(types.length >= 2)      score += 0.5;
-  else if(types.length >= 1) score += 0.25;
+// 탐구 방법 점수 (최대 10점)
+function rqEvalMethodScore(method){
+  var m = (method||'').trim();
+  if(!m) return 0;
+  var score = 0;
+  // ① 길이·분량: 구체적으로 쓸수록 (최대 4점)
+  var len = m.length;
+  if(len >= 80)      score += 4;
+  else if(len >= 40) score += 3;
+  else if(len >= 20) score += 2;
+  else if(len >= 8)  score += 1;
+  // ② 단계 구분: 번호/단계/화살표 (최대 2점)
+  var stepHits = (m.match(/[①②③④⑤]|[1-5][단계)\.:]|단계|→|step/gi)||[]).length;
+  if(stepHits >= 3)      score += 2;
+  else if(stepHits >= 1) score += 1;
+  // ③ 탐구 방법 키워드 다양성 (최대 2점)
+  var methodKw = ['설문','인터뷰','실험','관찰','분석','논문','통계','조사','비교','수집','측정','데이터','그래프','시각화','표','검증'];
+  var kwHits = methodKw.filter(function(k){ return m.includes(k); }).length;
+  if(kwHits >= 4)      score += 2;
+  else if(kwHits >= 2) score += 1;
+  // ④ 구체적 수량·대상 명시 (최대 2점)
+  var concrete = (m.match(/\d+[명문항편개회주]|[가-힣]+\s*[0-9]+\s*[명개]|대상|학급|친구|학교|가족/g)||[]).length;
+  if(concrete >= 2)      score += 2;
+  else if(concrete >= 1) score += 1;
+  return Math.min(10, Math.max(0, Math.round(score)));
+}
 
-  return Math.min(RQ_MAX_STARS, Math.max(1, Math.round(score)));
+// 합산 (질문 10 + 방법 10 = 최대 20)
+function rqEvalStars(major, topic, types, weeks){
+  var methodEl = document.getElementById('rq-method-input');
+  var method = methodEl ? methodEl.value : '';
+  var qScore = rqEvalQuestionScore(topic);
+  var mScore = rqEvalMethodScore(method);
+  return Math.min(RQ_MAX_STARS, Math.max(1, qScore + mScore));
+}
+
+// 실시간 별 업데이트 (질문·방법 입력 시 호출)
+function rqUpdateStarsFromInputs(){
+  var topic = (document.getElementById('rq-topic')||{}).value || '';
+  var method = (document.getElementById('rq-method-input')||{}).value || '';
+  if(topic.length < 3 && method.length < 3) return;
+  var qScore = rqEvalQuestionScore(topic);
+  var mScore = rqEvalMethodScore(method);
+  var total = Math.min(RQ_MAX_STARS, Math.max(1, qScore + mScore));
+  rqRenderStars(total);
 }
 
 function rqGradeLabel(n){
@@ -7936,11 +8078,11 @@ function buildResearchPrompt(major, topic, periodStr, typeStr, level) {
   var systemPrompt, userPrompt;
 
   if (isHigh) {
-    systemPrompt = '당신은 고등학생의 탐구 계획서를 도와주는 교사입니다. 학생의 탐구 질문을 중심으로, 해당 질문의 핵심 단어를 모든 항목에 포함시켜 작성합니다. 반드시 순수 JSON만 출력하고 다른 텍스트는 절대 포함하지 마세요.';
-    userPrompt = '고등학생 탐구 계획서를 JSON으로만 출력하세요. 마크다운 없이 순수 JSON만.\n\n탐구 질문: "' + topic + '"\n희망 학과: ' + major + '\n탐구 기간: ' + periodStr + '\n탐구 방식: ' + typeStr + '\n\n규칙: 모든 항목에 탐구 질문의 핵심 단어를 직접 포함. 학생부 세특 연계. 가설은 "~하면 ~할 것이다" 형식.\n\n{"subject":"탐구 주제명(핵심 단어 포함, 20자 이내)\\n\\n[탐구 배경] 탐구 질문이 왜 중요한지, ' + major + '와 어떻게 연결되는지 2문장","goal":"① 탐구 질문의 핵심 변수를 [방법]으로 검증한다\\n② 가설: [조건]에서 [예상결과]가 나타날 것이다\\n③ 결과를 ' + major + ' 관련 교과 개념과 연결한다","method":"1단계: 탐구 질문 관련 자료 수집 [구체적 출처와 방법]\\n2단계: 탐구 질문 핵심 내용 분석 [' + typeStr + ' 방식]\\n3단계: 결과 비교 및 가설 검증\\n4단계: ' + major + ' 개념 연결 및 정리","schedule":"' + periodStr + ' 전체를 주차별로 구분, 각 주차에 탐구 질문 핵심어와 구체적 과업 포함","material":"① 탐구 질문 조사용 자료 [구체적 자료명과 이유]\\n② 분석 도구 [도구명과 이 탐구에서의 역할]\\n③ 참고 자료 [논문DB·교과서 등]","expected":"가설: [탐구 질문에 대한 예측, 조건·근거 포함]\\n반증 가설: [결과가 다를 경우 대안 설명]\\n세특 연계: [어느 교과의 어떤 단원과 연결되는지]","summary":"시각화: [결과를 보여줄 그래프 종류 2가지]\\n보고서: 탐구 배경→방법→결과→결론, A4 3~5쪽\\n심화 방향: [이 탐구에서 파생된 후속 탐구 아이디어]"}';
+    systemPrompt = '당신은 고등학생의 탐구 계획서를 도와주는 교사입니다. 학생의 탐구 질문을 중심으로, 해당 질문의 핵심 단어를 모든 항목에 포함시켜 작성합니다. 반드시 순수 JSON만 출력하고 다른 텍스트는 절대 포함하지 마세요. JSON 규칙: (1) 문자열 내 줄바꿈은 반드시 \\n으로 표기 (2) 문자열 내 큰따옴표는 반드시 \\"로 이스케이프 (3) 백슬래시는 \\\\로 이스케이프 (4) 한글·이모지 그대로 사용 가능 (5) JSON 외 다른 텍스트 절대 금지.';
+    userPrompt = '고등학생 탐구 계획서를 JSON으로만 출력하세요. 마크다운 없이 순수 JSON만. 문자열 내 줄바꿈=\\n, 큰따옴표=\\".\n\n탐구 질문: "' + topic + '"\n희망 학과: ' + major + '\n탐구 기간: ' + periodStr + '\n탐구 방식: ' + typeStr + '\n\n규칙: 모든 항목에 탐구 질문의 핵심 단어를 직접 포함. 학생부 세특 연계. 가설은 "~하면 ~할 것이다" 형식.\n\n{"subject":"탐구 주제명(핵심 단어 포함, 20자 이내)\\n\\n[탐구 배경] 탐구 질문이 왜 중요한지, ' + major + '와 어떻게 연결되는지 2문장","goal":"① 탐구 질문의 핵심 변수를 [방법]으로 검증한다\\n② 가설: [조건]에서 [예상결과]가 나타날 것이다\\n③ 결과를 ' + major + ' 관련 교과 개념과 연결한다","method":"1단계: 탐구 질문 관련 자료 수집 [구체적 출처와 방법]\\n2단계: 탐구 질문 핵심 내용 분석 [' + typeStr + ' 방식]\\n3단계: 결과 비교 및 가설 검증\\n4단계: ' + major + ' 개념 연결 및 정리","schedule":"' + periodStr + ' 전체를 주차별로 구분, 각 주차에 탐구 질문 핵심어와 구체적 과업 포함","material":"① 탐구 질문 조사용 자료 [구체적 자료명과 이유]\\n② 분석 도구 [도구명과 이 탐구에서의 역할]\\n③ 참고 자료 [논문DB·교과서 등]","expected":"가설: [탐구 질문에 대한 예측, 조건·근거 포함]\\n반증 가설: [결과가 다를 경우 대안 설명]\\n세특 연계: [어느 교과의 어떤 단원과 연결되는지]","summary":"시각화: [결과를 보여줄 그래프 종류 2가지]\\n보고서: 탐구 배경→방법→결과→결론, A4 3~5쪽\\n심화 방향: [이 탐구에서 파생된 후속 탐구 아이디어]"}';
   } else {
-    systemPrompt = '당신은 중학생의 탐구 활동을 도와주는 친근한 선생님입니다. 학생의 탐구 질문을 중심으로, 중학생이 실제로 할 수 있는 탐구 계획서를 작성합니다. 반드시 순수 JSON만 출력하고 다른 텍스트는 절대 포함하지 마세요.';
-    userPrompt = '중학생 탐구 계획서를 JSON으로만 출력하세요. 마크다운 없이 순수 JSON만.\n\n탐구 질문: "' + topic + '"\n희망 학과: ' + major + '\n탐구 기간: ' + periodStr + '\n탐구 방식: ' + typeStr + '\n\n규칙: 모든 항목에 탐구 질문의 핵심 단어를 직접 포함. 중학생이 혼자 할 수 있는 수준. 쉽고 친근한 말투. 복잡한 통계 없이 관찰·비교·설문 위주.\n\n{"subject":"탐구 주제 이름(핵심 단어 포함, 15자 이내)\\n\\n[탐구 배경] 이 질문이 왜 궁금해졌는지 일상 경험 중심 2문장, ' + major + '와 연결","goal":"① 탐구 질문에서 가장 궁금한 것을 직접 확인해볼 거예요\\n② [비교하고 싶은 두 가지]를 비교해봐요\\n③ 결과를 정리해서 ' + major + '에 관심 갖게 된 이유와 연결해요","method":"1단계: 탐구 질문 관련 자료 찾기 [어디서, 어떻게]\\n2단계: 직접 관찰·실험·설문하기 [구체적 방법]\\n3단계: 결과를 표·그래프로 정리하기\\n4단계: 알게 된 점 정리하고 ' + major + '와 연결하기","schedule":"' + periodStr + ' 동안 할 일을 주 단위로, 탐구 질문 핵심어 포함해서 쉽게","material":"① 탐구 질문 조사할 자료 [구체적 자료와 이유]\\n② 직접 조사할 때 필요한 것 [설문지·관찰 도구 등]\\n③ 결과 정리할 도구 [노트·앱 등]","expected":"예상 결과: 탐구 질문에 대해 [이럴 것 같다]는 결과가 나올 것 같아요\\n더 궁금한 점: 탐구 후 더 알아보고 싶어질 것\\n진로 연결: 이 탐구가 ' + major + '에 관심 갖게 된 이유와 어떻게 이어지는지","summary":"시각화: 결과를 보여줄 그래프나 표 (막대그래프·비교표 등)\\n보고서: 궁금한 점→조사방법→결과→알게 된 점, A4 2~3쪽\\n발표: 친구들에게 쉽게 설명할 수 있는 자료 만들기"}';
+    systemPrompt = '당신은 중학생의 탐구 활동을 도와주는 친근한 선생님입니다. 학생의 탐구 질문을 중심으로, 중학생이 실제로 할 수 있는 탐구 계획서를 작성합니다. 반드시 순수 JSON만 출력하고 다른 텍스트는 절대 포함하지 마세요. JSON 규칙: (1) 문자열 내 줄바꿈은 반드시 \\n으로 표기 (2) 문자열 내 큰따옴표는 반드시 \\"로 이스케이프 (3) 백슬래시는 \\\\로 이스케이프 (4) 한글·이모지 그대로 사용 가능 (5) JSON 외 다른 텍스트 절대 금지.';
+    userPrompt = '중학생 탐구 계획서를 JSON으로만 출력하세요. 마크다운 없이 순수 JSON만. 문자열 내 줄바꿈=\\n, 큰따옴표=\\".\n\n탐구 질문: "' + topic + '"\n희망 학과: ' + major + '\n탐구 기간: ' + periodStr + '\n탐구 방식: ' + typeStr + '\n\n규칙: 모든 항목에 탐구 질문의 핵심 단어를 직접 포함. 중학생이 혼자 할 수 있는 수준. 쉽고 친근한 말투. 복잡한 통계 없이 관찰·비교·설문 위주.\n\n{"subject":"탐구 주제 이름(핵심 단어 포함, 15자 이내)\\n\\n[탐구 배경] 이 질문이 왜 궁금해졌는지 일상 경험 중심 2문장, ' + major + '와 연결","goal":"① 탐구 질문에서 가장 궁금한 것을 직접 확인해볼 거예요\\n② [비교하고 싶은 두 가지]를 비교해봐요\\n③ 결과를 정리해서 ' + major + '에 관심 갖게 된 이유와 연결해요","method":"1단계: 탐구 질문 관련 자료 찾기 [어디서, 어떻게]\\n2단계: 직접 관찰·실험·설문하기 [구체적 방법]\\n3단계: 결과를 표·그래프로 정리하기\\n4단계: 알게 된 점 정리하고 ' + major + '와 연결하기","schedule":"' + periodStr + ' 동안 할 일을 주 단위로, 탐구 질문 핵심어 포함해서 쉽게","material":"① 탐구 질문 조사할 자료 [구체적 자료와 이유]\\n② 직접 조사할 때 필요한 것 [설문지·관찰 도구 등]\\n③ 결과 정리할 도구 [노트·앱 등]","expected":"예상 결과: 탐구 질문에 대해 [이럴 것 같다]는 결과가 나올 것 같아요\\n더 궁금한 점: 탐구 후 더 알아보고 싶어질 것\\n진로 연결: 이 탐구가 ' + major + '에 관심 갖게 된 이유와 어떻게 이어지는지","summary":"시각화: 결과를 보여줄 그래프나 표 (막대그래프·비교표 등)\\n보고서: 궁금한 점→조사방법→결과→알게 된 점, A4 2~3쪽\\n발표: 친구들에게 쉽게 설명할 수 있는 자료 만들기"}';
   }
 
   return { system: systemPrompt, user: userPrompt };
@@ -7984,7 +8126,7 @@ function setRqLevel(level) {
 
 /* ── 7. 메인 함수 ── */
 function startResearch(){
-  window._requireAdminAuth(function(){ _startResearchCore(); });
+  window._requireAdminAuthStrict(function(){ _startResearchCore(); });
 }
 function _startResearchCore(){
   var major = document.getElementById('rq-major').value.trim();
@@ -8020,7 +8162,8 @@ function _startResearchCore(){
   var dateStr = now.getFullYear()+'년 '+(now.getMonth()+1)+'월 '+now.getDate()+'일';
 
   // 전역 저장
-  window._rqPlanData = { major, topic, weeks: periodStr, types: typeStr, date: dateStr };
+  var userMethod = ((document.getElementById('rq-method-input')||{}).value||'').trim();
+  window._rqPlanData = { major, topic, method: userMethod, weeks: periodStr, types: typeStr, date: dateStr };
 
   (async function(){
     var plan;
@@ -8044,11 +8187,34 @@ function _startResearchCore(){
       }
       var data = await resp.json();
       var raw = (data.content?.[0]?.text||'').trim();
-      // JSON 추출: ```json ... ``` 또는 { ... } 패턴
-      raw = raw.replace(/^```json\s*/,'').replace(/\s*```\s*$/,'').trim();
-      var planMatch = raw.match(/\{[\s\S]*\}/);
-      if(!planMatch) throw new Error('JSON not found in response');
-      plan = JSON.parse(planMatch[0]);
+      // 1단계: 코드 블록 제거
+      raw = raw.replace(/^```json\s*/i,'').replace(/^```\s*/,'').replace(/\s*```\s*$/,'').trim();
+      // 2단계: 가장 바깥 { } 추출 (greedy 방지: 첫 { ~ 마지막 } 로 추출)
+      var firstBrace = raw.indexOf('{');
+      var lastBrace  = raw.lastIndexOf('}');
+      if(firstBrace === -1 || lastBrace === -1) throw new Error('JSON not found in response');
+      raw = raw.slice(firstBrace, lastBrace + 1);
+      // 3단계: 제어문자 정리 (JSON 파싱 실패 원인 제거)
+      raw = raw.replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, ' ');
+      // 4단계: 파싱 시도 — 실패 시 필드별 정규식 복구
+      try {
+        plan = JSON.parse(raw);
+      } catch(jsonErr) {
+        // JSON이 잘못된 경우: 각 키 값을 정규식으로 추출하여 복구
+        var keys = ['subject','goal','method','schedule','material','expected','summary'];
+        plan = {};
+        keys.forEach(function(k){
+          var m = raw.match(new RegExp('"'+k+'"\\s*:\\s*"((?:[^"\\\\]|\\\\[\\s\\S])*)"'));
+          if(m){
+            try { plan[k] = JSON.parse('"' + m[1] + '"'); }
+            catch(e){ plan[k] = m[1].replace(/\\n/g,'\n').replace(/\\"/g,'"'); }
+          }
+        });
+        // 복구된 키가 하나도 없으면 fallback으로
+        if(Object.keys(plan).length === 0) throw new Error('JSON recovery failed');
+      }
+      // 5단계: 필수 필드 검증
+      if(!plan.subject && !plan.goal) throw new Error('invalid plan structure');
     } catch(e) {
       console.error('Research plan generation failed:', e);
       plan = generateFallbackPlan(major, topic, periodStr, typeStr, level);
@@ -8061,18 +8227,31 @@ function _startResearchCore(){
     document.getElementById('rqp-q-text').textContent = topic;
     var levelTag = (window._rqLevel==='high') ? ' 🏫 고등학교 수준' : ' 📚 중학교 수준';
     document.getElementById('rqp-meta-date').textContent = '작성일: '+dateStr+'  |  희망 학과: '+major+'  |  탐구 기간: '+periodStr+'  |'+levelTag;
+    // 탐구 방법 표시
+    var methodBox = document.getElementById('rqp-method-box');
+    var methodTxt = document.getElementById('rqp-method-text');
+    if(userMethod && methodBox && methodTxt){
+      methodTxt.textContent = userMethod;
+      methodBox.style.display = 'block';
+    } else if(methodBox){
+      methodBox.style.display = 'none';
+    }
 
     // STEP 카드 렌더
     var stepsHtml = RQP_STEPS.map(function(s, i){
       var col = RQP_STEP_COLORS[i % RQP_STEP_COLORS.length];
-      var content = (plan[s.key]||'').replace(/\\n/g,'\n');
+      var raw = plan[s.key] || '';
+      // \\n(이중 이스케이프) → \n → <br> 통합 처리
+      var content = raw.replace(/\\n/g, '\n').replace(/\n/g, '<br>');
+      // 빈 값 방어
+      if(!content || content.trim() === '') content = '(내용을 불러오지 못했습니다. 다시 시도해주세요.)';
       return '<div class="rqp-step" style="border-left:3px solid '+col.border+';">' +
         '<div class="rqp-step-header">' +
         '<span class="rqp-step-badge" style="color:'+col.badge+';">'+s.badge+'</span>' +
         '<span class="rqp-step-icon">'+s.icon+'</span>' +
         '<span class="rqp-step-title" style="color:'+col.icon+';">'+s.label+'</span>' +
         '</div>' +
-        '<div class="rqp-step-body"><div class="rqp-step-content">'+escapeHtml(content)+'</div></div>' +
+        '<div class="rqp-step-body"><div class="rqp-step-content">'+safeHtml(content)+'</div></div>' +
         '</div>';
     }).join('');
     document.getElementById('rqp-steps').innerHTML = stepsHtml;
@@ -8085,6 +8264,13 @@ function _startResearchCore(){
 
 function escapeHtml(s){
   return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+// <br>은 유지하고 나머지 HTML 문자만 이스케이프
+function safeHtml(s){
+  return s.replace(/&/g,'&amp;')
+    .replace(/<br>/g,'\x00BR\x00')
+    .replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/\x00BR\x00/g,'<br>');
 }
 
 /* ── 8. Fallback 계획서 (수준별) ── */
@@ -8127,6 +8313,7 @@ window.downloadRqPDF = function(){
     return;
   }
   var plan = d.plan;
+  var userMethodPdf = (d.method||'').trim();
   var steps = RQP_STEPS;
   var colors = ['#ef4444','#f59e0b','#34d399','#6366f1','#00bcd4','#ec4899','#a855f7'];
 
@@ -8144,9 +8331,12 @@ window.downloadRqPDF = function(){
   .header{text-align:center;margin-bottom:32px;padding-bottom:24px;border-bottom:2px solid #e5e7eb;}
   .school{font-size:13px;color:#9ca3af;letter-spacing:2px;margin-bottom:8px;}
   .main-title{font-size:28px;font-weight:900;color:#111;margin-bottom:20px;}
-  .q-box{background:#f0fdf4;border:1.5px solid #86efac;border-radius:12px;padding:16px 20px;margin-bottom:14px;}
+  .q-box{background:#f0fdf4;border:1.5px solid #86efac;border-radius:12px;padding:16px 20px;margin-bottom:10px;}
   .q-label{font-size:11px;color:#16a34a;letter-spacing:2px;font-weight:700;margin-bottom:6px;}
   .q-text{font-size:15px;font-weight:700;color:#111;line-height:1.6;word-break:keep-all;}
+  .m-box{background:#faf5ff;border:1.5px solid #c4b5fd;border-radius:12px;padding:14px 20px;margin-bottom:14px;}
+  .m-label{font-size:11px;color:#7c3aed;letter-spacing:2px;font-weight:700;margin-bottom:6px;}
+  .m-text{font-size:14px;color:#374151;line-height:1.8;word-break:keep-all;white-space:pre-line;}
   .meta{font-size:12px;color:#9ca3af;letter-spacing:1px;}
   .step{margin-bottom:20px;border-radius:10px;overflow:hidden;border:1px solid #e5e7eb;}
   .step-header{display:flex;align-items:center;gap:12px;padding:14px 18px;background:#f9fafb;}
@@ -8167,6 +8357,7 @@ window.downloadRqPDF = function(){
     <div class="q-label">🔍 탐구 질문</div>
     <div class="q-text">${escHtml(d.topic)}</div>
   </div>
+  ${userMethodPdf ? `<div class="m-box"><div class="m-label">🔬 나의 탐구 방법</div><div class="m-text">${escHtml(userMethodPdf)}</div></div>` : ''}
   <div class="meta">작성일: ${escHtml(d.date)}　|　희망 학과: ${escHtml(d.major)}　|　탐구 기간: ${escHtml(d.weeks)}</div>
 </div>
 ${steps.map(function(s,i){
@@ -8296,8 +8487,9 @@ rqRenderStars(0);
 <script>
 // ── 포트폴리오 팝업 열기 ──
 window.openPortfolioPopup = function(){
+  // 포트폴리오는 모바일 포함 항상 비밀번호 필요
   if(localStorage.getItem('admin_auth_expire') !== '1'){
-    window._requireAdminAuth(function(){ openPortfolioPopup(); });
+    window._requireAdminAuthStrict(function(){ openPortfolioPopup(); });
     return;
   }
   var overlay = document.getElementById('portfolio-popup-overlay');
@@ -8363,6 +8555,7 @@ window.openPortfolioPopup = function(){
   var rqPlan = rqData.plan || null;
   var rqMajor = rqData.major || '';
   var rqTopic = rqData.topic || (document.getElementById('rq-topic')||{}).value||'';
+  var rqMethod = rqData.method || (document.getElementById('rq-method-input')||{}).value||'';
   var rqWeeks = rqData.weeks || '';
   var rqTypes = rqData.types || '';
 
@@ -8618,6 +8811,7 @@ window.openPortfolioPopup = function(){
   if(hasRq){
     if(rqMajor) rqHtml += field('희망 학과', rqMajor, '#34d399');
     if(rqTopic) rqHtml += field('탐구 질문', rqTopic, '#34d399');
+    if(rqMethod) rqHtml += field('나의 탐구 방법', rqMethod, 'rgba(168,85,247,.9)');
     if(rqWeeks) rqHtml += field('탐구 기간', rqWeeks, '#34d399');
     if(rqTypes) rqHtml += field('탐구 방식', rqTypes, '#34d399');
     if(rqPlan){
@@ -8692,7 +8886,7 @@ window.openPortfolioPopup = function(){
     dnaLabel,selectedOrbs,dnaMajors,aiMajors,sgHistory,
     nepPickMajor,nepMajors,tlLabels,tlValues,
     ivMajorVal,ivUnivVal,ivPersonaVal,ivPairs,
-    rqMajor,rqTopic,rqWeeks,rqTypes,rqPlan};
+    rqMajor,rqTopic,rqMethod,rqWeeks,rqTypes,rqPlan};
 };
 
 window.closePortfolioPopup = function(){
@@ -9629,7 +9823,7 @@ window.toggleBadgePopup = toggleBadgePopup;
 
 // ── AI 전공 탐구 포트폴리오 PDF 다운로드 ──
 window.openAiPortfolio = function(){
-  window._requireAdminAuth(function(){ window._openAiPortfolioCore(); });
+  window._requireAdminAuthStrict(function(){ window._openAiPortfolioCore(); });
 };
 window._openAiPortfolioCore = async function(){
   // 데이터 수집
