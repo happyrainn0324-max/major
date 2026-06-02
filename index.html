@@ -7118,11 +7118,6 @@ document.querySelectorAll('.ql-card').forEach(function(card){
 
 // 팝업 열기 핵심 함수 - 어디서든 안전하게 호출 가능
 function _openIqbot(question) {
-  // 모바일 포함 항상 비번 필요
-  if(localStorage.getItem('admin_auth_expire') !== '1'){
-    window._requireAdminAuthStrict(function(){ _openIqbot(question); });
-    return;
-  }
   var overlay = document.getElementById('iqbotOverlay');
   if (!overlay) { console.error('iqbotOverlay 없음'); return; }
 
@@ -11963,11 +11958,6 @@ var introSlide = 0;
 
 <script>
 function openIqbotModal() {
-  // 모바일 포함 항상 비번 필요
-  if(localStorage.getItem('admin_auth_expire') !== '1'){
-    window._requireAdminAuthStrict(function(){ openIqbotModal(); });
-    return;
-  }
   var overlay = document.getElementById('iqbotOverlay');
   if (!overlay) return;
   var resultEl = document.getElementById('iqbotResult');
@@ -11997,6 +11987,11 @@ function closeIqbotModal() {
   document.body.style.overflow = '';
 }
 async function generateIqbot() {
+  // 탐구 계획 설계하기 버튼: 모바일 포함 비번 필요
+  if(localStorage.getItem('admin_auth_expire') !== '1'){
+    window._requireAdminAuthStrict(function(){ generateIqbot(); });
+    return;
+  }
   var q        = document.getElementById('iqbotQuestion').value.trim();
   if (!q) { alert('탐구 질문을 입력해주세요!'); document.getElementById('iqbotQuestion').focus(); return; }
   var typeText = document.getElementById('iqbotType').value;
