@@ -1749,17 +1749,52 @@ footer::before{
 .rq-placeholder-dim::placeholder{
   color:rgba(240,244,255,.22);
 }
+
+/* 탐구 방법 재구성 구조화 폼 */
+.rq-mf-row{
+  background:rgba(168,85,247,.04);
+  border:1.5px solid rgba(168,85,247,.18);
+  border-radius:14px;
+  overflow:hidden;
+  transition:.2s;
+}
+.rq-mf-row:focus-within{
+  border-color:rgba(168,85,247,.55);
+  background:rgba(168,85,247,.07);
+}
+.rq-mf-label{
+  font-size:13.5px;letter-spacing:1.5px;font-weight:700;
+  color:rgba(240,244,255,.75);
+  padding:9px 14px 6px;
+  border-bottom:1px solid rgba(168,85,247,.12);
+}
+.rq-mf-input{
+  width:100%;background:transparent;border:none;outline:none;
+  color:#f0f4ff;font-family:'Pretendard','Noto Sans KR',sans-serif;
+  font-size:14px;line-height:1.7;
+  padding:8px 14px 10px;
+}
+.rq-mf-textarea{
+  width:100%;background:transparent;border:none;outline:none;
+  color:#f0f4ff;font-family:'Pretendard','Noto Sans KR',sans-serif;
+  font-size:14px;line-height:1.7;resize:none;
+  padding:8px 14px 10px;
+}
+@media(max-width:620px){
+  .rq-mf-label{ font-size:13px; padding:8px 12px 5px; }
+  .rq-mf-input,.rq-mf-textarea{ font-size:14px; padding:7px 12px 9px; }
+}
 @media(max-width:620px){
   #rq-setup-card{padding:24px 14px!important;}
   #rq-setup-card>div:first-child{grid-template-columns:1fr!important;}
   /* 탐구 방법 입력 칸 모바일 최적화 */
   #rq-method-wrap textarea{
-    font-size:14px!important;
+    font-size:15px!important;
     padding:12px 13px!important;
     line-height:1.75!important;
   }
   #rq-method-wrap label{
-    font-size:12px!important;
+    font-size:15px!important;
     letter-spacing:1.5px!important;
   }
   #rq-method-wrap > div:nth-child(2){
@@ -1769,8 +1804,24 @@ footer::before{
     overflow-wrap:break-word!important;
   }
   #rq-topic-wrap textarea{
-    font-size:14px!important;
+    font-size:15px!important;
     padding:12px 13px!important;
+  }
+  #rq-topic-wrap label{
+    font-size:15px!important;
+  }
+}
+
+/* nep 버튼 그룹 모바일 */
+@media(max-width:480px){
+  #nep-btn-group{
+    flex-direction:column!important;
+    align-items:center!important;
+  }
+  #nep-btn-group button{
+    max-width:none!important;
+    width:100%!important;
+    flex:none!important;
   }
 }
 
@@ -2602,8 +2653,26 @@ window.toggleStage = function(n){
 .ec-launch-btn{
   width:100%;background:linear-gradient(135deg,#d97706,#fbbf24);
   border:none;color:#06080f;font-family:'Pretendard','Noto Sans KR',sans-serif;
-  font-size:17px;font-weight:800;padding:18px;border-radius:14px;
+  font-size:17px;font-weight:800;padding:18px 20px;border-radius:14px;
   cursor:pointer;transition:.25s;
+  line-height:1.4;text-align:center;white-space:nowrap;
+}
+.ec-launch-desc{
+  margin-top:10px;font-size:12.5px;
+  color:rgba(240,244,255,.45);
+  text-align:center;line-height:1.7;
+  word-break:keep-all;
+}
+@media(max-width:480px){
+  .ec-launch-btn{
+    font-size:14px;padding:16px 12px;
+    white-space:normal;word-break:keep-all;line-height:1.6;
+  }
+  .ec-launch-desc{
+    font-size:12px;
+    word-break:keep-all;
+    overflow-wrap:break-word;
+  }
 }
 .ec-launch-btn:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(251,191,36,.45);}
 
@@ -3276,9 +3345,10 @@ window.toggleStage = function(n){
           </div>
 
 
-          <button class="ec-launch-btn" onclick="document.getElementById('ec-result-wrap').classList.remove('show')">
-            ✦ 수집 계속하기
+          <button class="ec-launch-btn" onclick="window.open('https://cyberjinro.ice.go.kr/main?section=20210823300000000790','_blank')">
+            인천사이버진로교육원 AI 적성검사
           </button>
+          <div class="ec-launch-desc">보다 자세하고 정확한 진로적성검사를 위해서<br>인천사이버진로교육원 AI 적성검사에 참여해보세요!</div>
         </div>
       </div>
     </div>
@@ -3491,9 +3561,9 @@ window.toggleStage = function(n){
         </div>
 
         <!-- 학과 추천하기 버튼 -->
-        <div style="text-align:center;margin-bottom:28px;">
+        <div id="nep-btn-group" style="display:flex;gap:12px;justify-content:center;align-items:stretch;margin-bottom:28px;flex-wrap:wrap;">
           <button id="nep-recommend-btn" onclick="startNepRecommend()" style="
-            padding:15px 40px;
+            padding:15px 24px;
             border-radius:999px;
             background:linear-gradient(135deg,#a855f7,#1a6cf5);
             color:#fff;
@@ -3507,9 +3577,34 @@ window.toggleStage = function(n){
             transition:all .25s;
             display:inline-flex;
             align-items:center;
+            justify-content:center;
             gap:8px;
+            flex:1;
+            min-width:160px;
+            max-width:220px;
           ">✨ AI 학과 추천하기</button>
 
+          <button onclick="window.open('https://www.career.go.kr/cloud/w/major/uList','_blank')" style="
+            padding:15px 24px;
+            border-radius:999px;
+            background:linear-gradient(135deg,#0ea5e9,#059669);
+            color:#fff;
+            font-size:15px;
+            font-weight:800;
+            border:none;
+            cursor:pointer;
+            font-family:'Pretendard','Noto Sans KR',sans-serif;
+            box-shadow:0 8px 28px rgba(14,165,233,.45);
+            letter-spacing:.3px;
+            transition:all .25s;
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            gap:8px;
+            flex:1;
+            min-width:160px;
+            max-width:220px;
+          ">🔍 커리어넷 학과탐색</button>
         </div>
 
         <!-- AI 전공 로드맵 -->
@@ -3767,7 +3862,7 @@ window.toggleStage = function(n){
           <textarea id="iv-user-input"
             placeholder="전공에 관한 질문을 직접 입력하세요"
             rows="1"
-            style="width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:18px;padding:16px 20px;color:#f0f4ff;font-family:'Pretendard','Noto Sans KR',sans-serif;font-size:15px;outline:none;resize:none;line-height:1.6;transition:.25s;max-height:140px;overflow-y:auto;"
+            style="width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:18px;padding:16px 20px;color:#f0f4ff;font-family:'Pretendard','Noto Sans KR',sans-serif;font-size:14px;outline:none;resize:none;line-height:1.6;transition:.25s;max-height:140px;overflow-y:auto;"
             onfocus="this.style.borderColor='rgba(0,229,255,.45)';this.style.background='rgba(0,229,255,.04)'"
             onblur="this.style.borderColor='rgba(255,255,255,.1)';this.style.background='rgba(255,255,255,.05)'"
             onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendIvMessage();}"
@@ -6838,11 +6933,11 @@ function confirmMajorPickFromConstellation(){
 
       <!-- 탐구 질문 입력 (STEP1 미선택 시) -->
       <div id="rq-topic-wrap" style="margin-bottom:20px;">
-        <label style="display:block;font-size:13px;letter-spacing:2px;color:rgba(240,244,255,.55);font-weight:600;margin-bottom:6px;">❓ 탐구 질문</label>
+        <label style="display:block;font-size:15px;letter-spacing:2px;color:rgba(110,231,183,.7);font-weight:700;margin-bottom:6px;">🔎 탐구 질문</label>
         <div style="font-size:13px;color:rgba(240,244,255,.38);margin-bottom:8px;">STEP 1에서 질문을 선택하거나 직접 입력하세요</div>
         <textarea id="rq-topic" rows="3"
           placeholder="예) 자율주행 기술이 발달하면 10년 후 파일럿 직업은 어떻게 변화할까?"
-          style="width:100%;background:rgba(52,211,153,.04);border:1.5px solid rgba(52,211,153,.22);border-radius:12px;padding:14px 16px;color:#f0f4ff;font-family:'Pretendard','Noto Sans KR',sans-serif;font-size:15px;outline:none;resize:none;line-height:1.7;transition:.25s;"
+          style="width:100%;background:rgba(52,211,153,.04);border:1.5px solid rgba(52,211,153,.22);border-radius:12px;padding:14px 16px;color:#f0f4ff;font-family:'Pretendard','Noto Sans KR',sans-serif;font-size:14px;outline:none;resize:none;line-height:1.7;transition:.25s;"
           onfocus="this.style.borderColor='rgba(52,211,153,.7)';this.style.background='rgba(52,211,153,.07)'"
           onblur="this.style.borderColor='rgba(52,211,153,.22)';this.style.background='rgba(52,211,153,.04)'"
           oninput="rqUpdateStarsFromInputs()"
@@ -6850,19 +6945,73 @@ function confirmMajorPickFromConstellation(){
         ></textarea>
       </div>
 
-      <!-- 탐구 방법 직접 입력 -->
+      <!-- 탐구 방법 재구성 -->
       <div id="rq-method-wrap" style="margin-bottom:20px;">
-        <label style="display:block;font-size:13px;letter-spacing:2px;color:rgba(240,244,255,.55);font-weight:600;margin-bottom:6px;">🔬 탐구 방법</label>
-        <div style="font-size:13px;color:rgba(240,244,255,.38);margin-bottom:8px;line-height:1.7;word-break:keep-all;">AI 탐구 계획을 참고하여 나만의 탐구 방법을 구체적으로 기록해보세요.</div>
-        <textarea id="rq-method-input" rows="4"
-          placeholder="예) 1. 탐구 관련 도서 1권 읽기&#10;2. 독서 활동 후 주제별 토론하기&#10;3. 학급 친구 대상 설문지 제작&#10;4. 인포그래픽으로 탐구 과정 및 결과 제작"
-          style="width:100%;background:rgba(168,85,247,.04);border:1.5px solid rgba(168,85,247,.22);border-radius:12px;padding:14px 16px;color:#f0f4ff;font-family:'Pretendard','Noto Sans KR',sans-serif;font-size:15px;outline:none;resize:none;line-height:1.7;transition:.25s;"
-          onfocus="this.style.borderColor='rgba(168,85,247,.7)';this.style.background='rgba(168,85,247,.07)'"
-          onblur="this.style.borderColor='rgba(168,85,247,.22)';this.style.background='rgba(168,85,247,.04)'"
-          oninput="rqUpdateStarsFromInputs();document.getElementById('rq-method-saved').style.display='none';"
-          class="rq-placeholder-dim"
-        ></textarea>
-        <div style="display:flex;flex-direction:column;align-items:center;gap:10px;margin-top:10px;">
+        <label style="display:block;font-size:15px;letter-spacing:2px;color:rgba(196,181,253,.65);font-weight:700;margin-bottom:6px;">🔬 탐구 방법 재구성</label>
+        <div style="font-size:13px;color:rgba(240,244,255,.38);margin-bottom:12px;line-height:1.7;word-break:keep-all;">생성형 AI 탐구 계획을 참고하여 나만의 탐구 방법을 재구성한 내용을 구체적으로 기록해보세요.</div>
+
+        <!-- 숨김용 통합 textarea (기존 코드 호환) -->
+        <textarea id="rq-method-input" style="display:none;" readonly></textarea>
+
+        <div id="rq-method-fields" style="display:flex;flex-direction:column;gap:12px;">
+
+          <!-- 탐구 기간 -->
+          <div class="rq-mf-row">
+            <div class="rq-mf-label">⏱ 탐구 기간</div>
+            <input id="rq-mf-period" type="text" placeholder="예) 2주일 / 한 달 / 3개월"
+              class="rq-mf-input rq-placeholder-dim"
+              oninput="rqSyncMethodFields()"
+            />
+          </div>
+
+          <!-- 탐구 목적 -->
+          <div class="rq-mf-row">
+            <div class="rq-mf-label">🎯 탐구 목적</div>
+            <textarea id="rq-mf-goal" rows="2" placeholder="예) 자율주행 기술이 직업 변화에 미치는 영향을 분석하고 미래 진로를 탐색한다."
+              class="rq-mf-textarea rq-placeholder-dim"
+              oninput="rqSyncMethodFields()"
+            ></textarea>
+          </div>
+
+          <!-- 탐구 방법 -->
+          <div class="rq-mf-row">
+            <div class="rq-mf-label">🔍 탐구 방법</div>
+            <textarea id="rq-mf-method" rows="3" placeholder="예) 1. 탐구 관련 도서 1권 읽기&#10;2. 독서 활동 후 주제별 토론하기&#10;3. 학급 친구 대상 설문지 제작"
+              class="rq-mf-textarea rq-placeholder-dim"
+              oninput="rqSyncMethodFields()"
+            ></textarea>
+          </div>
+
+          <!-- 탐구 일정 -->
+          <div class="rq-mf-row">
+            <div class="rq-mf-label">📅 탐구 일정</div>
+            <textarea id="rq-mf-schedule" rows="2" placeholder="예) 1주차: 자료 수집 / 2주차: 설문 진행 / 3주차: 결과 분석 / 4주차: 보고서 작성"
+              class="rq-mf-textarea rq-placeholder-dim"
+              oninput="rqSyncMethodFields()"
+            ></textarea>
+          </div>
+
+          <!-- 예상 결과 -->
+          <div class="rq-mf-row">
+            <div class="rq-mf-label">💡 예상 결과</div>
+            <textarea id="rq-mf-expected" rows="2" placeholder="예) 자율주행 기술 발달로 파일럿 직업은 감소하고, 항공 데이터 분석 직군이 증가할 것이다."
+              class="rq-mf-textarea rq-placeholder-dim"
+              oninput="rqSyncMethodFields()"
+            ></textarea>
+          </div>
+
+          <!-- 탐구 산출물 기획 -->
+          <div class="rq-mf-row">
+            <div class="rq-mf-label">📦 산출물 기획</div>
+            <textarea id="rq-mf-output" rows="2" placeholder="예) 인포그래픽 포스터, 탐구 보고서 A4 3쪽, 발표 PPT 10장"
+              class="rq-mf-textarea rq-placeholder-dim"
+              oninput="rqSyncMethodFields()"
+            ></textarea>
+          </div>
+
+        </div>
+
+        <div style="display:flex;flex-direction:column;align-items:center;gap:10px;margin-top:16px;">
           <button onclick="rqSaveMethod()"
             style="padding:10px 32px;border-radius:999px;background:linear-gradient(135deg,#a855f7,#7c3aed);border:none;color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:'Pretendard','Noto Sans KR',sans-serif;transition:.2s;box-shadow:0 4px 14px rgba(168,85,247,.35);"
             onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'"
@@ -8169,6 +8318,8 @@ function _startResearchCore(){
   var dateStr = now.getFullYear()+'년 '+(now.getMonth()+1)+'월 '+now.getDate()+'일';
 
   // 전역 저장
+  // 탐구 방법 필드 동기화
+  if(typeof rqSyncMethodFields === 'function') rqSyncMethodFields();
   var userMethod = ((document.getElementById('rq-method-input')||{}).value||'').trim();
   window._rqPlanData = { major, topic, method: userMethod, weeks: periodStr, types: typeStr, date: dateStr };
 
@@ -8320,9 +8471,35 @@ window.downloadRqPDF = function(){
     return;
   }
   var plan = d.plan;
-  var userMethodPdf = (d.method||'').trim();
+  if(typeof rqSyncMethodFields === 'function') rqSyncMethodFields();
+  var userMethodPdf = (d.method || (document.getElementById('rq-method-input')||{}).value||'').trim();
+  var mfPdf = (d.methodFields) || null;
+  var hasMfPdf = mfPdf && (mfPdf.period||mfPdf.goal||mfPdf.method||mfPdf.schedule||mfPdf.expected||mfPdf.output);
   var steps = RQP_STEPS;
   var colors = ['#ef4444','#f59e0b','#34d399','#6366f1','#00bcd4','#ec4899','#a855f7'];
+
+  // 탐구 방법 재구성 PDF HTML 생성
+  var mfPdfHtml = '';
+  if(hasMfPdf){
+    var mfDefs = [
+      {icon:'⏱',label:'탐구 기간',val:mfPdf.period},
+      {icon:'🎯',label:'탐구 목적',val:mfPdf.goal},
+      {icon:'🔍',label:'탐구 방법',val:mfPdf.method},
+      {icon:'📅',label:'탐구 일정',val:mfPdf.schedule},
+      {icon:'💡',label:'예상 결과',val:mfPdf.expected},
+      {icon:'📦',label:'산출물 기획',val:mfPdf.output},
+    ];
+    mfPdfHtml += '<div class="mf-wrap">';
+    mfPdfHtml += '<div class="mf-title">🔬 탐구 방법 재구성</div>';
+    mfPdfHtml += '<div class="mf-grid">';
+    mfDefs.forEach(function(item){
+      if(!item.val) return;
+      mfPdfHtml += '<div class="mf-item"><div class="mf-item-label">'+item.icon+' '+item.label+'</div><div class="mf-item-text">'+escHtml(item.val)+'</div></div>';
+    });
+    mfPdfHtml += '</div></div>';
+  } else if(userMethodPdf){
+    mfPdfHtml = '<div class="m-box"><div class="m-label">🔬 나의 탐구 방법</div><div class="m-text">'+escHtml(userMethodPdf)+'</div></div>';
+  }
 
   // HTML → PDF via print window
   var html = `<!DOCTYPE html>
@@ -8344,6 +8521,13 @@ window.downloadRqPDF = function(){
   .m-box{background:#faf5ff;border:1.5px solid #c4b5fd;border-radius:12px;padding:14px 20px;margin-bottom:14px;}
   .m-label{font-size:11px;color:#7c3aed;letter-spacing:2px;font-weight:700;margin-bottom:6px;}
   .m-text{font-size:14px;color:#374151;line-height:1.8;word-break:keep-all;white-space:pre-line;}
+  .mf-wrap{margin-bottom:14px;border-radius:12px;overflow:hidden;border:1.5px solid #c4b5fd;}
+  .mf-title{background:#f3e8ff;padding:10px 18px;font-size:12px;font-weight:900;color:#6d28d9;letter-spacing:2px;border-bottom:1px solid #ddd6fe;}
+  .mf-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;}
+  .mf-item{padding:11px 16px;border-bottom:1px solid #f3e8ff;border-right:1px solid #f3e8ff;}
+  .mf-item:nth-child(even){border-right:none;}
+  .mf-item-label{font-size:10px;letter-spacing:1.5px;font-weight:700;color:#7c3aed;margin-bottom:5px;}
+  .mf-item-text{font-size:13px;color:#374151;line-height:1.75;white-space:pre-line;word-break:keep-all;}
   .meta{font-size:12px;color:#9ca3af;letter-spacing:1px;}
   .step{margin-bottom:20px;border-radius:10px;overflow:hidden;border:1px solid #e5e7eb;}
   .step-header{display:flex;align-items:center;gap:12px;padding:14px 18px;background:#f9fafb;}
@@ -8353,7 +8537,7 @@ window.downloadRqPDF = function(){
   .step-body{padding:14px 18px 16px;background:#fff;}
   .step-content{font-size:13.5px;color:#374151;line-height:1.85;white-space:pre-line;word-break:keep-all;overflow-wrap:break-word;}
   .footer{margin-top:32px;text-align:center;font-size:11px;color:#d1d5db;border-top:1px solid #f3f4f6;padding-top:16px;}
-  @media print{body{padding:24px 32px;} .no-print{display:none;}}
+  @media print{body{padding:24px 32px;} .no-print{display:none;} .mf-grid{grid-template-columns:1fr 1fr;}}
 </style>
 </head>
 <body>
@@ -8364,7 +8548,7 @@ window.downloadRqPDF = function(){
     <div class="q-label">🔍 탐구 질문</div>
     <div class="q-text">${escHtml(d.topic)}</div>
   </div>
-  ${userMethodPdf ? `<div class="m-box"><div class="m-label">🔬 나의 탐구 방법</div><div class="m-text">${escHtml(userMethodPdf)}</div></div>` : ''}
+  ${mfPdfHtml}
   <div class="meta">작성일: ${escHtml(d.date)}　|　희망 학과: ${escHtml(d.major)}　|　탐구 기간: ${escHtml(d.weeks)}</div>
 </div>
 ${steps.map(function(s,i){
@@ -8415,12 +8599,43 @@ if(document.readyState === 'loading'){
   if(btn) btn.onclick = function(e){ e.preventDefault(); startResearch(); };
 }
 
+// 탐구 방법 6개 필드 → 통합 텍스트로 동기화
+function rqSyncMethodFields(){
+  var period   = ((document.getElementById('rq-mf-period')||{}).value||'').trim();
+  var goal     = ((document.getElementById('rq-mf-goal')||{}).value||'').trim();
+  var method   = ((document.getElementById('rq-mf-method')||{}).value||'').trim();
+  var schedule = ((document.getElementById('rq-mf-schedule')||{}).value||'').trim();
+  var expected = ((document.getElementById('rq-mf-expected')||{}).value||'').trim();
+  var output   = ((document.getElementById('rq-mf-output')||{}).value||'').trim();
+  var combined = [
+    period   ? '[탐구 기간] '+period   : '',
+    goal     ? '[탐구 목적] '+goal     : '',
+    method   ? '[탐구 방법] '+method   : '',
+    schedule ? '[탐구 일정] '+schedule : '',
+    expected ? '[예상 결과] '+expected : '',
+    output   ? '[산출물 기획] '+output   : '',
+  ].filter(Boolean).join('\n');
+  var hidden = document.getElementById('rq-method-input');
+  if(hidden) hidden.value = combined;
+  // 개별 필드 객체 저장
+  var fields = { period, goal, method, schedule, expected, output };
+  if(window._rqPlanData) window._rqPlanData.methodFields = fields;
+  // 별 점수 실시간 반영
+  rqUpdateStarsFromInputs();
+  // 저장 확인 문구 숨김
+  var saved = document.getElementById('rq-method-saved');
+  if(saved) saved.style.display = 'none';
+}
+window.rqSyncMethodFields = rqSyncMethodFields;
+
 // 탐구 방법 저장
 function rqSaveMethod(){
+  rqSyncMethodFields();
   var val = ((document.getElementById('rq-method-input')||{}).value||'').trim();
   if(!val){ alert('탐구 방법을 먼저 입력해주세요!'); return; }
-  // _rqPlanData에도 반영
-  if(window._rqPlanData) window._rqPlanData.method = val;
+  if(window._rqPlanData){
+    window._rqPlanData.method = val;
+  }
   var saved = document.getElementById('rq-method-saved');
   if(saved){ saved.style.display = 'inline'; }
 }
@@ -8573,7 +8788,10 @@ window.openPortfolioPopup = function(){
   var rqPlan = rqData.plan || null;
   var rqMajor = rqData.major || '';
   var rqTopic = rqData.topic || (document.getElementById('rq-topic')||{}).value||'';
+  // 탐구 방법 필드 동기화 후 읽기
+  if(typeof rqSyncMethodFields === 'function') rqSyncMethodFields();
   var rqMethod = rqData.method || (document.getElementById('rq-method-input')||{}).value||'';
+  var rqMethodFields = rqData.methodFields || null;
   var rqWeeks = rqData.weeks || '';
   var rqTypes = rqData.types || '';
 
@@ -8829,7 +9047,31 @@ window.openPortfolioPopup = function(){
   if(hasRq){
     if(rqMajor) rqHtml += field('희망 학과', rqMajor, '#34d399');
     if(rqTopic) rqHtml += field('탐구 질문', rqTopic, '#34d399');
-    if(rqMethod) rqHtml += field('나의 탐구 방법', rqMethod, 'rgba(168,85,247,.9)');
+    // 탐구 방법 재구성 6개 항목
+    var mf = rqMethodFields;
+    var hasMf = mf && (mf.period||mf.goal||mf.method||mf.schedule||mf.expected||mf.output);
+    if(hasMf){
+      rqHtml += '<div style="margin:6px 0 14px;">';
+      rqHtml += '<div style="font-size:11px;letter-spacing:2px;color:rgba(196,181,253,.8);font-weight:700;margin-bottom:10px;">🔬 탐구 방법 재구성</div>';
+      var mfItems = [
+        {icon:'⏱',label:'탐구 기간',val:mf.period},
+        {icon:'🎯',label:'탐구 목적',val:mf.goal},
+        {icon:'🔍',label:'탐구 방법',val:mf.method},
+        {icon:'📅',label:'탐구 일정',val:mf.schedule},
+        {icon:'💡',label:'예상 결과',val:mf.expected},
+        {icon:'📦',label:'산출물 기획',val:mf.output},
+      ];
+      mfItems.forEach(function(item){
+        if(!item.val) return;
+        rqHtml += '<div style="margin-bottom:10px;padding:10px 14px;background:rgba(168,85,247,.06);border-radius:10px;border:1px solid rgba(168,85,247,.18);">';
+        rqHtml += '<div style="font-size:11px;letter-spacing:1.5px;color:rgba(196,181,253,.75);font-weight:700;margin-bottom:5px;">'+item.icon+' '+item.label+'</div>';
+        rqHtml += '<div style="font-size:13px;color:rgba(240,244,255,.85);line-height:1.75;white-space:pre-line;">'+item.val+'</div>';
+        rqHtml += '</div>';
+      });
+      rqHtml += '</div>';
+    } else if(rqMethod){
+      rqHtml += field('나의 탐구 방법', rqMethod, 'rgba(168,85,247,.9)');
+    }
     if(rqWeeks) rqHtml += field('탐구 기간', rqWeeks, '#34d399');
     if(rqTypes) rqHtml += field('탐구 방식', rqTypes, '#34d399');
     if(rqPlan){
