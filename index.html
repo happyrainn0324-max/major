@@ -1930,6 +1930,12 @@ window.toggleStage = function(n){
   };
 
   window._requireAdminAuth = function(callback){
+    // 모바일에서는 비밀번호 없이 바로 실행
+    var isMobile = /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
+    if(isMobile){
+      callback();
+      return;
+    }
     if(isAuthed()){
       callback();
       return;
