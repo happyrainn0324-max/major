@@ -2650,6 +2650,10 @@ window.toggleStage = function(n){
 .ec-stars-big{font-size:3rem;font-weight:800;color:#fbbf24;display:block;
   text-shadow:0 0 20px rgba(251,191,36,.5);}
 .ec-stars-sub{font-size:16px;color:rgba(240,244,255,.62);margin-top:6px;}
+@media(max-width:480px){
+  .ec-stars-big{font-size:2rem!important;}
+  .ec-stars-sub{font-size:13px!important;line-height:1.7;word-break:keep-all;}
+}
 .ec-launch-btn{
   width:100%;background:linear-gradient(135deg,#d97706,#fbbf24);
   border:none;color:#06080f;font-family:'Pretendard','Noto Sans KR',sans-serif;
@@ -3159,13 +3163,16 @@ window.toggleStage = function(n){
 .nep-tl-input::placeholder{color:rgba(255,255,255,.2);}
 
 .nep-submit-btn{
-  width:100%;background:linear-gradient(135deg,#1d4ed8,#3b82f6,#60a5fa);
+  display:block;margin:0 auto;
+  background:linear-gradient(135deg,#1d4ed8,#3b82f6,#60a5fa);
   border:none;color:#fff;font-family:'Pretendard','Noto Sans KR',sans-serif;
-  font-size:16px;font-weight:800;padding:18px;border-radius:14px;
-  cursor:pointer;transition:.25s;
-  box-shadow:0 8px 32px rgba(59,130,246,.35);
+  font-size:15px;font-weight:800;padding:15px 40px;border-radius:999px;
+  cursor:pointer;transition:all .25s;
+  box-shadow:0 8px 28px rgba(59,130,246,.45);
+  letter-spacing:.3px;
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
 }
-.nep-submit-btn:hover{transform:translateY(-2px);box-shadow:0 16px 40px rgba(59,130,246,.5);}
+.nep-submit-btn:hover{transform:translateY(-2px);box-shadow:0 12px 36px rgba(59,130,246,.6);}
 .nep-complete-box{display:none;text-align:center;padding:24px 0;}
 .nep-complete-title{font-size:1.2rem;font-weight:800;color:#93c5fd;margin-bottom:8px;}
 .nep-complete-sub{font-size:14px;color:rgba(240,244,255,.62);margin-bottom:20px;line-height:1.7;}
@@ -3616,7 +3623,7 @@ window.toggleStage = function(n){
             flex:1;
             min-width:160px;
             max-width:220px;
-          ">🔍 커리어넷 학과탐색</button>
+          ">🔍 커리어넷 직접 탐험</button>
         </div>
 
         <!-- AI 전공 로드맵 -->
@@ -3667,7 +3674,7 @@ window.toggleStage = function(n){
 
       <div class="nep-pick-row">
         <div class="nep-pick-label">선택한 학과</div>
-        <input class="nep-pick-input" id="nep-pick-major" type="text" placeholder="탐색한 학과 이름을 입력해요" maxlength="20" />
+        <input class="nep-pick-input" id="nep-pick-major" type="text" placeholder="선택한 희망 학과 이름" maxlength="20" />
       </div>
 
       <div class="nep-roadmap-timeline" id="nep-roadmap-timeline">
@@ -5532,7 +5539,7 @@ function launchAnalysis(){
   const ecSub = document.getElementById('ec-stars-sub');
   const s2badge= document.getElementById('stage2-badge');
   if(ecBig) ecBig.textContent = stars + '⭐';
-  if(ecSub) ecSub.textContent = `직업 관심 분야 ${orbCollected}개 선택 → DNA 분석 완료! 🔭`;
+  if(ecSub) ecSub.innerHTML = `직업 관심 분야 ${orbCollected}개 선택<br>DNA 분석 완료! 🔭`;
   gzStars.s2 = stars;
   if(s2badge) s2badge.textContent = `⭐ ${stars} / 20`;
   updateStarBar();
@@ -6976,7 +6983,7 @@ function confirmMajorPickFromConstellation(){
       <!-- 탐구 방법 재구성 -->
       <div id="rq-method-wrap" style="margin-bottom:20px;">
         <label style="display:block;font-size:15px;letter-spacing:2px;color:#a855f7;font-weight:700;margin-bottom:6px;">🔬 탐구 방법 재구성</label>
-        <div style="font-size:13px;color:rgba(240,244,255,.38);margin-bottom:12px;line-height:1.7;word-break:keep-all;">생성형 AI 탐구 계획을 참고하여 나만의 탐구 방법을 재구성한 내용을 구체적으로 기록해보세요.</div>
+        <div style="font-size:13px;color:rgba(240,244,255,.38);margin-bottom:12px;line-height:1.7;word-break:keep-all;">AI가 생성한 탐구 계획을 참고하여 나만의 탐구 방법을<br>재구성한 내용을 탐구 계획서를 완성해보세요.</div>
 
         <!-- 숨김용 통합 textarea (기존 코드 호환) -->
         <textarea id="rq-method-input" style="display:none;" readonly></textarea>
