@@ -3120,6 +3120,12 @@ window.toggleStage = function(n){
 .nep-pick-input:focus{border-color:rgba(96,165,250,.6);}
 .nep-pick-input::placeholder{color:rgba(255,255,255,.2);font-weight:400;}
 
+/* 전공 로드맵 섹션 — 독립 섹션, 항상 표시 */
+.nep-roadmap-section{
+  display:block !important;
+  visibility:visible !important;
+  opacity:1 !important;
+}
 .nep-roadmap-timeline{display:flex;flex-direction:column;gap:0;margin-bottom:24px;position:relative;}
 .nep-roadmap-timeline::before{
   content:'';position:absolute;left:16px;top:24px;bottom:24px;
@@ -3649,8 +3655,13 @@ window.toggleStage = function(n){
       </div>
     </div>
 
-    <!-- 🗺️ 나의 전공 로드맵 — 항상 표시 -->
-    <div class="nep-roadmap-section" id="nep-roadmap-section" style="margin-top:32px;">
+  </div>
+</section>
+
+<!-- 🗺️ 나의 전공 로드맵 — 항상 표시 (game-zone 외부, 데스크탑·모바일 모두) -->
+<section style="background:linear-gradient(180deg,#06080f 0%,#0b1220 100%);padding:48px 0 60px;position:relative;z-index:2;">
+  <div style="width:90%;max-width:900px;margin:0 auto;">
+    <div class="nep-roadmap-section" id="nep-roadmap-section">
       <div class="nep-section-title">🗺️ 나의 전공 로드맵</div>
       <div class="nep-section-desc">희망 학과를 입력하고 나만의 로드맵을 완성해봐요!<br>단계마다 채울수록 별이 쌓여요 ✨</div>
 
@@ -3708,7 +3719,6 @@ window.toggleStage = function(n){
         </div>
       </div>
     </div>
-
   </div>
 </section>
 
@@ -9012,17 +9022,22 @@ window.openPortfolioPopup = function(){
     // ③ 탐색한 학과 (nep-pick-major)
     if(nepPickMajor) s4Html += field('로드맵 작성 학과', nepPickMajor, '#60a5fa');
 
-    // ④ 나의 성장 로드맵
+    // ④ 나의 성장 로드맵 — 4단계 카드
     var tlFilled = tlValues.some(function(v){return v.trim();});
     if(tlFilled){
-      s4Html += '<div style="font-size:11px;letter-spacing:2px;color:rgba(96,165,250,.8);font-weight:700;margin-bottom:10px;margin-top:4px;">🗺️ 나의 성장 로드맵</div>';
+      var tlColors = ['#60a5fa','#a78bfa','#34d399','#fbbf24'];
+      var tlIcons  = ['📚','🏫','🎓','🚀'];
+      s4Html += '<div style="font-size:11px;letter-spacing:2px;color:rgba(96,165,250,.8);font-weight:700;margin-bottom:12px;margin-top:4px;">🗺️ 나의 성장 로드맵</div>';
+      s4Html += '<div style="display:flex;flex-direction:column;gap:10px;">';
       tlValues.forEach(function(v,i){
         if(!v.trim()) return;
-        s4Html += '<div style="display:flex;gap:12px;margin-bottom:10px;">'+
-          '<div style="flex-shrink:0;width:70px;font-size:11px;font-weight:700;color:#60a5fa;padding-top:2px;">'+tlLabels[i]+'</div>'+
-          '<div style="font-size:13px;color:rgba(240,244,255,.85);line-height:1.7;border-left:2px solid rgba(96,165,250,.3);padding-left:12px;">'+v+'</div>'+
-          '</div>';
+        var c = tlColors[i];
+        s4Html += '<div style="border-radius:12px;overflow:hidden;border:1.5px solid '+c+'44;background:'+c+'09;">';
+        s4Html += '<div style="padding:7px 14px;background:'+c+'18;font-size:12px;font-weight:800;color:'+c+';letter-spacing:1px;">'+tlIcons[i]+' '+tlLabels[i]+'</div>';
+        s4Html += '<div style="padding:10px 14px;font-size:13px;color:rgba(240,244,255,.88);line-height:1.75;white-space:pre-line;">'+v+'</div>';
+        s4Html += '</div>';
       });
+      s4Html += '</div>';
     }
     if(!nepMajors.length && !nepPickMajor && !tlFilled){
       s4Html += emptyNote('아직 전공 로드맵 탐험을 진행하지 않았어요.');
@@ -9283,12 +9298,16 @@ window.downloadPortfolioPDF = function(){
     if(nepMajors.length) s4body += '<div style="margin-bottom:10px;"><div style="font-size:10px;letter-spacing:2px;color:#1d4ed8;font-weight:700;margin-bottom:6px;">AI 추천 로드맵 학과</div>'+nepMajors.slice(0,3).map(function(m){return tagEl(m,'#3b82f6');}).join('')+'</div>';
     var tlFilled = tlValues.some(function(v){return v&&v.trim();});
     if(tlFilled){
-      s4body += '<div style="font-size:10px;letter-spacing:2px;color:#1d4ed8;font-weight:700;margin-bottom:10px;">나의 성장 로드맵</div>';
+      var pdfTlColors = ['#2563eb','#7c3aed','#059669','#b45309'];
+      var pdfTlIcons  = ['📚','🏫','🎓','🚀'];
+      s4body += '<div style="font-size:10px;letter-spacing:2px;color:#1d4ed8;font-weight:700;margin-bottom:10px;">🗺️ 나의 성장 로드맵</div>';
       tlValues.forEach(function(v,i){
         if(!v||!v.trim()) return;
-        s4body += '<div style="display:flex;gap:12px;margin-bottom:10px;">'
-          +'<div style="flex-shrink:0;width:68px;font-size:11px;font-weight:700;color:#3b82f6;padding-top:2px;">'+tlLabels[i]+'</div>'
-          +'<div style="font-size:13px;color:#374151;line-height:1.7;border-left:2px solid #93c5fd;padding-left:12px;">'+v+'</div></div>';
+        var c = pdfTlColors[i];
+        s4body += '<div style="margin-bottom:10px;border-radius:8px;overflow:hidden;border:1.5px solid '+c+'44;">'
+          +'<div style="padding:6px 12px;background:'+c+'18;font-size:11px;font-weight:800;color:'+c+';">'+pdfTlIcons[i]+' '+tlLabels[i]+'</div>'
+          +'<div style="padding:8px 12px;font-size:13px;color:#374151;line-height:1.75;white-space:pre-line;">'+v+'</div>'
+          +'</div>';
       });
     }
   } else { s4body = emptyRow('아직 전공 로드맵 탐험을 진행하지 않았어요.'); }
