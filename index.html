@@ -1929,14 +1929,12 @@ window.toggleStage = function(n){
     }
   };
 
+  function _isMobileDevice(){
+    return /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
+  }
+
   window._requireAdminAuth = function(callback){
-    // 모바일에서는 비밀번호 없이 바로 실행
-    var isMobile = /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
-    if(isMobile){
-      callback();
-      return;
-    }
-    if(isAuthed()){
+    if(_isMobileDevice() || isAuthed()){
       callback();
       return;
     }
@@ -4835,7 +4833,7 @@ function sgProgressBar(label, pct, color){
 }
 
 async function generateSgReco(){
-  if(localStorage.getItem('admin_auth_expire') !== '1'){
+  if(!(/Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)||window.innerWidth<=768) && localStorage.getItem('admin_auth_expire') !== '1'){
     window._requireAdminAuth(function(){ generateSgReco(); });
     return;
   }
@@ -6008,7 +6006,7 @@ function confirmNepSelection(){
 }
 
 function loadNepCardInfo(name, i, retryCount){
-  if(localStorage.getItem('admin_auth_expire') !== '1'){
+  if(!(/Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)||window.innerWidth<=768) && localStorage.getItem('admin_auth_expire') !== '1'){
     window._requireAdminAuth(function(){ loadNepCardInfo(name, i, retryCount); });
     return;
   }
@@ -6188,7 +6186,7 @@ window.retryNepCard = function(name, i){
 
 
 function startNepRecommend(){
-  if(localStorage.getItem('admin_auth_expire') !== '1'){
+  if(!(/Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)||window.innerWidth<=768) && localStorage.getItem('admin_auth_expire') !== '1'){
     window._requireAdminAuth(function(){ startNepRecommend(); });
     return;
   }
@@ -6373,7 +6371,7 @@ function renderNep10Grid(majors){ renderNep8Grid(majors); }
 
 
 function submitNepRoadmap(){
-  if(localStorage.getItem('admin_auth_expire') !== '1'){
+  if(!(/Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)||window.innerWidth<=768) && localStorage.getItem('admin_auth_expire') !== '1'){
     window._requireAdminAuth(function(){ submitNepRoadmap(); });
     return;
   }
@@ -7191,7 +7189,7 @@ function tryParseJSON(raw) {
 
 // 1. 버튼 클릭 진입점
 async function onClickGenerateBtn() {
-  if(localStorage.getItem('admin_auth_expire') !== '1'){
+  if(!(/Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)||window.innerWidth<=768) && localStorage.getItem('admin_auth_expire') !== '1'){
     window._requireAdminAuth(function(){ onClickGenerateBtn(); });
     return;
   }
@@ -8301,7 +8299,7 @@ rqRenderStars(0);
 <script>
 // ── 포트폴리오 팝업 열기 ──
 window.openPortfolioPopup = function(){
-  if(localStorage.getItem('admin_auth_expire') !== '1'){
+  if(!(/Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)||window.innerWidth<=768) && localStorage.getItem('admin_auth_expire') !== '1'){
     window._requireAdminAuth(function(){ openPortfolioPopup(); });
     return;
   }
