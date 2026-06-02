@@ -6853,15 +6853,22 @@ function confirmMajorPickFromConstellation(){
       <!-- 탐구 방법 직접 입력 -->
       <div id="rq-method-wrap" style="margin-bottom:20px;">
         <label style="display:block;font-size:13px;letter-spacing:2px;color:rgba(240,244,255,.55);font-weight:600;margin-bottom:6px;">🔬 탐구 방법</label>
-        <div style="font-size:13px;color:rgba(240,244,255,.38);margin-bottom:8px;line-height:1.7;word-break:keep-all;">AI가 생성해준 탐구 계획을 참고하여 나만의 탐구 방법을 구체적으로 기록해보세요.</div>
+        <div style="font-size:13px;color:rgba(240,244,255,.38);margin-bottom:8px;line-height:1.7;word-break:keep-all;">AI 탐구 계획을 참고하여 나만의 탐구 방법을 구체적으로 기록해보세요.</div>
         <textarea id="rq-method-input" rows="4"
-          placeholder="예) 1단계: 관련 논문 5편 수집 → 2단계: 설문지 제작(20문항) → 3단계: 학급 친구 30명 대상 조사 → 4단계: 결과를 막대그래프로 시각화하여 비교 분석"
+          placeholder="예) 1. 탐구 관련 도서 1권 읽기&#10;2. 독서 활동 후 주제별 토론하기&#10;3. 학급 친구 대상 설문지 제작&#10;4. 인포그래픽으로 탐구 과정 및 결과 제작"
           style="width:100%;background:rgba(168,85,247,.04);border:1.5px solid rgba(168,85,247,.22);border-radius:12px;padding:14px 16px;color:#f0f4ff;font-family:'Pretendard','Noto Sans KR',sans-serif;font-size:15px;outline:none;resize:none;line-height:1.7;transition:.25s;"
           onfocus="this.style.borderColor='rgba(168,85,247,.7)';this.style.background='rgba(168,85,247,.07)'"
           onblur="this.style.borderColor='rgba(168,85,247,.22)';this.style.background='rgba(168,85,247,.04)'"
-          oninput="rqUpdateStarsFromInputs()"
+          oninput="rqUpdateStarsFromInputs();document.getElementById('rq-method-saved').style.display='none';"
           class="rq-placeholder-dim"
         ></textarea>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:10px;margin-top:10px;">
+          <button onclick="rqSaveMethod()"
+            style="padding:10px 32px;border-radius:999px;background:linear-gradient(135deg,#a855f7,#7c3aed);border:none;color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:'Pretendard','Noto Sans KR',sans-serif;transition:.2s;box-shadow:0 4px 14px rgba(168,85,247,.35);"
+            onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'"
+          >💾 저장하기</button>
+          <span id="rq-method-saved" style="display:none;font-size:13px;color:#a855f7;font-weight:600;animation:rqFadeUp .3s ease both;">✅ 입력되었습니다.</span>
+        </div>
       </div>
 
       <!-- ⭐ 별 바 -->
@@ -7111,6 +7118,11 @@ document.querySelectorAll('.ql-card').forEach(function(card){
 
 // 팝업 열기 핵심 함수 - 어디서든 안전하게 호출 가능
 function _openIqbot(question) {
+  // 모바일 포함 항상 비번 필요
+  if(localStorage.getItem('admin_auth_expire') !== '1'){
+    window._requireAdminAuthStrict(function(){ _openIqbot(question); });
+    return;
+  }
   var overlay = document.getElementById('iqbotOverlay');
   if (!overlay) { console.error('iqbotOverlay 없음'); return; }
 
@@ -8407,6 +8419,17 @@ if(document.readyState === 'loading'){
   var btn = document.getElementById('rq-start-btn');
   if(btn) btn.onclick = function(e){ e.preventDefault(); startResearch(); };
 }
+
+// 탐구 방법 저장
+function rqSaveMethod(){
+  var val = ((document.getElementById('rq-method-input')||{}).value||'').trim();
+  if(!val){ alert('탐구 방법을 먼저 입력해주세요!'); return; }
+  // _rqPlanData에도 반영
+  if(window._rqPlanData) window._rqPlanData.method = val;
+  var saved = document.getElementById('rq-method-saved');
+  if(saved){ saved.style.display = 'inline'; }
+}
+window.rqSaveMethod = rqSaveMethod;
 
 // 초기 렌더
 rqRenderStars(0);
@@ -11940,6 +11963,11 @@ var introSlide = 0;
 
 <script>
 function openIqbotModal() {
+  // 모바일 포함 항상 비번 필요
+  if(localStorage.getItem('admin_auth_expire') !== '1'){
+    window._requireAdminAuthStrict(function(){ openIqbotModal(); });
+    return;
+  }
   var overlay = document.getElementById('iqbotOverlay');
   if (!overlay) return;
   var resultEl = document.getElementById('iqbotResult');
