@@ -3282,8 +3282,8 @@ window.toggleStage = function(n){
             </div>
             <div class="ec-scanner-info">
               <div class="ec-scanner-title">JUPITER ENERGY SCANNER</div>
-              <div class="ec-scanner-phase" id="ec-phase-name">전공 DNA 에너지를 수집하세요.</div>
-              <div class="ec-scanner-sub" id="ec-phase-sub">나와 맞는 것들을 클릭해서 흡수!</div>
+              <div class="ec-scanner-phase" id="ec-phase-name">전공 DNA 에너지 수집</div>
+              <div class="ec-scanner-sub" id="ec-phase-sub"></div>
             </div>
             <div class="ec-energy-readout">
               ENERGY<span class="ec-energy-val" id="ec-energy-val">0</span>
@@ -3304,6 +3304,12 @@ window.toggleStage = function(n){
           </div>
 
 
+
+          <div id="ec-no-orb-notice" style="display:none;margin-bottom:14px;padding:14px 18px;background:rgba(251,191,36,.08);border:1.5px solid rgba(251,191,36,.3);border-radius:14px;text-align:center;">
+            <div style="font-size:1.4rem;margin-bottom:8px;">🌟</div>
+            <div style="font-size:14px;font-weight:700;color:#fbbf24;margin-bottom:5px;">직업 관심 분야를 먼저 선택해주세요!</div>
+            <div style="font-size:13px;color:rgba(240,244,255,.55);line-height:1.7;word-break:keep-all;">관심 분야를 선택하면 나만의<br>전공 DNA 에너지를 분석해드려요 🔭</div>
+          </div>
 
           <button class="apt-submit-btn" id="apt-submit-btn" onclick="launchAnalysis()" style="opacity:1;cursor:pointer;">
             🔭 전공 DNA 별자리 분석하기
@@ -5462,6 +5468,19 @@ function launchAnalysis(){
     .filter((_,i) => absorbedOrbs.has('f'+i))
     .map(o => o.label);
 
+  // 관심 분야 미선택 시 안내 메시지
+  if(absorbedOrbs.size === 0){
+    var noticeEl = document.getElementById('ec-no-orb-notice');
+    if(noticeEl){
+      noticeEl.style.display = 'block';
+      noticeEl.scrollIntoView({behavior:'smooth', block:'nearest'});
+    }
+    return;
+  }
+  // 안내 메시지 숨기기
+  var noticeEl = document.getElementById('ec-no-orb-notice');
+  if(noticeEl) noticeEl.style.display = 'none';
+
   // ② 지배적 DNA 계산
   const scoreEntries = Object.entries(dnaScore).sort((a,b)=>b[1]-a[1]);
   const topDna = (scoreEntries[0] && scoreEntries[0][1] > 0) ? scoreEntries[0][0] : 'explore';
@@ -6933,7 +6952,7 @@ function confirmMajorPickFromConstellation(){
 
       <!-- 탐구 질문 입력 (STEP1 미선택 시) -->
       <div id="rq-topic-wrap" style="margin-bottom:20px;">
-        <label style="display:block;font-size:15px;letter-spacing:2px;color:rgba(110,231,183,.7);font-weight:700;margin-bottom:6px;">🔎 탐구 질문</label>
+        <label style="display:block;font-size:15px;letter-spacing:2px;color:#34d399;font-weight:700;margin-bottom:6px;">🔎 탐구 질문</label>
         <div style="font-size:13px;color:rgba(240,244,255,.38);margin-bottom:8px;">STEP 1에서 질문을 선택하거나 직접 입력하세요</div>
         <textarea id="rq-topic" rows="3"
           placeholder="예) 자율주행 기술이 발달하면 10년 후 파일럿 직업은 어떻게 변화할까?"
@@ -6947,7 +6966,7 @@ function confirmMajorPickFromConstellation(){
 
       <!-- 탐구 방법 재구성 -->
       <div id="rq-method-wrap" style="margin-bottom:20px;">
-        <label style="display:block;font-size:15px;letter-spacing:2px;color:rgba(196,181,253,.65);font-weight:700;margin-bottom:6px;">🔬 탐구 방법 재구성</label>
+        <label style="display:block;font-size:15px;letter-spacing:2px;color:#a855f7;font-weight:700;margin-bottom:6px;">🔬 탐구 방법 재구성</label>
         <div style="font-size:13px;color:rgba(240,244,255,.38);margin-bottom:12px;line-height:1.7;word-break:keep-all;">생성형 AI 탐구 계획을 참고하여 나만의 탐구 방법을 재구성한 내용을 구체적으로 기록해보세요.</div>
 
         <!-- 숨김용 통합 textarea (기존 코드 호환) -->
