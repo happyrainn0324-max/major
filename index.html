@@ -3643,72 +3643,71 @@ window.toggleStage = function(n){
             <div class="nep-result-cards-row" id="nep-result-row"></div>
           </div>
 
-          <!-- STEP 2: 전공 로드맵 활동지 -->
-          <div class="nep-roadmap-section" id="nep-roadmap-section">
-            <div class="nep-section-title" style="margin-top:32px;">🗺️ 나의 전공 로드맵</div>
-            <div class="nep-section-desc">위 학과 중 하나를 골라 나만의 로드맵을 완성해봐요!<br>단계마다 채울수록 별이 쌓여요 ✨</div>
+          <!-- STEP 2: 전공 로드맵 활동지 (내부에서 제거 — 아래 외부 섹션으로 이동) -->
 
-            <div class="nep-pick-row">
-              <div class="nep-pick-label">선택한 학과</div>
-              <input class="nep-pick-input" id="nep-pick-major" type="text" placeholder="탐색한 학과 이름을 입력해요" maxlength="20" />
-            </div>
-
-            <div class="nep-roadmap-timeline" id="nep-roadmap-timeline">
-              <div class="nep-tl-item">
-                <div class="nep-tl-dot" style="background:#60a5fa;box-shadow:0 0 10px rgba(96,165,250,.6);"></div>
-                <div class="nep-tl-card" style="border-color:rgba(96,165,250,.5);">
-                  <div class="nep-tl-stage">📚 중학교</div>
-                  <div class="nep-tl-hint">이 전공을 위해 중학교 때 해볼 활동은?</div>
-                  <textarea class="nep-tl-input" id="nep-tl-0" placeholder="예) 과학 동아리 참여, 관련 책 읽기, 진로 체험…"></textarea>
-                </div>
-              </div>
-              <div class="nep-tl-item">
-                <div class="nep-tl-dot" style="background:#a78bfa;box-shadow:0 0 10px rgba(167,139,250,.6);"></div>
-                <div class="nep-tl-card" style="border-color:rgba(167,139,250,.5);">
-                  <div class="nep-tl-stage">🏫 고등학교</div>
-                  <div class="nep-tl-hint">선택할 과목과 준비할 활동은?</div>
-                  <textarea class="nep-tl-input" id="nep-tl-1" placeholder="예) 미적분·정보 선택, 탐구 보고서, 교내 대회…"></textarea>
-                </div>
-              </div>
-              <div class="nep-tl-item">
-                <div class="nep-tl-dot" style="background:#34d399;box-shadow:0 0 10px rgba(52,211,153,.6);"></div>
-                <div class="nep-tl-card" style="border-color:rgba(52,211,153,.5);">
-                  <div class="nep-tl-stage">🎓 대학교</div>
-                  <div class="nep-tl-hint">대학에서 배우고 경험하고 싶은 것은?</div>
-                  <textarea class="nep-tl-input" id="nep-tl-2" placeholder="예) 연구실 참여, 인턴십, 교환학생, 포트폴리오…"></textarea>
-                </div>
-              </div>
-              <div class="nep-tl-item">
-                <div class="nep-tl-dot" style="background:#fbbf24;box-shadow:0 0 10px rgba(251,191,36,.6);"></div>
-                <div class="nep-tl-card" style="border-color:rgba(251,191,36,.5);">
-                  <div class="nep-tl-stage">🚀 졸업 후</div>
-                  <div class="nep-tl-hint">10년 후 나는 어떤 사람이 되어 있을까?</div>
-                  <textarea class="nep-tl-input" id="nep-tl-3" placeholder="예) AI 연구원으로 세상을 바꾸는 기술을 개발하고 있다…"></textarea>
-                </div>
-              </div>
-            </div>
-
-            <button class="nep-submit-btn" id="nep-submit-btn" onclick="submitNepRoadmap()">
-              🔵 로드맵 완성하고 별 받기
-            </button>
-
-            <div class="nep-complete-box" id="nep-complete" style="display:none;">
-              <div style="font-size:3rem;margin-bottom:12px;">🌊</div>
-              <div class="nep-complete-title" id="nep-complete-title">전공 로드맵 완성!</div>
-              <div class="nep-complete-sub" id="nep-complete-sub"></div>
-              <div class="nep-stars-award">
-                <div class="nep-stars-big" id="nep-stars-big">+10⭐</div>
-                <div class="nep-stars-label">AI 전공 로드맵 탐험 완료!</div>
-              </div>
-            </div>
-
-
-          </div>
         </div>
       </div>
     </div>
 
+    <!-- 🗺️ 나의 전공 로드맵 — 항상 표시 -->
+    <div class="nep-roadmap-section" id="nep-roadmap-section" style="margin-top:32px;">
+      <div class="nep-section-title">🗺️ 나의 전공 로드맵</div>
+      <div class="nep-section-desc">희망 학과를 입력하고 나만의 로드맵을 완성해봐요!<br>단계마다 채울수록 별이 쌓여요 ✨</div>
 
+      <div class="nep-pick-row">
+        <div class="nep-pick-label">선택한 학과</div>
+        <input class="nep-pick-input" id="nep-pick-major" type="text" placeholder="탐색한 학과 이름을 입력해요" maxlength="20" />
+      </div>
+
+      <div class="nep-roadmap-timeline" id="nep-roadmap-timeline">
+        <div class="nep-tl-item">
+          <div class="nep-tl-dot" style="background:#60a5fa;box-shadow:0 0 10px rgba(96,165,250,.6);"></div>
+          <div class="nep-tl-card" style="border-color:rgba(96,165,250,.5);">
+            <div class="nep-tl-stage">📚 중학교</div>
+            <div class="nep-tl-hint">이 전공을 위해 중학교 때 해볼 활동은?</div>
+            <textarea class="nep-tl-input" id="nep-tl-0" placeholder="예) 과학 동아리 참여, 관련 책 읽기, 진로 체험…"></textarea>
+          </div>
+        </div>
+        <div class="nep-tl-item">
+          <div class="nep-tl-dot" style="background:#a78bfa;box-shadow:0 0 10px rgba(167,139,250,.6);"></div>
+          <div class="nep-tl-card" style="border-color:rgba(167,139,250,.5);">
+            <div class="nep-tl-stage">🏫 고등학교</div>
+            <div class="nep-tl-hint">선택할 과목과 준비할 활동은?</div>
+            <textarea class="nep-tl-input" id="nep-tl-1" placeholder="예) 미적분·정보 선택, 탐구 보고서, 교내 대회…"></textarea>
+          </div>
+        </div>
+        <div class="nep-tl-item">
+          <div class="nep-tl-dot" style="background:#34d399;box-shadow:0 0 10px rgba(52,211,153,.6);"></div>
+          <div class="nep-tl-card" style="border-color:rgba(52,211,153,.5);">
+            <div class="nep-tl-stage">🎓 대학교</div>
+            <div class="nep-tl-hint">대학에서 배우고 경험하고 싶은 것은?</div>
+            <textarea class="nep-tl-input" id="nep-tl-2" placeholder="예) 연구실 참여, 인턴십, 교환학생, 포트폴리오…"></textarea>
+          </div>
+        </div>
+        <div class="nep-tl-item">
+          <div class="nep-tl-dot" style="background:#fbbf24;box-shadow:0 0 10px rgba(251,191,36,.6);"></div>
+          <div class="nep-tl-card" style="border-color:rgba(251,191,36,.5);">
+            <div class="nep-tl-stage">🚀 졸업 후</div>
+            <div class="nep-tl-hint">10년 후 나는 어떤 사람이 되어 있을까?</div>
+            <textarea class="nep-tl-input" id="nep-tl-3" placeholder="예) AI 연구원으로 세상을 바꾸는 기술을 개발하고 있다…"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <button class="nep-submit-btn" id="nep-submit-btn" onclick="submitNepRoadmap()">
+        🔵 로드맵 완성하고 별 받기
+      </button>
+
+      <div class="nep-complete-box" id="nep-complete" style="display:none;">
+        <div style="font-size:3rem;margin-bottom:12px;">🌊</div>
+        <div class="nep-complete-title" id="nep-complete-title">전공 로드맵 완성!</div>
+        <div class="nep-complete-sub" id="nep-complete-sub"></div>
+        <div class="nep-stars-award">
+          <div class="nep-stars-big" id="nep-stars-big">+10⭐</div>
+          <div class="nep-stars-label">AI 전공 로드맵 탐험 완료!</div>
+        </div>
+      </div>
+    </div>
 
   </div>
 </section>
