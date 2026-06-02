@@ -1751,8 +1751,10 @@ footer::before{
 }
 /* 모바일 줄바꿈 — 좋은 탐구 계획 항목 */
 .mobile-br{ display:none; }
+.mobile-dash{ display:inline; }
 @media(max-width:600px){
   .mobile-br{ display:block; }
+  .mobile-dash{ display:none; }
 }
 
 /* 탐구 방법 재구성 구조화 폼 */
@@ -3671,8 +3673,13 @@ window.toggleStage = function(n){
 </section>
 
 <!-- 🗺️ 나의 전공 로드맵 — 항상 표시 (game-zone 외부, 데스크탑·모바일 모두) -->
-<section style="background:linear-gradient(180deg,#06080f 0%,#0b1220 100%);padding:48px 0 60px;position:relative;z-index:2;">
-  <div style="width:90%;max-width:900px;margin:0 auto;">
+<section style="background:linear-gradient(180deg,#06080f 0%,#0b1220 100%);padding:48px 0 60px;position:relative;z-index:2;overflow:hidden;">
+  <div class="star-canvas" id="roadmap-star-canvas" style="position:absolute;inset:0;pointer-events:none;z-index:0;overflow:hidden;"></div>
+  <div style="position:absolute;inset:0;pointer-events:none;z-index:1;">
+    <div style="position:absolute;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(168,85,247,.07) 0%,transparent 70%);top:-80px;right:-100px;filter:blur(60px);"></div>
+    <div style="position:absolute;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(99,102,241,.06) 0%,transparent 70%);bottom:-60px;left:-80px;filter:blur(55px);"></div>
+  </div>
+  <div style="width:90%;max-width:900px;margin:0 auto;position:relative;z-index:2;">
     <div class="nep-roadmap-section" id="nep-roadmap-section">
       <div class="nep-section-title">🗺️ 나의 전공 로드맵</div>
       <div class="nep-section-desc">희망 학과를 입력하고 나만의 로드맵을 완성해봐요!<br>단계마다 채울수록 별이 쌓여요 ✨</div>
@@ -6950,14 +6957,16 @@ function confirmMajorPickFromConstellation(){
     <!-- ══════════════════════════════════
          STEP 2: 탐구 설계
     ══════════════════════════════════ -->
-    <div class="rq-step-block" id="rq-block-2" style="opacity:1;filter:none;pointer-events:auto;transition:.5s;">
-      <div class="rq-step-label">
-        <div class="rq-step-num" style="background:linear-gradient(135deg,#06b6d4,#0891b2);">2</div>
-        <div>
-          <div class="rq-step-title-txt">탐구 설계하기</div>
-          <div class="rq-step-sub">희망 학과·탐구 기간·방식을 선택하고 탐구 질문을 확정하세요</div>
+    <div class="rq-step-block" id="rq-block-2" style="opacity:1;filter:none;pointer-events:auto;transition:.5s;position:relative;overflow:hidden;">
+      <div class="star-canvas" id="rqblock2-star-canvas" style="position:absolute;inset:0;pointer-events:none;z-index:0;overflow:hidden;border-radius:inherit;"></div>
+      <div style="position:relative;z-index:1;">
+        <div class="rq-step-label">
+          <div class="rq-step-num" style="background:linear-gradient(135deg,#06b6d4,#0891b2);">2</div>
+          <div>
+            <div class="rq-step-title-txt">탐구 설계하기</div>
+            <div class="rq-step-sub">희망 학과·탐구 기간·방식을 선택하고 탐구 질문을 확정하세요</div>
+          </div>
         </div>
-      </div>
 
       <!-- 희망 학과 + 탐구 기간 -->
       <!-- 탐구 수준 선택 -->
@@ -6973,16 +6982,18 @@ function confirmMajorPickFromConstellation(){
 
       <!-- 좋은 탐구 계획이란? -->
       <div style="margin-bottom:22px;">
-        <label style="display:block;font-size:15px;letter-spacing:2px;color:#38bdf8;font-weight:700;margin-bottom:6px;">📋 좋은 탐구 계획이란?</label>
+        <label style="display:block;font-size:15px;letter-spacing:2px;color:#38bdf8;font-weight:700;margin-bottom:4px;">📋 탐구 설계 방법</label>
+        <div style="font-size:13px;color:rgba(240,244,255,.38);margin-bottom:8px;line-height:1.7;word-break:keep-all;">탐구 계획서를 작성하기 전에 좋은 탐구 계획의 8가지 핵심 요소를 확인해보세요.</div>
         <div style="background:rgba(14,165,233,.06);border:1.5px solid rgba(14,165,233,.2);border-radius:16px;padding:18px 20px;">
           <div style="font-size:13px;color:rgba(240,244,255,.7);line-height:2;word-break:keep-all;overflow-wrap:break-word;letter-spacing:-.1px;">
-            ① <strong style="color:rgba(240,244,255,.9);">구체적인 탐구 질문</strong> —<br class="mobile-br"> "왜?", "어떻게?", "어떤 영향을?" 처럼 깊이 있는 질문으로 시작해요.<br>
-            ② <strong style="color:rgba(240,244,255,.9);">명확한 탐구 목적</strong> —<br class="mobile-br"> 무엇을 알고 싶은지, 왜 중요한지 한 문장으로 정리해요.<br>
-            ③ <strong style="color:rgba(240,244,255,.9);">실현 가능한 방법</strong> —<br class="mobile-br"> 설문·관찰·실험·인터뷰 등 직접 할 수 있는 방법을 선택해요.<br>
-            ④ <strong style="color:rgba(240,244,255,.9);">단계별 일정</strong> —<br class="mobile-br"> 자료 수집 → 분석 → 정리 순서로 주차별 계획을 세워요.<br>
-            ⑤ <strong style="color:rgba(240,244,255,.9);">예상 결과와 근거</strong> —<br class="mobile-br"> 탐구 전 결과를 예측하고, 다를 경우도 생각해두어요.<br>
-            ⑥ <strong style="color:rgba(240,244,255,.9);">산출물 기획</strong> —<br class="mobile-br"> 보고서·포스터·PPT 등 결과를 어떻게 표현할지 미리 정해요.<br>
-            ⑦ <strong style="color:rgba(240,244,255,.9);">진로 연계</strong> —<br class="mobile-br"> 탐구 주제가 나의 희망 학과·직업과 어떻게 연결되는지 명확히 해요.
+            ① <strong style="color:#c4b5fd;">구체적인 탐구 질문</strong> <span class="mobile-dash">—</span><br class="mobile-br"> "왜?", "어떻게?", "어떤 영향을?" 처럼 깊이 있는 질문으로 시작해요.<br>
+            ② <strong style="color:#c4b5fd;">명확한 탐구 목적</strong> <span class="mobile-dash">—</span><br class="mobile-br"> 무엇을 알고 싶은지, 왜 중요한지 한 문장으로 정리해요.<br>
+            ③ <strong style="color:#c4b5fd;">실현 가능한 방법</strong> <span class="mobile-dash">—</span><br class="mobile-br"> 설문·관찰·실험·인터뷰 등 직접 할 수 있는 방법을 선택해요.<br>
+            ④ <strong style="color:#c4b5fd;">단계별 일정</strong> <span class="mobile-dash">—</span><br class="mobile-br"> 자료 수집 → 분석 → 정리 순서로 주차별 계획을 세워요.<br>
+            ⑤ <strong style="color:#c4b5fd;">예상 결과와 근거</strong> <span class="mobile-dash">—</span><br class="mobile-br"> 탐구 전 결과를 예측하고, 다를 경우도 생각해두어요.<br>
+            ⑥ <strong style="color:#c4b5fd;">산출물 기획</strong> <span class="mobile-dash">—</span><br class="mobile-br"> 보고서·포스터·PPT 등 결과를 어떻게 표현할지 미리 정해요.<br>
+            ⑦ <strong style="color:#c4b5fd;">진로 연계</strong> <span class="mobile-dash">—</span><br class="mobile-br"> 탐구 주제가 나의 희망 학과·직업과 어떻게 연결되는지 명확히 해요.<br>
+            ⑧ <strong style="color:#c4b5fd;">반성과 개선</strong> <span class="mobile-dash">—</span><br class="mobile-br"> 탐구 중 발견한 한계와 개선점을 기록하며 더 깊은 사고를 키워요.
           </div>
         </div>
       </div>
@@ -7069,9 +7080,10 @@ function confirmMajorPickFromConstellation(){
 
         <div style="display:flex;flex-direction:column;align-items:center;gap:10px;margin-top:16px;">
           <button onclick="rqSaveMethod()"
-            style="padding:10px 32px;border-radius:999px;background:linear-gradient(135deg,#a855f7,#7c3aed);border:none;color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:'Pretendard','Noto Sans KR',sans-serif;transition:.2s;box-shadow:0 4px 14px rgba(168,85,247,.35);"
-            onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'"
-          >💾 저장하기</button>
+            style="display:inline-flex;align-items:center;gap:7px;padding:15px 32px;border-radius:999px;background:linear-gradient(135deg,#a855f7,#7c3aed);border:none;color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:'Pretendard','Noto Sans KR',sans-serif;transition:.25s;box-shadow:0 4px 18px rgba(168,85,247,.4);white-space:nowrap;"
+            onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 28px rgba(168,85,247,.55)'"
+            onmouseout="this.style.transform='';this.style.boxShadow='0 4px 18px rgba(168,85,247,.4)'"
+          >💾 탐구 설계 저장하기</button>
           <span id="rq-method-saved" style="display:none;font-size:13px;color:#a855f7;font-weight:600;animation:rqFadeUp .3s ease both;">✅ 입력되었습니다.</span>
         </div>
       </div>
@@ -7097,6 +7109,7 @@ function confirmMajorPickFromConstellation(){
       </div>
 
       <!-- 탐구 설계하기 버튼은 팝업 모달에서 제공됩니다 -->
+      </div><!-- /z-index:1 inner wrap -->
     </div>
 
     <!-- STEP 2→3 연결 화살표 -->
@@ -11642,6 +11655,8 @@ initStarCanvas('gamezone-star-canvas', 140);
 initStarCanvas('interview-star-canvas', 120);
 initStarCanvas('research-star-canvas', 130);
 initStarCanvas('footer-star-canvas', 80);
+initStarCanvas('roadmap-star-canvas', 110);
+initStarCanvas('rqblock2-star-canvas', 90);
 (function(){
   const canvas = document.getElementById('poster-star-canvas');
   if(!canvas) return;
