@@ -1749,7 +1749,95 @@ footer::before{
 .rq-placeholder-dim::placeholder{
   color:rgba(240,244,255,.22);
 }
-/* 모바일 줄바꿈 — 좋은 탐구 계획 항목 */
+/* ── 탐구 설계 방법 반응형 ── */
+.plan-mobile{ display:none; }
+.plan-desktop{ display:block; }
+.plan-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+}
+.pcard{
+  background:rgba(196,181,253,.07);
+  border:1.5px solid rgba(196,181,253,.22);
+  border-radius:12px;
+  overflow:hidden;
+  cursor:pointer;
+  transition:border-color .2s;
+}
+.pcard.open{ border-color:rgba(196,181,253,.55); }
+.pcard-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:11px 10px;
+}
+.pcard-left{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:5px;
+  flex:1;
+}
+.pcard-emoji{ font-size:18px; line-height:1; }
+.pcard-title{
+  font-size:11px;
+  font-weight:600;
+  color:rgba(240,244,255,.85);
+  text-align:center;
+  line-height:1.45;
+  word-break:keep-all;
+}
+.pcard-arrow{
+  width:20px;
+  height:20px;
+  border-radius:50%;
+  background:rgba(196,181,253,.25);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-shrink:0;
+  margin-left:4px;
+  transition:transform .25s, background .2s;
+  user-select:none;
+}
+.pcard-arrow::after{
+  content:'';
+  display:block;
+  width:6px;
+  height:6px;
+  border-right:1.5px solid #fff;
+  border-bottom:1.5px solid #fff;
+  transform:rotate(45deg);
+  margin-top:-3px;
+  transition:transform .25s;
+}
+.pcard.open .pcard-arrow{
+  background:rgba(196,181,253,.45);
+  transform:none;
+}
+.pcard.open .pcard-arrow::after{
+  transform:rotate(225deg);
+  margin-top:3px;
+}
+.pcard-desc{
+  max-height:0;
+  overflow:hidden;
+  transition:max-height .3s ease, padding .3s ease;
+}
+.pcard.open .pcard-desc{ max-height:100px; padding:0 10px 10px; }
+.pcard-desc-inner{
+  font-size:10.5px;
+  color:rgba(240,244,255,.52);
+  line-height:1.6;
+  word-break:keep-all;
+  border-top:1px solid rgba(196,181,253,.15);
+  padding-top:8px;
+}
+@media(max-width:600px){
+  .plan-mobile{ display:block; }
+  .plan-desktop{ display:none; }
+}
 .mobile-br{ display:none; }
 .mobile-dash{ display:inline; }
 @media(max-width:600px){
@@ -6981,16 +7069,54 @@ function confirmMajorPickFromConstellation(){
       <div style="margin-bottom:22px;">
         <label style="display:block;font-size:15px;letter-spacing:2px;color:#38bdf8;font-weight:700;margin-bottom:4px;">📋 탐구 설계 방법</label>
         <div style="font-size:13px;color:rgba(240,244,255,.38);margin-bottom:8px;line-height:1.7;word-break:keep-all;">탐구 계획서를 작성하기 전에 좋은 탐구 계획의 8가지 핵심 요소를 확인해보세요.</div>
-        <div style="background:rgba(14,165,233,.06);border:1.5px solid rgba(14,165,233,.2);border-radius:16px;padding:18px 20px;">
+        <!-- 데스크탑: 텍스트 목록 / 모바일: 2열 그리드 표 -->
+        <div class="plan-desktop" style="background:rgba(14,165,233,.06);border:1.5px solid rgba(14,165,233,.2);border-radius:16px;padding:18px 20px;">
           <div style="font-size:13px;color:rgba(240,244,255,.7);line-height:2;word-break:keep-all;overflow-wrap:break-word;letter-spacing:-.1px;">
-            ① <strong style="color:#c4b5fd;">구체적인 탐구 질문</strong> <span class="mobile-dash">—</span><br class="mobile-br"> "왜?", "어떻게?", "어떤 영향을?" 처럼 깊이 있는 질문으로 시작해요.<br>
-            ② <strong style="color:#c4b5fd;">명확한 탐구 목적</strong> <span class="mobile-dash">—</span><br class="mobile-br"> 무엇을 알고 싶은지, 왜 중요한지 한 문장으로 정리해요.<br>
-            ③ <strong style="color:#c4b5fd;">실현 가능한 방법</strong> <span class="mobile-dash">—</span><br class="mobile-br"> 설문·관찰·실험·인터뷰 등 직접 할 수 있는 방법을 선택해요.<br>
-            ④ <strong style="color:#c4b5fd;">단계별 일정</strong> <span class="mobile-dash">—</span><br class="mobile-br"> 자료 수집 → 분석 → 정리 순서로 주차별 계획을 세워요.<br>
-            ⑤ <strong style="color:#c4b5fd;">예상 결과와 근거</strong> <span class="mobile-dash">—</span><br class="mobile-br"> 탐구 전 결과를 예측하고, 다를 경우도 생각해두어요.<br>
-            ⑥ <strong style="color:#c4b5fd;">산출물 기획</strong> <span class="mobile-dash">—</span><br class="mobile-br"> 보고서·포스터·PPT 등 결과를 어떻게 표현할지 미리 정해요.<br>
-            ⑦ <strong style="color:#c4b5fd;">진로 연계</strong> <span class="mobile-dash">—</span><br class="mobile-br"> 탐구 주제가 나의 희망 학과·직업과 어떻게 연결되는지 명확히 해요.<br>
-            ⑧ <strong style="color:#c4b5fd;">반성과 개선</strong> <span class="mobile-dash">—</span><br class="mobile-br"> 탐구 중 발견한 한계와 개선점을 기록하며 더 깊은 사고를 키워요.
+            ① <strong style="color:#c4b5fd;">구체적인 탐구 질문</strong> — "왜?", "어떻게?", "어떤 영향을?" 처럼 깊이 있는 질문으로 시작해요.<br>
+            ② <strong style="color:#c4b5fd;">명확한 탐구 목적</strong> — 무엇을 알고 싶은지, 왜 중요한지 한 문장으로 정리해요.<br>
+            ③ <strong style="color:#c4b5fd;">실현 가능한 방법</strong> — 설문·관찰·실험·인터뷰 등 직접 할 수 있는 방법을 선택해요.<br>
+            ④ <strong style="color:#c4b5fd;">단계별 일정</strong> — 자료 수집 → 분석 → 정리 순서로 주차별 계획을 세워요.<br>
+            ⑤ <strong style="color:#c4b5fd;">예상 결과와 근거</strong> — 탐구 전 결과를 예측하고, 다를 경우도 생각해두어요.<br>
+            ⑥ <strong style="color:#c4b5fd;">산출물 기획</strong> — 보고서·포스터·PPT 등 결과를 어떻게 표현할지 미리 정해요.<br>
+            ⑦ <strong style="color:#c4b5fd;">진로 연계</strong> — 탐구 주제가 나의 희망 학과·직업과 어떻게 연결되는지 명확히 해요.<br>
+            ⑧ <strong style="color:#c4b5fd;">반성과 개선</strong> — 탐구 중 발견한 한계와 개선점을 기록하며 더 깊은 사고를 키워요.
+          </div>
+        </div>
+        <!-- 모바일 전용 2열 그리드 -->
+        <div class="plan-mobile">
+          <div class="plan-grid">
+            <div class="pcard" onclick="this.classList.toggle('open')">
+              <div class="pcard-top"><div class="pcard-left"><span class="pcard-emoji">🔍</span><span class="pcard-title">구체적인<br>탐구 질문</span></div><span class="pcard-arrow"></span></div>
+              <div class="pcard-desc"><div class="pcard-desc-inner">"왜?", "어떻게?", "어떤 영향을?" 처럼 깊이 있는 질문으로 시작해요.</div></div>
+            </div>
+            <div class="pcard" onclick="this.classList.toggle('open')">
+              <div class="pcard-top"><div class="pcard-left"><span class="pcard-emoji">🎯</span><span class="pcard-title">명확한<br>탐구 목적</span></div><span class="pcard-arrow"></span></div>
+              <div class="pcard-desc"><div class="pcard-desc-inner">무엇을 알고 싶은지, 왜 중요한지 한 문장으로 정리해요.</div></div>
+            </div>
+            <div class="pcard" onclick="this.classList.toggle('open')">
+              <div class="pcard-top"><div class="pcard-left"><span class="pcard-emoji">🧪</span><span class="pcard-title">실현 가능한<br>방법</span></div><span class="pcard-arrow"></span></div>
+              <div class="pcard-desc"><div class="pcard-desc-inner">설문·관찰·실험·인터뷰 등 직접 할 수 있는 방법을 선택해요.</div></div>
+            </div>
+            <div class="pcard" onclick="this.classList.toggle('open')">
+              <div class="pcard-top"><div class="pcard-left"><span class="pcard-emoji">📅</span><span class="pcard-title">단계별<br>일정</span></div><span class="pcard-arrow"></span></div>
+              <div class="pcard-desc"><div class="pcard-desc-inner">자료 수집 → 분석 → 정리 순서로 주차별 계획을 세워요.</div></div>
+            </div>
+            <div class="pcard" onclick="this.classList.toggle('open')">
+              <div class="pcard-top"><div class="pcard-left"><span class="pcard-emoji">💡</span><span class="pcard-title">예상 결과와<br>근거</span></div><span class="pcard-arrow"></span></div>
+              <div class="pcard-desc"><div class="pcard-desc-inner">탐구 전 결과를 예측하고, 다를 경우도 생각해두어요.</div></div>
+            </div>
+            <div class="pcard" onclick="this.classList.toggle('open')">
+              <div class="pcard-top"><div class="pcard-left"><span class="pcard-emoji">📦</span><span class="pcard-title">산출물<br>기획</span></div><span class="pcard-arrow"></span></div>
+              <div class="pcard-desc"><div class="pcard-desc-inner">보고서·포스터·PPT 등 결과를 어떻게 표현할지 미리 정해요.</div></div>
+            </div>
+            <div class="pcard" onclick="this.classList.toggle('open')">
+              <div class="pcard-top"><div class="pcard-left"><span class="pcard-emoji">🏫</span><span class="pcard-title">진로<br>연계</span></div><span class="pcard-arrow"></span></div>
+              <div class="pcard-desc"><div class="pcard-desc-inner">탐구 주제가 나의 희망 학과·직업과 어떻게 연결되는지 명확히 해요.</div></div>
+            </div>
+            <div class="pcard" onclick="this.classList.toggle('open')">
+              <div class="pcard-top"><div class="pcard-left"><span class="pcard-emoji">📝</span><span class="pcard-title">반성과<br>개선</span></div><span class="pcard-arrow"></span></div>
+              <div class="pcard-desc"><div class="pcard-desc-inner">탐구 중 발견한 한계와 개선점을 기록하며 더 깊은 사고를 키워요.</div></div>
+            </div>
           </div>
         </div>
       </div>
