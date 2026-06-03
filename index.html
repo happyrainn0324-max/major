@@ -4281,7 +4281,7 @@ let ivIsLoading = false;
 let ivStars = 0;          // 현재 별 개수 (최대 15)
 let ivMsgCount = 0;       // 사용자 메시지 누적 카운트
 const IV_MAX_STARS = 15;
-const IV_MSGS_PER_STAR = 3; // 메시지 3개 = 별 1개
+const IV_MSGS_PER_STAR = 2; // 메시지 2개 = 별 1개
 
 function ivRenderStars(){
   const pipsTop = document.getElementById('iv-star-pips-top');
@@ -4540,7 +4540,7 @@ async function sendIvMessage(){
   if(!text) return;
 
   // ── 6회 제한 사전 차단 ──
-  if(ivHistory.filter(m=>m.role==='user').length >= 3){
+  if(ivHistory.filter(m=>m.role==='user').length >= 2){
     applyIvLimit();
     return;
   }
@@ -4667,7 +4667,7 @@ async function sendIvMessage(){
   ivIsLoading = false;
 
   // ── AI 답변 후 6회 제한 체크 ──
-  if(ivHistory.filter(m=>m.role==='user').length >= 3){
+  if(ivHistory.filter(m=>m.role==='user').length >= 2){
     applyIvLimit();
   } else {
     document.getElementById('iv-send-btn').style.opacity = '1';
@@ -4694,7 +4694,7 @@ function applyIvLimit(){
     limitDiv.id = 'iv-limit-msg';
     limitDiv.style.cssText = 'text-align:center;padding:16px 20px;margin:16px 0 4px;background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.25);border-radius:14px;font-size:13px;color:rgba(251,191,36,.9);line-height:1.8;';
     limitDiv.innerHTML = [
-      '💬 인터뷰 횟수(3회)를 모두 사용했어요!<br>',
+      '💬 인터뷰 횟수(2회)를 모두 사용했어요!<br>',
       '<span style="font-size:12px;opacity:.7;">다른 멘토와 새 인터뷰를 시작하거나,</span><br>',
       '<button onclick="window._ivUnlockWithPw()" ',
       'style="margin-top:10px;padding:8px 22px;border-radius:999px;',
@@ -10187,7 +10187,7 @@ function _sgbRender(setIdx){
   var catCount = {};
   cats.forEach(function(c){ catCount[c] = (catCount[c]||0)+1; });
   var catBadges = Object.keys(catCount).map(function(c){
-    return '<span style="display:inline-flex;align-items:center;gap:3px;padding:3px 9px;border-radius:999px;background:'+(_catColorMap[c]||'#888')+'18;border:1px solid '+(_catColorMap[c]||'#888')+'44;font-size:10px;font-weight:700;color:'+(_catColorMap[c]||'#888')+';margin:2px;">'+c+' '+catCount[c]+'</span>';
+    return '<span style="display:inline-flex;align-items:center;gap:3px;padding:3px 9px;border-radius:999px;background:'+(_catColorMap[c]||'#888')+'18;border:1px solid '+(_catColorMap[c]||'#888')+'44;font-size:10px;font-weight:700;color:'+(_catColorMap[c]||'#888')+';margin:2px;">'+c+'</span>';
   }).join('');
 
   // 문장 목록 HTML
