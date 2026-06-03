@@ -4280,6 +4280,8 @@ let ivIsLoading = false;
 // ── 인터뷰 별 시스템 ──
 let ivStars = 0;          // 현재 별 개수 (최대 15)
 let ivMsgCount = 0;       // 사용자 메시지 누적 카운트
+let ivTotalMsgCount = 0;  // 전체 세션 누적 메시지 수 (대상 무관)
+const IV_FREE_LIMIT = 8;  // 무료 제공 메시지 수
 const IV_MAX_STARS = 15;
 const IV_MSGS_PER_STAR = 2; // 메시지 2개 = 별 1개
 
@@ -4485,7 +4487,8 @@ function startInterview(){
   ivUniv = document.getElementById('iv-univ-input').value.trim();
   ivHistory = [];
   // 새 인터뷰마다 별 카운트 초기화하지 않음 (누적)
-  ivMsgCount = 0; // 새 인터뷰 시 메시지 카운트는 리셋
+  ivMsgCount = 0; // 대상별 카운트 리셋 (별 계산용)
+  // ivTotalMsgCount는 리셋하지 않음 (전체 세션 누적)
 
   const p = IV_PERSONAS[ivPersona];
   // 프로필 바 설정
@@ -4539,8 +4542,8 @@ async function sendIvMessage(){
   const text = inp.value.trim();
   if(!text) return;
 
-  // ── 6회 제한 사전 차단 ──
-  if(ivHistory.filter(m=>m.role==='user').length >= 2){
+  // ── 전체 누적 8회 초과 시 사전 차단 ──
+  if(ivTotalMsgCount >= IV_FREE_LIMIT && !window._ivUnlocked){
     applyIvLimit();
     return;
   }
@@ -4551,8 +4554,9 @@ async function sendIvMessage(){
   // 유저 메시지 추가
   appendUserMsg(text);
   ivHistory.push({ role: 'user', content: text });
+  ivTotalMsgCount++; // 전체 누적 카운트
 
-  // 별 누적 (3메시지마다 1개)
+  // 별 누적 (2메시지마다 1개)
   ivTryAddStar();
 
   // 타이핑 인디케이터
@@ -4666,8 +4670,8 @@ async function sendIvMessage(){
 
   ivIsLoading = false;
 
-  // ── AI 답변 후 6회 제한 체크 ──
-  if(ivHistory.filter(m=>m.role==='user').length >= 2){
+  // ── AI 답변 후 전체 누적 8회 제한 체크 ──
+  if(ivTotalMsgCount >= IV_FREE_LIMIT && !window._ivUnlocked){
     applyIvLimit();
   } else {
     document.getElementById('iv-send-btn').style.opacity = '1';
@@ -4687,15 +4691,15 @@ function applyIvLimit(){
   const sendBtn = document.getElementById('iv-send-btn');
   const inp = document.getElementById('iv-user-input');
   if(sendBtn){ sendBtn.disabled = true; sendBtn.style.opacity = '0.4'; sendBtn.style.cursor = 'not-allowed'; }
-  if(inp){ inp.disabled = true; inp.placeholder = '인터뷰 횟수를 모두 사용했어요.'; inp.style.opacity = '0.5'; }
+  if(inp){ inp.disabled = true; inp.placeholder = '무료 인터뷰 횟수를 모두 사용했어요.'; inp.style.opacity = '0.5'; }
   const box = document.getElementById('iv-chat-box');
   if(box && !document.getElementById('iv-limit-msg')){
     const limitDiv = document.createElement('div');
     limitDiv.id = 'iv-limit-msg';
     limitDiv.style.cssText = 'text-align:center;padding:16px 20px;margin:16px 0 4px;background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.25);border-radius:14px;font-size:13px;color:rgba(251,191,36,.9);line-height:1.8;';
     limitDiv.innerHTML = [
-      '💬 인터뷰 횟수(2회)를 모두 사용했어요!<br>',
-      '<span style="font-size:12px;opacity:.7;">다른 멘토와 새 인터뷰를 시작하거나,</span><br>',
+      '💬 무료 인터뷰 횟수(8회)를 모두 사용했어요!<br>',
+      '<span style="font-size:12px;opacity:.7;">관리자 비밀번호를 입력하면 계속 이용할 수 있어요.</span><br>',
       '<button onclick="window._ivUnlockWithPw()" ',
       'style="margin-top:10px;padding:8px 22px;border-radius:999px;',
       'background:rgba(251,191,36,.18);border:1.5px solid rgba(251,191,36,.5);',
@@ -4710,6 +4714,7 @@ function applyIvLimit(){
 
 window._ivUnlockWithPw = function(){
   window._requireAdminAuth(function(){
+    window._ivUnlocked = true; // 비번 인증 시 전체 해제
     resetIvLimit();
     const box = document.getElementById('iv-chat-box');
     if(box){
