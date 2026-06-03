@@ -5094,40 +5094,38 @@ async function generateSgReco(){
   document.getElementById('sg-result').style.display='none';
   document.getElementById('sg-error').style.display='none';
 
-  var systemPrompt =
-    '당신은 2022 개정교육과정 전문가이자 대입 진학 컨설턴트입니다.\n\n' +
-    '[핵심 원칙]\n' +
-    '- 2022 개정교육과정의 실제 과목명만 사용하세요.\n' +
-    '- 각 과목마다 왜 이 과목인가를 학과 전공과 직접 연결하여 구체적으로 설명합니다.\n' +
-    '- 단순 나열이 아닌, 전공 커리큘럼·직무·입시 전략과 연결된 실질적 이유를 제시합니다.\n' +
-    '- 전문대나 비수도권 대학도 학과 특성 기반으로 동일하게 추천하세요.\n' +
-    '- 순수 JSON만 반환하세요. 마크다운, 코드블록 없이.\n\n' +
-    '[각 카테고리 기준]\n' +
-    '- required(필수 이수): 이 과목 없이는 전공 기초 학습과 입시 경쟁력 확보가 어려운 과목 3~4개\n' +
-    '- recommended(강력 권장): 이수하면 입시와 전공 이해에 명확한 유리함이 생기는 과목 3~4개\n' +
-    '- optional(선택 심화): 심화 관심이 있는 학생에게 추가로 추천하는 과목 2~3개\n\n' +
-    '[각 과목 desc 작성 기준 - 반드시 아래 내용을 포함해 구체적으로 작성]\n' +
-    '① 전공 연결: 이 과목의 어떤 개념·역량이 해당 학과의 어떤 전공 과목·직무와 연결되는지\n' +
-    '② 입시 전략: 세특 작성에 어떻게 활용할 수 있는지, 학종에서 어떤 이점이 있는지\n' +
-    '③ 실제 활용: 해당 학과 진학 후 또는 관련 직업에서 이 과목 지식이 실제로 어떻게 쓰이는지\n\n' +
-    '[reason 필드 - 3~5문장, 단순 요약 금지]\n' +
-    '① 이 학과의 핵심 역량과 전공 특성 설명\n' +
-    '② 추천 과목들이 그 역량을 어떻게 뒷받침하는지\n' +
-    '③ 입시(학종·수능) 전략 관점에서의 구체적 포인트\n\n' +
-    '[admissionTags]: 입시 포인트 태그 3~4개\n' +
-    '[importance]: 수학/과학/인문사회/예체능 중요도 0~100';
+  // ── localStorage 캐시 확인 (7일) ──
+  var cacheKey = 'sg_reco_v2_' + major + '_' + (univ||'');
+  try {
+    var cached = localStorage.getItem(cacheKey);
+    if(cached){
+      var cp = JSON.parse(cached);
+      if(Date.now() - cp.ts < 7*24*60*60*1000 && cp.data && cp.data.required){
+        sgRecoData = {major:major, univ:univ, data:cp.data};
+        renderSgResult(major, univ, cp.data);
+        document.getElementById('sg-loading').style.display='none';
+        if(btn){ btn.disabled=false; btn.textContent='✨ AI 과목 추천받기'; btn.style.opacity='1'; }
+        sgCheckReady();
+        return;
+      }
+    }
+  } catch(e){}
 
-  var univInfo = univ ? ('희망 대학: '+univ+'\n') : '(희망 대학 미입력 — 학과 일반 추천)\n';
+  // ── 경량화된 프롬프트 ──
+  var systemPrompt =
+    '2022 개정교육과정 진학 전문가. 순수 JSON만 반환. 마크다운·코드블록 금지.\n' +
+    'required(필수 3~4개): 전공 기초·입시 필수 과목\n' +
+    'recommended(권장 3~4개): 이수 시 입시·전공 이해에 유리한 과목\n' +
+    'optional(심화 2~3개): 심화 관심 학생 추가 추천\n' +
+    '각 desc: 전공연결·세특활용·실제활용 포함 2문장 이내.\n' +
+    'reason: 학과 핵심역량·과목 조합 이유·입시 전략 2~3문장.\n' +
+    'admissionTags: 입시 포인트 태그 3개. importance: 수학/과학/인문사회/예체능 0~100.';
+
   var userPrompt =
-    univInfo +
-    '희망 학과: '+major+'\n\n' +
-    'JSON 형식으로만 출력하세요:\n' +
-    '{"required":[{"name":"과목명","desc":"전공연결·세특활용·실제활용을 포함한 구체적 이유 2~3문장"}],' +
-    '"recommended":[{"name":"과목명","desc":"전공연결·세특활용·실제활용을 포함한 구체적 이유 2~3문장"}],' +
-    '"optional":[{"name":"과목명","desc":"전공연결·세특활용·실제활용을 포함한 구체적 이유 2~3문장"}],' +
-    '"reason":"이 학과의 핵심 역량·추천 과목 조합의 이유·입시 전략을 담은 3~5문장",' +
-    '"admissionTags":["태그1","태그2","태그3"],' +
-    '"importance":{"math":0~100,"science":0~100,"social":0~100,"art":0~100}}';
+    (univ ? '희망 대학: '+univ+'\n' : '') +
+    '희망 학과: '+major+'\n' +
+    '{"required":[{"name":"","desc":""}],"recommended":[{"name":"","desc":""}],"optional":[{"name":"","desc":""}],"reason":"","admissionTags":[],"importance":{"math":0,"science":0,"social":0,"art":0}}';
+
   function tryParse(raw){
     try{return JSON.parse(raw);}catch(e){}
     var s=raw.replace(/```[\w]*/g,'').replace(/```/g,'').trim();
@@ -5142,8 +5140,8 @@ async function generateSgReco(){
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({
-        model:'claude-sonnet-4-20250514',
-        max_tokens:2500,
+        model:'claude-haiku-4-5-20251001',
+        max_tokens:1200,
         system:systemPrompt,
         messages:[{role:'user',content:userPrompt}]
       })
@@ -5154,10 +5152,11 @@ async function generateSgReco(){
     if(!rawText) throw new Error('응답이 비어있습니다.');
     var parsed = tryParse(rawText);
     if(!parsed||!parsed.required) throw new Error('JSON 파싱 실패');
+    // 캐시 저장
+    try { localStorage.setItem(cacheKey, JSON.stringify({data:parsed, ts:Date.now()})); } catch(e){}
     sgRecoData = {major:major, univ:univ, data:parsed};
     renderSgResult(major, univ, parsed);
   } catch(e) {
-    // 폴백: 학과 특성 기반 기본 추천
     var fallback = sgFallback(major, univ);
     sgRecoData = {major:major, univ:univ, data:fallback};
     renderSgResult(major, univ, fallback);
@@ -7137,7 +7136,7 @@ function confirmMajorPickFromConstellation(){
               <div class="pcard-desc"><div class="pcard-desc-inner">탐구 전 결과를 예측하고, 다를 경우도 생각해두어요.</div></div>
             </div>
             <div class="pcard" onclick="this.classList.toggle('open')">
-              <div class="pcard-top"><div class="pcard-left"><span class="pcard-emoji">📦</span><span class="pcard-title">산출물<br>기획</span></div><span class="pcard-arrow"></span></div>
+              <div class="pcard-top"><div class="pcard-left"><span class="pcard-emoji">📋</span><span class="pcard-title">산출물<br>기획</span></div><span class="pcard-arrow"></span></div>
               <div class="pcard-desc"><div class="pcard-desc-inner">보고서·포스터·PPT 등 결과를 어떻게 표현할지 미리 정해요.</div></div>
             </div>
             <div class="pcard" onclick="this.classList.toggle('open')">
@@ -7223,7 +7222,7 @@ function confirmMajorPickFromConstellation(){
 
           <!-- 탐구 산출물 기획 -->
           <div class="rq-mf-row">
-            <div class="rq-mf-label">📦 산출물 기획</div>
+            <div class="rq-mf-label">📋 산출물 기획</div>
             <textarea id="rq-mf-output" rows="2" placeholder="예) 인포그래픽 포스터, 탐구 보고서 A4 3쪽, 발표 PPT 10장"
               class="rq-mf-textarea rq-placeholder-dim"
               oninput="rqSyncMethodFields()"
@@ -8710,7 +8709,7 @@ window.downloadRqPDF = function(){
       {icon:'🔍',label:'탐구 방법',val:mfPdf.method},
       {icon:'📅',label:'탐구 일정',val:mfPdf.schedule},
       {icon:'💡',label:'예상 결과',val:mfPdf.expected},
-      {icon:'📦',label:'산출물 기획',val:mfPdf.output},
+      {icon:'📋',label:'산출물 기획',val:mfPdf.output},
     ];
     mfPdfHtml += '<div class="mf-wrap">';
     mfPdfHtml += '<div class="mf-title">🔬 탐구 방법 재구성</div>';
@@ -8943,11 +8942,6 @@ rqRenderStars(0);
 <script>
 // ── 포트폴리오 팝업 열기 ──
 window.openPortfolioPopup = function(){
-  // 포트폴리오는 모바일 포함 항상 비밀번호 필요
-  if(localStorage.getItem('admin_auth_expire') !== '1'){
-    window._requireAdminAuthStrict(function(){ openPortfolioPopup(); });
-    return;
-  }
   var overlay = document.getElementById('portfolio-popup-overlay');
   var body = document.getElementById('pf-popup-body');
   overlay.classList.add('show');
@@ -8987,6 +8981,21 @@ window.openPortfolioPopup = function(){
 
   // Stage 4: 해왕성 — 전공 로드맵
   var nepMajors = window._nepMajors || [];
+  // localStorage 캐시에서 학과 카드 데이터 복원 (AI 호출 없이)
+  if(!window._nepCardCache) window._nepCardCache = {};
+  nepMajors.forEach(function(m){
+    if(window._nepCardCache[m]) return;
+    try {
+      var cached = localStorage.getItem('nep_card_v1_' + m);
+      if(cached){
+        var parsed = JSON.parse(cached);
+        var EXPIRE = 7 * 24 * 60 * 60 * 1000;
+        if(Date.now() - parsed.ts < EXPIRE && parsed.data && parsed.data.overview){
+          window._nepCardCache[m] = parsed.data;
+        }
+      }
+    } catch(e) {}
+  });
   var nepPickMajor = (document.getElementById('nep-pick-major')||{}).value||'';
   var tlLabels = ['중학교','고등학교','대학교','미래의 나'];
   var tlValues = [0,1,2,3].map(function(i){
@@ -9287,7 +9296,7 @@ window.openPortfolioPopup = function(){
         {icon:'🔍',label:'탐구 방법',val:mf.method},
         {icon:'📅',label:'탐구 일정',val:mf.schedule},
         {icon:'💡',label:'예상 결과',val:mf.expected},
-        {icon:'📦',label:'산출물 기획',val:mf.output},
+        {icon:'📋',label:'산출물 기획',val:mf.output},
       ];
       mfItems.forEach(function(item){
         if(!item.val) return;
@@ -9374,7 +9383,10 @@ window.openPortfolioPopup = function(){
     dnaLabel,selectedOrbs,dnaMajors,aiMajors,sgHistory,
     nepPickMajor,nepMajors,tlLabels,tlValues,
     ivMajorVal,ivUnivVal,ivPersonaVal,ivPairs,
-    rqMajor,rqTopic,rqMethod,rqWeeks,rqTypes,rqPlan};
+    rqMajor,rqTopic,rqMethod,rqWeeks,rqTypes,rqPlan,
+    rqMethodFields,
+    iqbotPlan: window._iqbotPlan || null,
+    nepCardData: window._nepCardCache || {}};
 };
 
 window.closePortfolioPopup = function(){
@@ -9471,15 +9483,32 @@ window.downloadPortfolioPDF = function(){
   html += sec('#fbbf24','🟡','전공 적합성 탐험', gz.s2||0, 20, s2body);
 
   // ── 3. 선택과목 ──
-  var sgDoneList = d.sgDoneList||[];
+  var sgHistory2 = d.sgHistory||[];
   var s3body = '';
-  if(sgDoneList.length){
-    s3body = sgDoneList.map(function(s){
-      return '<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:#f5f3ff;border-radius:8px;margin-bottom:6px;">'
-        +'<span style="font-size:13px;color:#374151;">'+s.icon+' '+s.name+'</span>'
-        +'<span style="font-size:12px;font-weight:700;color:#7c3aed;">'+s.score+'/'+s.total+'점</span></div>';
+  if(sgHistory2.length){
+    s3body = sgHistory2.map(function(entry){
+      var sd = entry.data||{};
+      var label = (entry.univ?entry.univ+' · ':'')+entry.major;
+      var inner = '<div style="margin-bottom:12px;border-radius:10px;overflow:hidden;border:1.5px solid #a855f733;">'
+        +'<div style="padding:8px 14px;background:#a855f714;font-size:12px;font-weight:900;color:#7c3aed;">🎓 '+label+'</div>'
+        +'<div style="padding:10px 14px;">';
+      if(sd.required&&sd.required.length){
+        inner += '<div style="font-size:10px;letter-spacing:1.5px;color:#2563eb;font-weight:700;margin-bottom:4px;">🛡️ 필수 이수</div>';
+        inner += '<div style="margin-bottom:8px;">'+sd.required.map(function(s){return tagEl(s.name,'#3b82f6');}).join('')+'</div>';
+      }
+      if(sd.recommended&&sd.recommended.length){
+        inner += '<div style="font-size:10px;letter-spacing:1.5px;color:#059669;font-weight:700;margin-bottom:4px;">👍 강력 권장</div>';
+        inner += '<div style="margin-bottom:8px;">'+sd.recommended.map(function(s){return tagEl(s.name,'#10b981');}).join('')+'</div>';
+      }
+      if(sd.optional&&sd.optional.length){
+        inner += '<div style="font-size:10px;letter-spacing:1.5px;color:#b45309;font-weight:700;margin-bottom:4px;">➕ 선택 심화</div>';
+        inner += '<div style="margin-bottom:6px;">'+sd.optional.map(function(s){return tagEl(s.name,'#f59e0b');}).join('')+'</div>';
+      }
+      if(sd.reason) inner += '<div style="font-size:11px;color:#6b7280;line-height:1.65;margin-top:6px;padding-top:6px;border-top:1px solid #e5e7eb;">'+sd.reason+'</div>';
+      inner += '</div></div>';
+      return inner;
     }).join('');
-  } else { s3body = emptyRow('아직 선택과목 퀴즈를 진행하지 않았어요.'); }
+  } else { s3body = emptyRow('아직 선택과목 탐험을 진행하지 않았어요.'); }
   html += sec('#a855f7','🟣','선택과목 탐험', gz.s3||0, 10, s3body);
 
   // ── 4. 전공 로드맵 ──
@@ -9487,15 +9516,42 @@ window.downloadPortfolioPDF = function(){
   var tlValues   = d.tlValues||[];
   var nepPickMajor = d.nepPickMajor||'';
   var nepMajors  = d.nepMajors||[];
+  var nepCardData2 = d.nepCardData||window._nepCardCache||{};
   var s4body = '';
   if(nepPickMajor||tlValues.some(function(v){return v&&v.trim();})||nepMajors.length){
     if(nepPickMajor) s4body += row('탐색한 학과', nepPickMajor, '#1d4ed8');
-    if(nepMajors.length) s4body += '<div style="margin-bottom:10px;"><div style="font-size:10px;letter-spacing:2px;color:#1d4ed8;font-weight:700;margin-bottom:6px;">AI 추천 로드맵 학과</div>'+nepMajors.slice(0,3).map(function(m){return tagEl(m,'#3b82f6');}).join('')+'</div>';
+    if(nepMajors.length){
+      s4body += '<div style="margin-bottom:10px;"><div style="font-size:10px;letter-spacing:2px;color:#1d4ed8;font-weight:700;margin-bottom:6px;">🎓 AI 추천 학과</div>'+nepMajors.slice(0,3).map(function(m){return tagEl(m,'#3b82f6');}).join('')+'</div>';
+      var pfIcons2=['⭐','✦','✧'];
+      nepMajors.slice(0,3).forEach(function(m,mi){
+        var info=nepCardData2[m];
+        if(!info) return;
+        s4body += '<div style="margin-bottom:12px;border-radius:10px;overflow:hidden;border:1.5px solid #3b82f633;">'
+          +'<div style="padding:8px 14px;background:#3b82f614;font-size:12px;font-weight:900;color:#1d4ed8;">'+pfIcons2[mi]+' '+m+'</div>'
+          +'<div style="padding:10px 14px;">';
+        if(info.overview) s4body += '<div style="font-size:12px;color:#374151;line-height:1.7;margin-bottom:8px;">'+info.overview+'</div>';
+        if(info.jobs&&info.jobs.length){
+          s4body += '<div style="font-size:10px;color:#1d4ed8;font-weight:700;margin-bottom:4px;">💼 관련 직업</div>';
+          s4body += '<div style="margin-bottom:7px;">'+info.jobs.slice(0,4).map(function(j){return tagEl(j,'#3b82f6');}).join('')+'</div>';
+        }
+        if(info.subjects&&info.subjects.length){
+          s4body += '<div style="font-size:10px;color:#7c3aed;font-weight:700;margin-bottom:4px;">📚 선택과목</div>';
+          s4body += '<div style="margin-bottom:7px;">'+info.subjects.slice(0,4).map(function(s){return tagEl(s,'#7c3aed');}).join('')+'</div>';
+        }
+        if(info.midActs&&info.midActs.length){
+          s4body += '<div style="font-size:10px;color:#059669;font-weight:700;margin-bottom:4px;">✅ 추천 활동</div>';
+          info.midActs.slice(0,3).forEach(function(a,ai){
+            s4body += '<div style="font-size:11px;color:#374151;line-height:1.6;padding:2px 0 2px 8px;border-left:2px solid #34d39944;">'+(ai+1)+'. '+a+'</div>';
+          });
+        }
+        s4body += '</div></div>';
+      });
+    }
     var tlFilled = tlValues.some(function(v){return v&&v.trim();});
     if(tlFilled){
       var pdfTlColors = ['#2563eb','#7c3aed','#059669','#b45309'];
       var pdfTlIcons  = ['📚','🏫','🎓','🚀'];
-      s4body += '<div style="font-size:10px;letter-spacing:2px;color:#1d4ed8;font-weight:700;margin-bottom:10px;">🗺️ 나의 성장 로드맵</div>';
+      s4body += '<div style="font-size:10px;letter-spacing:2px;color:#1d4ed8;font-weight:700;margin-bottom:10px;margin-top:8px;">🗺️ 나의 성장 로드맵</div>';
       tlValues.forEach(function(v,i){
         if(!v||!v.trim()) return;
         var c = pdfTlColors[i];
@@ -9534,12 +9590,27 @@ window.downloadPortfolioPDF = function(){
   var rqWeeks = d.rqWeeks||'';
   var rqTypes = d.rqTypes||'';
   var rqPlan  = d.rqPlan||null;
+  var rqMF    = d.rqMethodFields||null;
   var rqbody  = '';
-  if(rqTopic||rqPlan){
+  if(rqTopic||rqPlan||rqMF){
     if(rqMajor) rqbody += row('희망 학과', rqMajor, '#059669');
     if(rqTopic) rqbody += row('탐구 질문', rqTopic, '#059669');
     if(rqWeeks) rqbody += row('탐구 기간', rqWeeks, '#059669');
     if(rqTypes) rqbody += row('탐구 방식', rqTypes, '#059669');
+    var hasMF = rqMF&&(rqMF.period||rqMF.goal||rqMF.method||rqMF.schedule||rqMF.expected||rqMF.output);
+    if(hasMF){
+      rqbody += '<div style="margin-bottom:12px;"><div style="font-size:10px;letter-spacing:2px;color:#059669;font-weight:700;margin-bottom:8px;">🔬 탐구 방법 재구성</div>';
+      [{icon:'⏱',label:'탐구 기간',val:rqMF.period},{icon:'🎯',label:'탐구 목적',val:rqMF.goal},
+       {icon:'🔍',label:'탐구 방법',val:rqMF.method},{icon:'📅',label:'탐구 일정',val:rqMF.schedule},
+       {icon:'💡',label:'예상 결과',val:rqMF.expected},{icon:'📋',label:'산출물 기획',val:rqMF.output}
+      ].forEach(function(item){
+        if(!item.val) return;
+        rqbody += '<div style="margin-bottom:8px;border-radius:8px;overflow:hidden;border:1.5px solid #05966933;">'
+          +'<div style="padding:6px 12px;background:#05966912;font-size:11px;font-weight:900;color:#059669;">'+item.icon+' '+item.label+'</div>'
+          +'<div style="padding:7px 12px;font-size:13px;color:#374151;line-height:1.75;white-space:pre-line;">'+item.val+'</div></div>';
+      });
+      rqbody += '</div>';
+    }
     if(rqPlan){
       var rqFields = [{key:'subject',label:'탐구 주제'},{key:'goal',label:'탐구 목표'},{key:'method',label:'탐구 방법'},{key:'schedule',label:'탐구 일정'},{key:'material',label:'필요 자료'},{key:'expected',label:'예상 결과'},{key:'summary',label:'정리 방법'}];
       rqFields.forEach(function(f){ if(rqPlan[f.key]) rqbody += row(f.label, rqPlan[f.key], '#059669'); });
@@ -9548,7 +9619,7 @@ window.downloadPortfolioPDF = function(){
   html += sec('#34d399','🔭','주제 탐구', rqStar, 20, rqbody);
 
   // ── 탐구 설계하기 결과 (iqbot) ──
-  var iqData = window._iqbotPlan || null;
+  var iqData = d.iqbotPlan || window._iqbotPlan || null;
   var iqQ = (document.getElementById('iqbotQuestion')||{}).value||'';
   if(iqData && iqData.plan){
     var iqPlan = iqData.plan;
@@ -9577,6 +9648,16 @@ window.downloadPortfolioPDF = function(){
         +'</div>';
     });
     html += sec('#f472b6','📋','탐구 설계 계획서', undefined, undefined, iqBody);
+
+    // ── 선택한 탐구 산출물 ──
+    if(iqData.outputs && iqData.outputs.length > 0){
+      var outPdfBody = '<div style="display:flex;flex-wrap:wrap;gap:8px;">';
+      iqData.outputs.forEach(function(o){
+        outPdfBody += '<div style="display:inline-flex;align-items:center;gap:5px;padding:6px 14px;border-radius:999px;background:#fbbf2418;border:1.5px solid #fbbf2444;font-size:12px;font-weight:700;color:#92400e;">'+o.emoji+' '+o.label+'</div>';
+      });
+      outPdfBody += '</div>';
+      html += sec('#fbbf24','🎁','선택한 탐구 산출물', undefined, undefined, outPdfBody);
+    }
   }
 
   // ── 꼬리말 ──
@@ -10315,242 +10396,313 @@ window.toggleBadgePopup = toggleBadgePopup;
 
 // ── AI 전공 탐구 포트폴리오 PDF 다운로드 ──
 window.openAiPortfolio = function(){
-  window._requireAdminAuthStrict(function(){ window._openAiPortfolioCore(); });
+  window._openAiPortfolioCore();
 };
-window._openAiPortfolioCore = async function(){
-  // 데이터 수집
+window._openAiPortfolioCore = function(){
+  // ── 데이터 수집 (AI 호출 없이 기존 입력/생성 데이터만 사용) ──
   var info = window.explorerInfo || {};
   var name = info.name || '탐험가';
   var school = info.school || '';
   var sid = info.sid || '';
+  var dateStr = new Date().toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric'});
 
-  // 별 정보
   var gz = (typeof gzStars !== 'undefined') ? gzStars : {s1:0,s2:0,s3:0,s4:0};
   var iv = (typeof ivStars !== 'undefined') ? ivStars : 0;
   var rq = (typeof rqStars !== 'undefined') ? rqStars : 0;
   var totalStars = (gz.s1||0)+(gz.s2||0)+(gz.s3||0)+(gz.s4||0)+iv+rq;
-  var badge = getCurrentBadge(totalStars);
+  var badge = (typeof getCurrentBadge==='function') ? getCurrentBadge(totalStars) : {icon:'🔴',name:'탐험 시작!'};
 
-  // 입력 데이터 수집
-  var majorEl = document.getElementById('rq-major');
-  var topicEl = document.getElementById('rq-topic');
-  var major = majorEl ? majorEl.value.trim() : '';
-  var topic = topicEl ? topicEl.value.trim() : '';
-  var ivMajorVal = (typeof ivMajor !== 'undefined') ? ivMajor : '';
+  // 희망 학과 / 탐구 주제
+  var major = ((document.getElementById('rq-major')||{}).value||'').trim() || (typeof ivMajor!=='undefined'?ivMajor:'');
+  var topic = ((document.getElementById('rq-topic')||{}).value||'').trim();
 
-  // 탐험 일기 수집
-  var diaryTextareas = document.querySelectorAll('.diary-field textarea');
-  var diaryQs = ['오늘 탐험에서 가장 인상 깊었던 순간은?','탐험 전 예상과 달랐던 점이 있었나요?','이 전공에 대해 더 알고 싶어진 것이 있나요?','미래의 나에게 한 마디'];
-  var diaryEntries = diaryQs.map(function(q, i){ return {q:q, a:(diaryTextareas[i]?.value||'')}; });
-
-  // 인터뷰 기록
-  var chatHistory = (typeof ivHistory !== 'undefined') ? ivHistory : [];
-  var pairs = [];
-  for(var hi=0; hi<chatHistory.length-1; hi++){
-    if(chatHistory[hi].role==='user' && chatHistory[hi+1] && chatHistory[hi+1].role==='assistant'){
-      pairs.push({q:chatHistory[hi].content, a:chatHistory[hi+1].content});
-      hi++;
-    }
-  }
-
-  // 탐구 계획서
-  var rqPlan = window._rqPlanData ? window._rqPlanData.plan : null;
-
-  // AI 추천 전공
+  // DNA / 적합성
+  var aptData = window._aptData || {};
+  var topDnaId = aptData.topDna || '';
+  var dnaLabel = '';
+  if(typeof DNA_TYPES!=='undefined' && topDnaId){ var dt=DNA_TYPES.find(function(d){return d.id===topDnaId;}); if(dt) dnaLabel=dt.emoji+' '+dt.label; }
+  var selectedOrbs = aptData.selected || [];
+  var orbLabels = [];
+  if(typeof ACTIVITY_ORBS!=='undefined'){ selectedOrbs.forEach(function(key){ var o=ACTIVITY_ORBS.find(function(x){return x.emoji+x.label===key||x.label===key;}); if(o) orbLabels.push(o.emoji+' '+o.label); }); }
+  var dnaMajors = window._dnaRecommendedMajors || [];
   var aiMajors = [];
   document.querySelectorAll('.ob-report-major-tag').forEach(function(el){ aiMajors.push(el.textContent.trim()); });
 
-  // 로딩 표시
-  var loadingDiv = document.createElement('div');
-  loadingDiv.id = 'ai-pdf-loading';
-  loadingDiv.style.cssText = 'position:fixed;inset:0;z-index:99999;background:rgba(6,8,15,0.9);backdrop-filter:blur(12px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;';
-  loadingDiv.innerHTML = '<div style="font-size:3rem;animation:floatY 1s ease-in-out infinite;">✨</div>' +
-    '<div style="font-size:1.2rem;font-weight:800;color:#f0f4ff;letter-spacing:-0.5px;">AI가 포트폴리오를 작성하는 중...</div>' +
-    '<div id="ai-pdf-msg" style="font-size:14px;color:rgba(240,244,255,.5);">탐험 기록을 정리하고 있어요</div>' +
-    '<div style="width:200px;height:4px;background:rgba(255,255,255,.08);border-radius:999px;overflow:hidden;"><div id="ai-pdf-bar" style="height:100%;width:0%;background:linear-gradient(90deg,#1a6cf5,#a855f7);border-radius:999px;transition:width .8s ease;"></div></div>';
-  document.body.appendChild(loadingDiv);
+  // 선택과목
+  var sgHistory = window._sgRecoHistory || [];
 
-  function setMsg(msg, pct){
-    var msgEl = document.getElementById('ai-pdf-msg');
-    var barEl = document.getElementById('ai-pdf-bar');
-    if(msgEl) msgEl.textContent = msg;
-    if(barEl) barEl.style.width = pct + '%';
+  // 전공 로드맵
+  var nepMajors = window._nepMajors || [];
+  if(!window._nepCardCache) window._nepCardCache = {};
+  nepMajors.forEach(function(m){
+    if(window._nepCardCache[m]) return;
+    try { var _c=localStorage.getItem('nep_card_v1_'+m); if(_c){ var _p=JSON.parse(_c); if(Date.now()-_p.ts<7*24*60*60*1000&&_p.data&&_p.data.overview) window._nepCardCache[m]=_p.data; } } catch(e){}
+  });
+  var nepCardData = window._nepCardCache || {};
+  var nepPickMajor = ((document.getElementById('nep-pick-major')||{}).value||'').trim();
+  var tlLabels = ['중학교','고등학교','대학교','미래의 나'];
+  var tlValues = [0,1,2,3].map(function(i){ return ((document.getElementById('nep-tl-'+i)||{}).value||'').trim(); });
+
+  // 학과 인터뷰
+  var ivMajorVal = (typeof ivMajor!=='undefined')?ivMajor:'';
+  var ivUnivVal  = (typeof ivUniv!=='undefined')?ivUniv:'';
+  var ivPersonaVal=(typeof ivPersona!=='undefined')?ivPersona:'';
+  var chatHistory= (typeof ivHistory!=='undefined')?ivHistory:[];
+  var ivPairs=[];
+  for(var hi=0;hi<chatHistory.length-1;hi++){
+    if(chatHistory[hi].role==='user'&&chatHistory[hi+1]&&chatHistory[hi+1].role==='assistant'){
+      ivPairs.push({q:chatHistory[hi].content,a:chatHistory[hi+1].content}); hi++;
+    }
   }
 
-  try {
-    setMsg('AI가 탐험 내용을 분석하는 중...', 20);
+  // 주제 탐구
+  var rqData = window._rqPlanData || {};
+  var rqPlan  = rqData.plan || null;
+  var rqMajor = rqData.major || major;
+  var rqTopic = rqData.topic || topic;
+  var rqWeeks = rqData.weeks || '';
+  var rqTypes = rqData.types || '';
+  var rqMF    = rqData.methodFields || null;
 
-    var prompt = `아래는 학생의 전공 탐구 포트폴리오 데이터입니다. 이를 바탕으로 전문적이고 따뜻한 전공 탐구 포트폴리오 요약 리포트를 작성해주세요.
+  // 탐구 설계 (iqbot)
+  var iqData = window._iqbotPlan || null;
 
-[학생 정보]
-이름: ${name}
-학교: ${school}
-학번: ${sid}
+  // 탐험 일기
+  var diaryTextareas = document.querySelectorAll('.diary-field textarea');
+  var diaryQs = ['오늘 탐험에서 가장 인상 깊었던 순간은?','탐험 전 예상과 달랐던 점이 있었나요?','이 전공에 대해 더 알고 싶어진 것이 있나요?','미래의 나에게 한 마디'];
+  var diaryEntries = diaryQs.map(function(q,i){ return {q:q,a:(diaryTextareas[i]?diaryTextareas[i].value:'')}; }).filter(function(e){return e.a.trim();});
 
-[탐험 별 현황]
-- 화성·전공퀴즈: ${gz.s1||0}/25⭐
-- 목성·적합성: ${gz.s2||0}/20⭐
-- 토성·선택과목: ${gz.s3||0}/10⭐
-- 해왕성·로드맵: ${gz.s4||0}/10⭐
-- 학과인터뷰: ${iv}/15⭐
-- 주제탐구: ${rq}/20⭐
-- 총합: ${totalStars}/100⭐
-- 뱃지: ${badge.icon} ${badge.name}
+  // ── 유틸 ──
+  function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function sec(color,emoji,title,stars,maxStars,body){
+    var starBadge=stars!==undefined?'<span style="font-size:11px;font-weight:800;color:'+color+';background:'+color+'18;padding:3px 10px;border-radius:999px;margin-left:8px;">⭐ '+stars+' / '+maxStars+'</span>':'';
+    return '<div style="margin-bottom:22px;border-radius:12px;overflow:hidden;border:1.5px solid '+color+'33;">'
+      +'<div style="padding:12px 18px;background:'+color+'14;border-bottom:1.5px solid '+color+'22;display:flex;align-items:center;gap:8px;">'
+      +'<span style="font-size:18px;">'+emoji+'</span>'
+      +'<span style="font-size:13px;font-weight:900;color:'+color+';letter-spacing:1px;">'+title+'</span>'
+      +starBadge+'</div>'
+      +'<div style="padding:14px 18px;">'+body+'</div></div>';
+  }
+  function row(label,val,color){
+    if(!val||!String(val).trim()) return '';
+    return '<div style="margin-bottom:10px;">'
+      +'<div style="font-size:10px;letter-spacing:2px;color:'+(color||'#6b7280')+';font-weight:700;margin-bottom:3px;">'+label+'</div>'
+      +'<div style="font-size:13px;color:#1f2937;line-height:1.75;white-space:pre-line;">'+esc(val)+'</div></div>';
+  }
+  function tagEl(text,color){
+    return '<span style="display:inline-block;padding:4px 11px;border-radius:999px;background:'+color+'18;border:1px solid '+color+'44;font-size:11px;color:'+color+';margin:2px 2px 2px 0;">'+esc(text)+'</span>';
+  }
+  function empty(text){ return '<div style="font-size:12px;color:#9ca3af;font-style:italic;">'+text+'</div>'; }
 
-[희망 학과 / 탐구 주제]
-희망 학과: ${major||ivMajorVal||'미입력'}
-탐구 주제: ${topic||'미입력'}
+  var starRows=[
+    {label:'🔴 화성 · 전공퀴즈',val:gz.s1||0,max:25,color:'#f97316'},
+    {label:'🟡 목성 · 적합성',val:gz.s2||0,max:20,color:'#fbbf24'},
+    {label:'🟣 토성 · 선택과목',val:gz.s3||0,max:10,color:'#a855f7'},
+    {label:'🔵 해왕성 · 로드맵',val:gz.s4||0,max:10,color:'#60a5fa'},
+    {label:'🎤 학과 인터뷰',val:iv,max:15,color:'#00e5ff'},
+    {label:'🔭 주제 탐구',val:rq,max:20,color:'#34d399'},
+  ];
 
-${rqPlan ? '[탐구 계획서]\n탐구 목표: ' + (rqPlan.goal||'').substring(0,200) + '\n탐구 방법: ' + (rqPlan.method||'').substring(0,200) : ''}
+  var html = '';
 
-[탐험 일기]
-${diaryEntries.filter(function(e){return e.a;}).map(function(e){return '질문: '+e.q+'\n답변: '+e.a;}).join('\n\n')}
+  // ── 1. 전공 탐험 퀴즈 ──
+  var s1=gz.s1||0;
+  html += sec('#f97316','🔴','전공 탐험 퀴즈',s1,25,
+    s1>0 ? row('퀴즈 점수',s1+' / 15점','#f97316')+row('수준',s1>=13?'🏆 화성 마스터':s1>=10?'🌟 전공 박사':s1>=7?'🚀 절반 클리어':'🔴 도전 중','#f97316')
+         : empty('아직 전공 퀴즈를 진행하지 않았어요.'));
 
-${pairs.length > 0 ? '[학과 인터뷰 주요 내용 (최대 3쌍)]\n'+pairs.slice(0,3).map(function(p,i){return 'Q'+(i+1)+': '+p.q.substring(0,100)+'\nA: '+p.a.substring(0,200);}).join('\n\n') : ''}
+  // ── 2. 전공 적합성 ──
+  var s2b='';
+  if(dnaLabel||orbLabels.length||dnaMajors.length||aiMajors.length){
+    if(dnaLabel) s2b+=row('나의 DNA 유형',dnaLabel,'#b45309');
+    if(orbLabels.length) s2b+='<div style="margin-bottom:10px;"><div style="font-size:10px;letter-spacing:2px;color:#b45309;font-weight:700;margin-bottom:5px;">선택한 활동 오브</div>'+orbLabels.map(function(l){return tagEl(l,'#f59e0b');}).join('')+'</div>';
+    if(dnaMajors.length) s2b+='<div style="margin-bottom:10px;"><div style="font-size:10px;letter-spacing:2px;color:#b45309;font-weight:700;margin-bottom:5px;">DNA 별자리 추천 학과</div>'+dnaMajors.slice(0,5).map(function(m){return tagEl(m,'#f59e0b');}).join('')+'</div>';
+    if(aiMajors.length) s2b+='<div style="margin-bottom:4px;"><div style="font-size:10px;letter-spacing:2px;color:#b45309;font-weight:700;margin-bottom:5px;">AI 추천 전공</div>'+aiMajors.map(function(m){return tagEl(m,'#a855f7');}).join('')+'</div>';
+  } else { s2b=empty('아직 전공 적합성 탐험을 진행하지 않았어요.'); }
+  html += sec('#fbbf24','🟡','전공 적합성 탐험',gz.s2||0,20,s2b);
 
-[요청]
-위 데이터를 바탕으로 아래 섹션으로 구성된 포트폴리오 리포트를 한국어로 작성해주세요. 각 섹션은 ### 섹션제목 형식으로 구분하고, 실제 입력된 내용을 풍부하게 활용해주세요.
+  // ── 3. 선택과목 ──
+  var s3b='';
+  if(sgHistory.length){
+    s3b=sgHistory.map(function(entry){
+      var sd=entry.data||{};
+      var label=(entry.univ?entry.univ+' · ':'')+entry.major;
+      var inner='<div style="margin-bottom:12px;border-radius:10px;overflow:hidden;border:1.5px solid #a855f733;">'
+        +'<div style="padding:7px 14px;background:#a855f714;font-size:12px;font-weight:900;color:#7c3aed;">🎓 '+esc(label)+'</div>'
+        +'<div style="padding:10px 14px;">';
+      if(sd.required&&sd.required.length){ inner+='<div style="font-size:10px;color:#2563eb;font-weight:700;margin-bottom:4px;">🛡️ 필수 이수</div><div style="margin-bottom:7px;">'+sd.required.map(function(s){return tagEl(s.name,'#3b82f6');}).join('')+'</div>'; }
+      if(sd.recommended&&sd.recommended.length){ inner+='<div style="font-size:10px;color:#059669;font-weight:700;margin-bottom:4px;">👍 강력 권장</div><div style="margin-bottom:7px;">'+sd.recommended.map(function(s){return tagEl(s.name,'#10b981');}).join('')+'</div>'; }
+      if(sd.optional&&sd.optional.length){ inner+='<div style="font-size:10px;color:#b45309;font-weight:700;margin-bottom:4px;">➕ 선택 심화</div><div style="margin-bottom:6px;">'+sd.optional.map(function(s){return tagEl(s.name,'#f59e0b');}).join('')+'</div>'; }
+      if(sd.reason) inner+='<div style="font-size:11px;color:#6b7280;line-height:1.65;margin-top:5px;padding-top:5px;border-top:1px solid #e5e7eb;">'+esc(sd.reason)+'</div>';
+      inner+='</div></div>';
+      return inner;
+    }).join('');
+  } else { s3b=empty('아직 선택과목 탐험을 진행하지 않았어요.'); }
+  html += sec('#a855f7','🟣','선택과목 탐험',gz.s3||0,10,s3b);
 
-### 탐험가 소개
-### 나의 탐험 여정 (별 현황 요약 및 성장 이야기)
-### 희망 전공 탐구 (전공과 주제에 대한 깊은 탐구 내용)
-### 탐구 설계 (탐구 계획과 방법론)
-### 탐험 일기 요약
-### 미래를 향한 한 마디
-### AI 응원 메시지 (따뜻하고 구체적인 응원, 2~3문장)`;
+  // ── 4. 전공 로드맵 ──
+  var s4b='';
+  if(nepPickMajor||tlValues.some(function(v){return v;})||nepMajors.length){
+    if(nepPickMajor) s4b+=row('탐색한 학과',nepPickMajor,'#1d4ed8');
+    if(nepMajors.length){
+      s4b+='<div style="margin-bottom:10px;"><div style="font-size:10px;letter-spacing:2px;color:#1d4ed8;font-weight:700;margin-bottom:5px;">🎓 AI 추천 학과</div>'+nepMajors.slice(0,3).map(function(m){return tagEl(m,'#3b82f6');}).join('')+'</div>';
+      var pfIcons=['⭐','✦','✧'];
+      nepMajors.slice(0,3).forEach(function(m,mi){
+        var info=nepCardData[m]; if(!info) return;
+        s4b+='<div style="margin-bottom:10px;border-radius:9px;overflow:hidden;border:1.5px solid #3b82f633;">'
+          +'<div style="padding:7px 13px;background:#3b82f614;font-size:12px;font-weight:900;color:#1d4ed8;">'+pfIcons[mi]+' '+esc(m)+'</div>'
+          +'<div style="padding:9px 13px;">';
+        if(info.overview) s4b+='<div style="font-size:11px;color:#374151;line-height:1.7;margin-bottom:6px;">'+esc(info.overview)+'</div>';
+        if(info.jobs&&info.jobs.length){ s4b+='<div style="font-size:10px;color:#1d4ed8;font-weight:700;margin-bottom:3px;">💼 관련 직업</div><div style="margin-bottom:6px;">'+info.jobs.slice(0,4).map(function(j){return tagEl(j,'#3b82f6');}).join('')+'</div>'; }
+        if(info.subjects&&info.subjects.length){ s4b+='<div style="font-size:10px;color:#7c3aed;font-weight:700;margin-bottom:3px;">📚 선택과목</div><div style="margin-bottom:6px;">'+info.subjects.slice(0,4).map(function(s){return tagEl(s,'#7c3aed');}).join('')+'</div>'; }
+        if(info.midActs&&info.midActs.length){ s4b+='<div style="font-size:10px;color:#059669;font-weight:700;margin-bottom:3px;">✅ 추천 활동</div>'; info.midActs.slice(0,3).forEach(function(a,ai){ s4b+='<div style="font-size:11px;color:#374151;line-height:1.6;padding:2px 0 2px 8px;border-left:2px solid #34d39944;">'+(ai+1)+'. '+esc(a)+'</div>'; }); }
+        s4b+='</div></div>';
+      });
+    }
+    var tlFilled=tlValues.some(function(v){return v;});
+    if(tlFilled){
+      var tlC=['#2563eb','#7c3aed','#059669','#b45309'],tlI=['📚','🏫','🎓','🚀'];
+      s4b+='<div style="font-size:10px;letter-spacing:2px;color:#1d4ed8;font-weight:700;margin-bottom:8px;margin-top:6px;">🗺️ 나의 성장 로드맵</div>';
+      tlValues.forEach(function(v,i){
+        if(!v) return;
+        s4b+='<div style="margin-bottom:8px;border-radius:8px;overflow:hidden;border:1.5px solid '+tlC[i]+'44;">'
+          +'<div style="padding:6px 12px;background:'+tlC[i]+'18;font-size:11px;font-weight:800;color:'+tlC[i]+';">'+tlI[i]+' '+tlLabels[i]+'</div>'
+          +'<div style="padding:7px 12px;font-size:13px;color:#374151;line-height:1.75;white-space:pre-line;">'+esc(v)+'</div></div>';
+      });
+    }
+  } else { s4b=empty('아직 전공 로드맵 탐험을 진행하지 않았어요.'); }
+  html += sec('#60a5fa','🔵','전공 로드맵 탐험',gz.s4||0,10,s4b);
 
-    var resp = await fetch('/.netlify/functions/claude', {
-      method:'POST',
-      headers:{
-        'Content-Type':'application/json'
-      },
-      body: JSON.stringify({
-        model:'claude-sonnet-4-20250514',
-        max_tokens:3000,
-        messages:[{ role:'user', content: prompt }]
-      })
+  // ── 5. 학과 인터뷰 ──
+  var ivb='';
+  var pLabel={professor:'교수님',senior:'대학원 선배',undergrad:'학부생 선배',worker:'현직자',researcher:'연구원',counselor:'진로 선생님'};
+  if(ivMajorVal||ivPairs.length){
+    var meta=[ivMajorVal,ivUnivVal,ivPersonaVal&&pLabel[ivPersonaVal]?pLabel[ivPersonaVal]+'와 인터뷰':''].filter(Boolean).join(' · ');
+    if(meta) ivb+=row('인터뷰 대상',meta,'#0369a1');
+    if(ivPairs.length){
+      ivb+='<div style="font-size:10px;letter-spacing:2px;color:#0369a1;font-weight:700;margin-bottom:8px;">인터뷰 내용</div>';
+      ivPairs.slice(0,5).forEach(function(p,i){
+        ivb+='<div style="margin-bottom:11px;"><div style="font-size:12px;font-weight:700;color:#0369a1;margin-bottom:4px;">Q'+(i+1)+'. '+esc(p.q)+'</div>'
+          +'<div style="font-size:12px;color:#374151;line-height:1.7;padding-left:10px;border-left:2px solid #7dd3fc;">'+esc(p.a)+'</div></div>';
+      });
+    }
+  } else { ivb=empty('아직 학과 인터뷰를 진행하지 않았어요.'); }
+  html += sec('#00e5ff','🎤','학과 인터뷰',iv,15,ivb);
+
+  // ── 6. 주제 탐구 ──
+  var rqb='';
+  if(rqTopic||rqPlan||rqMF){
+    if(rqMajor) rqb+=row('희망 학과',rqMajor,'#059669');
+    if(rqTopic) rqb+=row('탐구 질문',rqTopic,'#059669');
+    if(rqWeeks) rqb+=row('탐구 기간',rqWeeks,'#059669');
+    if(rqTypes) rqb+=row('탐구 방식',rqTypes,'#059669');
+    var hasMF=rqMF&&(rqMF.period||rqMF.goal||rqMF.method||rqMF.schedule||rqMF.expected||rqMF.output);
+    if(hasMF){
+      rqb+='<div style="margin-bottom:10px;"><div style="font-size:10px;letter-spacing:2px;color:#059669;font-weight:700;margin-bottom:7px;">🔬 탐구 방법 재구성</div>';
+      [{icon:'⏱',label:'탐구 기간',val:rqMF.period},{icon:'🎯',label:'탐구 목적',val:rqMF.goal},
+       {icon:'🔍',label:'탐구 방법',val:rqMF.method},{icon:'📅',label:'탐구 일정',val:rqMF.schedule},
+       {icon:'💡',label:'예상 결과',val:rqMF.expected},{icon:'📋',label:'산출물 기획',val:rqMF.output}
+      ].forEach(function(item){
+        if(!item.val) return;
+        rqb+='<div style="margin-bottom:7px;border-radius:7px;overflow:hidden;border:1.5px solid #05966933;">'
+          +'<div style="padding:5px 11px;background:#05966912;font-size:10px;font-weight:900;color:#059669;">'+item.icon+' '+item.label+'</div>'
+          +'<div style="padding:6px 11px;font-size:12px;color:#374151;line-height:1.7;white-space:pre-line;">'+esc(item.val)+'</div></div>';
+      });
+      rqb+='</div>';
+    }
+    if(rqPlan){
+      [{key:'subject',label:'탐구 주제'},{key:'goal',label:'탐구 목표'},{key:'method',label:'탐구 방법'},
+       {key:'schedule',label:'탐구 일정'},{key:'material',label:'필요 자료'},{key:'expected',label:'예상 결과'},{key:'summary',label:'정리 방법'}
+      ].forEach(function(f){ if(rqPlan[f.key]) rqb+=row(f.label,rqPlan[f.key],'#059669'); });
+    }
+  } else { rqb=empty('아직 탐구 계획서를 생성하지 않았어요.'); }
+  html += sec('#34d399','🔭','주제 탐구',rq,20,rqb);
+
+  // ── 7. 탐구 설계 계획서 (iqbot) ──
+  if(iqData&&iqData.plan){
+    var iqP=iqData.plan;
+    var iqC={subject:'#be185d',goal:'#1d4ed8',method:'#047857',schedule:'#b45309',material:'#c2410c',expected:'#6d28d9',summary:'#0e7490'};
+    var iqb='<div style="margin-bottom:11px;padding:9px 13px;background:#fdf2f8;border-radius:7px;border:1px solid #fbcfe8;">'
+      +'<div style="font-size:10px;font-weight:700;color:#be185d;margin-bottom:3px;letter-spacing:1px;">탐구 질문</div>'
+      +'<div style="font-size:13px;color:#374151;line-height:1.7;">'+esc(iqData.q||'')+'</div>'
+      +(iqData.type||iqData.period?'<div style="font-size:10px;color:#9ca3af;margin-top:5px;">방식: '+(iqData.type||'-')+'  |  기간: '+(iqData.period||'-')+'</div>':'')+'</div>';
+    [{key:'subject',label:'탐구 주제'},{key:'goal',label:'탐구 목표'},{key:'method',label:'탐구 방법'},
+     {key:'schedule',label:'탐구 일정'},{key:'material',label:'필요한 자료'},{key:'expected',label:'예상 결과'},{key:'summary',label:'결과 정리'}
+    ].forEach(function(f){
+      var val=iqP[f.key]; if(!val||!String(val).trim()) return;
+      var c=iqC[f.key]||'#374151';
+      iqb+='<div style="margin-bottom:8px;border-radius:7px;overflow:hidden;border:1.5px solid '+c+'33;">'
+        +'<div style="padding:6px 11px;background:'+c+'12;font-size:10px;font-weight:900;color:'+c+';letter-spacing:.5px;">'+f.label+'</div>'
+        +'<div style="padding:7px 11px;font-size:12px;color:#374151;line-height:1.75;white-space:pre-line;">'+esc(String(val).replace(/\\n/g,'\n'))+'</div></div>';
     });
-
-    setMsg('포트폴리오를 구성하는 중...', 60);
-    var data = await resp.json();
-    var aiText = (data.content?.[0]?.text||'');
-
-    setMsg('PDF를 생성하는 중...', 85);
-
-    // 마크다운 파싱하여 HTML 섹션 생성
-    function parseSection(text, heading){
-      var regex = new RegExp('### '+heading+'([\\s\\S]*?)(?=###|$)', 'i');
-      var m = text.match(regex);
-      return m ? m[1].trim() : '';
+    html += sec('#f472b6','📋','탐구 설계 계획서',undefined,undefined,iqb);
+    if(iqData.outputs&&iqData.outputs.length){
+      var outb='<div style="display:flex;flex-wrap:wrap;gap:7px;">'+iqData.outputs.map(function(o){
+        return '<div style="display:inline-flex;align-items:center;gap:4px;padding:5px 12px;border-radius:999px;background:#fbbf2418;border:1.5px solid #fbbf2444;font-size:12px;font-weight:700;color:#92400e;">'+o.emoji+' '+esc(o.label)+'</div>';
+      }).join('')+'</div>';
+      html += sec('#fbbf24','🎁','선택한 탐구 산출물',undefined,undefined,outb);
     }
+  }
 
-    var sections = [
-      '탐험가 소개','나의 탐험 여정','희망 전공 탐구','탐구 설계','탐험 일기 요약','미래를 향한 한 마디','AI 응원 메시지'
-    ];
-    var sectionColors = ['#1a6cf5','#a855f7','#00e5ff','#34d399','#fbbf24','#ec4899','#60a5fa'];
-    var sectionEmojis = ['👤','🌟','🎓','🔬','📓','🚀','💌'];
-
-    var sectionsHtml = sections.map(function(sec, i){
-      var content = parseSection(aiText, sec);
-      var lines = content.split('\n').filter(function(l){return l.trim();});
-      var htmlContent = lines.map(function(l){
-        return '<p style="font-size:14px;color:#374151;line-height:1.8;margin-bottom:8px;">'+l.replace(/\*\*/g,'').replace(/\*/g,'')+'</p>';
-      }).join('');
-      return '<div style="margin-bottom:28px;padding:22px 24px;border:1px solid #e5e7eb;border-left:4px solid '+sectionColors[i]+';border-radius:0 14px 14px 0;">' +
-        '<div style="font-size:14px;font-weight:800;color:'+sectionColors[i]+';letter-spacing:2px;margin-bottom:12px;">'+sectionEmojis[i]+' '+sec.toUpperCase()+'</div>' +
-        (htmlContent || '<p style="font-size:14px;color:#9ca3af;">내용이 없어요.</p>') +
-      '</div>';
+  // ── 8. 탐험 일기 ──
+  if(diaryEntries.length){
+    var db=diaryEntries.map(function(e,i){
+      return '<div style="margin-bottom:12px;padding:10px 14px;background:#f0fdf4;border-radius:8px;border:1px solid #bbf7d0;">'
+        +'<div style="font-size:10px;font-weight:700;color:#059669;margin-bottom:4px;">Q'+(i+1)+'. '+esc(e.q)+'</div>'
+        +'<div style="font-size:13px;color:#374151;line-height:1.75;white-space:pre-line;">'+esc(e.a)+'</div></div>';
     }).join('');
+    html += sec('#10b981','📓','탐험 일기',undefined,undefined,db);
+  }
 
-    var starRows = [
-      {label:'화성 · 전공퀴즈', val:gz.s1||0, max:25, color:'#f97316'},
-      {label:'목성 · 적합성', val:gz.s2||0, max:20, color:'#fbbf24'},
-      {label:'토성 · 선택과목', val:gz.s3||0, max:10, color:'#a855f7'},
-      {label:'해왕성 · 로드맵', val:gz.s4||0, max:10, color:'#60a5fa'},
-      {label:'인터뷰', val:iv, max:15, color:'#00e5ff'},
-      {label:'주제탐구', val:rq, max:20, color:'#34d399'},
-    ];
-    var starGridHtml = starRows.map(function(r){
-      return '<div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:12px;text-align:center;">' +
-        '<div style="font-size:12px;color:#6b7280;margin-bottom:4px;">'+r.label+'</div>' +
-        '<div style="font-size:1.2rem;font-weight:800;color:'+r.color+';">'+r.val+'<span style="font-size:11px;color:#9ca3af;"> /'+r.max+'</span></div>' +
-      '</div>';
-    }).join('');
+  // ── 꼬리말 ──
+  html += '<div style="margin-top:28px;padding-top:14px;border-top:1px solid #e5e7eb;display:flex;justify-content:space-between;font-size:11px;color:#9ca3af;">'
+    +'<span>'+esc(name)+' 탐험가 · 전지적 전공시점</span>'
+    +'<span>'+[school,dateStr].filter(Boolean).join(' · ')+'</span></div>';
 
-    var pdfHtml = `<!DOCTYPE html>
-<html lang="ko">
-<head>
-<meta charset="UTF-8"/>
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap');
-*{margin:0;padding:0;box-sizing:border-box;}
-body{font-family:'Noto Sans KR',sans-serif;background:#fff;color:#111;}
-@page{margin:15mm 18mm;size:A4;}
-</style>
-</head>
-<body>
+  // ── PDF 생성 ──
+  var starGridHtml = starRows.map(function(r){
+    return '<div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:10px;text-align:center;">'
+      +'<div style="font-size:11px;color:#6b7280;margin-bottom:3px;">'+r.label+'</div>'
+      +'<div style="font-size:1.1rem;font-weight:800;color:'+r.color+';">'+r.val+'<span style="font-size:10px;color:#9ca3af;"> /'+r.max+'</span></div></div>';
+  }).join('');
 
-<!-- 표지 -->
-<div style="background:linear-gradient(145deg,#0b1220,#0f1e3a);color:#fff;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:60px;page-break-after:always;">
-  <div style="font-size:13px;letter-spacing:4px;color:rgba(0,229,255,.8);margin-bottom:28px;">전지적 전공시점 · AI 전공 탐구 포트폴리오</div>
-  <div style="font-size:3rem;font-weight:900;color:#fff;letter-spacing:-2px;line-height:1.2;margin-bottom:12px;">${name}의<br>전공 탐구 포트폴리오</div>
-  <div style="font-size:15px;color:rgba(255,255,255,.5);margin-bottom:40px;">${school} ${sid}</div>
-  <div style="font-size:4rem;margin-bottom:16px;">${badge.icon}</div>
-  <div style="font-size:1.4rem;font-weight:800;color:#fbbf24;margin-bottom:8px;">${badge.name}</div>
-  <div style="font-size:15px;color:rgba(255,255,255,.5);margin-bottom:40px;">총 ${totalStars} / 100 ⭐ 획득</div>
-  <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;">
-    ${starRows.map(function(r){ return '<div style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:10px 16px;text-align:center;"><div style="font-size:11px;color:rgba(255,255,255,.45);margin-bottom:4px;">'+r.label+'</div><div style="font-size:1.1rem;font-weight:800;color:'+r.color+';">'+r.val+' / '+r.max+'⭐</div></div>'; }).join('')}
-  </div>
-  <div style="margin-top:40px;font-size:13px;color:rgba(255,255,255,.25);">${new Date().toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric'})}</div>
-</div>
+  var pdfHtml = '<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"/>'
+    +'<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&display=swap" rel="stylesheet"/>'
+    +'<style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:"Noto Sans KR",sans-serif;background:#fff;color:#111;padding:32px 40px;}@page{margin:12mm 16mm;size:A4;}@media print{.no-print{display:none;}}</style>'
+    +'</head><body>'
+    // 표지
+    +'<div style="background:linear-gradient(145deg,#0b1220,#0f1e3a);color:#fff;padding:56px 48px;text-align:center;page-break-after:always;border-radius:0;">'
+    +'<div style="font-size:11px;letter-spacing:4px;color:rgba(0,229,255,.7);margin-bottom:20px;">전지적 전공시점 · 전공 탐구 포트폴리오</div>'
+    +'<div style="font-size:2.4rem;font-weight:900;letter-spacing:-1.5px;line-height:1.3;margin-bottom:12px;">'+esc(name)+'의<br>전공 탐구 포트폴리오</div>'
+    +(school||sid?'<div style="font-size:13px;color:rgba(255,255,255,.4);margin-bottom:32px;">'+esc([school,sid].filter(Boolean).join(' · '))+'</div>':'<div style="margin-bottom:32px;"></div>')
+    +'<div style="font-size:3.5rem;margin-bottom:10px;">'+badge.icon+'</div>'
+    +'<div style="font-size:1.2rem;font-weight:800;color:#fbbf24;margin-bottom:6px;">'+esc(badge.name)+'</div>'
+    +'<div style="font-size:13px;color:rgba(255,255,255,.4);margin-bottom:36px;">총 '+totalStars+' / 100 ⭐</div>'
+    +'<div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">'
+    +starRows.map(function(r){return '<div style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:9px;padding:8px 14px;text-align:center;"><div style="font-size:10px;color:rgba(255,255,255,.4);margin-bottom:3px;">'+r.label+'</div><div style="font-size:1rem;font-weight:800;color:'+r.color+';">'+r.val+'<span style="font-size:9px;color:rgba(255,255,255,.3);"> /'+r.max+'</span></div></div>';}).join('')
+    +'</div><div style="margin-top:36px;font-size:11px;color:rgba(255,255,255,.2);">'+dateStr+'</div></div>'
+    // 별 요약
+    +'<div style="padding:40px 0 28px;page-break-after:always;">'
+    +'<div style="font-size:12px;font-weight:800;color:#1a6cf5;letter-spacing:3px;border-bottom:2px solid #e8f0fe;padding-bottom:10px;margin-bottom:20px;">✦ 탐험 별 현황</div>'
+    +'<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px;">'+starGridHtml+'</div>'
+    +'<div style="background:linear-gradient(135deg,#1a6cf5,#6366f1);border-radius:12px;padding:18px 22px;text-align:center;color:#fff;">'
+    +'<div style="font-size:12px;color:rgba(255,255,255,.7);margin-bottom:6px;">총 획득 별</div>'
+    +'<div style="font-size:2.2rem;font-weight:900;">'+totalStars+' <span style="font-size:.9rem;color:rgba(255,255,255,.5);">/ 100 ⭐</span></div>'
+    +'<div style="font-size:1rem;font-weight:700;margin-top:6px;">'+badge.icon+' '+esc(badge.name)+'</div></div></div>'
+    // 탐구 내용
+    +'<div>'
+    +'<div style="font-size:12px;font-weight:800;color:#1a6cf5;letter-spacing:3px;border-bottom:2px solid #e8f0fe;padding-bottom:10px;margin-bottom:22px;">✦ 전공 탐구 기록</div>'
+    +html
+    +'</div>'
+    +'</body></html>';
 
-<!-- 별 요약 -->
-<div style="padding:48px 60px;page-break-after:always;">
-  <div style="font-size:13px;font-weight:800;color:#1a6cf5;letter-spacing:3px;text-transform:uppercase;border-bottom:2px solid #e8f0fe;padding-bottom:12px;margin-bottom:28px;">✦ 탐험 별 현황</div>
-  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:28px;">${starGridHtml}</div>
-  <div style="background:linear-gradient(135deg,#1a6cf5,#6366f1);border-radius:14px;padding:20px 24px;text-align:center;color:#fff;">
-    <div style="font-size:14px;color:rgba(255,255,255,.7);margin-bottom:8px;">총 획득 별</div>
-    <div style="font-size:2.4rem;font-weight:900;">${totalStars} <span style="font-size:1rem;color:rgba(255,255,255,.6);">/ 100 ⭐</span></div>
-    <div style="font-size:1.1rem;font-weight:700;margin-top:8px;">${badge.icon} ${badge.name}</div>
-  </div>
-</div>
-
-<!-- AI 생성 포트폴리오 내용 -->
-<div style="padding:48px 60px;">
-  <div style="font-size:13px;font-weight:800;color:#1a6cf5;letter-spacing:3px;text-transform:uppercase;border-bottom:2px solid #e8f0fe;padding-bottom:12px;margin-bottom:28px;">✦ AI 전공 탐구 리포트</div>
-  ${sectionsHtml}
-  <div style="margin-top:48px;padding-top:24px;border-top:1px solid #e5e7eb;display:flex;align-items:center;gap:12px;font-size:13px;color:#9ca3af;">
-    <span>${name} 탐험가</span>
-    <span>·</span>
-    <span>전지적 전공시점</span>
-    <span>·</span>
-    <span>${school}</span>
-    <span>·</span>
-    <span>${new Date().toLocaleDateString('ko-KR')}</span>
-  </div>
-</div>
-
-</body>
-</html>`;
-
-    setMsg('PDF 파일을 여는 중...', 100);
-    var w = window.open('', '_blank');
-    if(w){
-      w.document.write(pdfHtml);
-      w.document.close();
-      setTimeout(function(){
-        w.print();
-      }, 1200);
-    } else {
-      alert('팝업이 차단되었어요. 팝업 허용 후 다시 시도해주세요.');
-    }
-
-  } catch(e) {
-    console.error(e);
-    alert('오류가 발생했어요. 잠시 후 다시 시도해주세요.');
-  } finally {
-    var el = document.getElementById('ai-pdf-loading');
-    if(el) el.remove();
+  var w = window.open('','_blank','width=1000,height=860');
+  if(w){
+    w.document.write(pdfHtml);
+    w.document.close();
+    setTimeout(function(){ w.print(); }, 1000);
+  } else {
+    alert('팝업이 차단되어 있어요. 팝업 허용 후 다시 시도해주세요.');
   }
 };
 </script>
