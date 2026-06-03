@@ -7254,6 +7254,24 @@ function confirmMajorPickFromConstellation(){
             ></textarea>
           </div>
 
+          <!-- 진로 연계 -->
+          <div class="rq-mf-row">
+            <div class="rq-mf-label">🏫 진로 연계</div>
+            <textarea id="rq-mf-career" rows="2" placeholder="예) 이 탐구가 항공우주공학과 진학 목표와 연결되는 이유, 관련 교과 세특 활용 계획 등"
+              class="rq-mf-textarea rq-placeholder-dim"
+              oninput="rqSyncMethodFields()"
+            ></textarea>
+          </div>
+
+          <!-- 성찰 기록 -->
+          <div class="rq-mf-row">
+            <div class="rq-mf-label">💭 성찰 기록</div>
+            <textarea id="rq-mf-reflection" rows="2" placeholder="예) 탐구를 통해 새롭게 알게 된 점, 생각이 바뀐 부분, 앞으로 더 알고 싶은 것"
+              class="rq-mf-textarea rq-placeholder-dim"
+              oninput="rqSyncMethodFields()"
+            ></textarea>
+          </div>
+
         </div>
 
         <div style="display:flex;flex-direction:column;align-items:center;gap:10px;margin-top:16px;">
@@ -8738,7 +8756,7 @@ window.downloadRqPDF = function(){
   if(typeof rqSyncMethodFields === 'function') rqSyncMethodFields();
   var userMethodPdf = (d.method || (document.getElementById('rq-method-input')||{}).value||'').trim();
   var mfPdf = (d.methodFields) || null;
-  var hasMfPdf = mfPdf && (mfPdf.period||mfPdf.goal||mfPdf.method||mfPdf.schedule||mfPdf.expected||mfPdf.output);
+  var hasMfPdf = mfPdf && (mfPdf.period||mfPdf.goal||mfPdf.method||mfPdf.schedule||mfPdf.expected||mfPdf.output||mfPdf.career||mfPdf.reflection);
   var steps = RQP_STEPS;
   var colors = ['#ef4444','#f59e0b','#34d399','#6366f1','#00bcd4','#ec4899','#a855f7'];
 
@@ -8752,6 +8770,8 @@ window.downloadRqPDF = function(){
       {icon:'📅',label:'탐구 일정',val:mfPdf.schedule},
       {icon:'💡',label:'예상 결과',val:mfPdf.expected},
       {icon:'📋',label:'산출물 기획',val:mfPdf.output},
+      {icon:'🏫',label:'진로 연계',val:mfPdf.career},
+      {icon:'💭',label:'성찰 기록',val:mfPdf.reflection},
     ];
     mfPdfHtml += '<div class="mf-wrap">';
     mfPdfHtml += '<div class="mf-title">🔬 탐구 방법 재구성</div>';
@@ -8865,24 +8885,28 @@ if(document.readyState === 'loading'){
 
 // 탐구 방법 6개 필드 → 통합 텍스트로 동기화
 function rqSyncMethodFields(){
-  var period   = ((document.getElementById('rq-mf-period')||{}).value||'').trim();
-  var goal     = ((document.getElementById('rq-mf-goal')||{}).value||'').trim();
-  var method   = ((document.getElementById('rq-mf-method')||{}).value||'').trim();
-  var schedule = ((document.getElementById('rq-mf-schedule')||{}).value||'').trim();
-  var expected = ((document.getElementById('rq-mf-expected')||{}).value||'').trim();
-  var output   = ((document.getElementById('rq-mf-output')||{}).value||'').trim();
+  var period     = ((document.getElementById('rq-mf-period')||{}).value||'').trim();
+  var goal       = ((document.getElementById('rq-mf-goal')||{}).value||'').trim();
+  var method     = ((document.getElementById('rq-mf-method')||{}).value||'').trim();
+  var schedule   = ((document.getElementById('rq-mf-schedule')||{}).value||'').trim();
+  var expected   = ((document.getElementById('rq-mf-expected')||{}).value||'').trim();
+  var output     = ((document.getElementById('rq-mf-output')||{}).value||'').trim();
+  var career     = ((document.getElementById('rq-mf-career')||{}).value||'').trim();
+  var reflection = ((document.getElementById('rq-mf-reflection')||{}).value||'').trim();
   var combined = [
-    period   ? '[탐구 기간] '+period   : '',
-    goal     ? '[탐구 목적] '+goal     : '',
-    method   ? '[탐구 방법] '+method   : '',
-    schedule ? '[탐구 일정] '+schedule : '',
-    expected ? '[예상 결과] '+expected : '',
-    output   ? '[산출물 기획] '+output   : '',
+    period     ? '[탐구 기간] '+period     : '',
+    goal       ? '[탐구 목적] '+goal       : '',
+    method     ? '[탐구 방법] '+method     : '',
+    schedule   ? '[탐구 일정] '+schedule   : '',
+    expected   ? '[예상 결과] '+expected   : '',
+    output     ? '[산출물 기획] '+output   : '',
+    career     ? '[진로 연계] '+career     : '',
+    reflection ? '[성찰 기록] '+reflection : '',
   ].filter(Boolean).join('\n');
   var hidden = document.getElementById('rq-method-input');
   if(hidden) hidden.value = combined;
   // 개별 필드 객체 저장
-  var fields = { period, goal, method, schedule, expected, output };
+  var fields = { period, goal, method, schedule, expected, output, career, reflection };
   if(window._rqPlanData) window._rqPlanData.methodFields = fields;
   // 별 점수 실시간 반영
   rqUpdateStarsFromInputs();
@@ -9342,7 +9366,7 @@ window.openPortfolioPopup = function(){
     if(rqTopic) rqHtml += field('탐구 질문', rqTopic, '#34d399');
     // 탐구 방법 재구성 6개 항목
     var mf = rqMethodFields;
-    var hasMf = mf && (mf.period||mf.goal||mf.method||mf.schedule||mf.expected||mf.output);
+    var hasMf = mf && (mf.period||mf.goal||mf.method||mf.schedule||mf.expected||mf.output||mf.career||mf.reflection);
     if(hasMf){
       rqHtml += '<div style="margin:6px 0 14px;">';
       rqHtml += '<div style="font-size:11px;letter-spacing:2px;color:rgba(196,181,253,.8);font-weight:700;margin-bottom:10px;">🔬 탐구 방법 재구성</div>';
@@ -9353,6 +9377,8 @@ window.openPortfolioPopup = function(){
         {icon:'📅',label:'탐구 일정',val:mf.schedule},
         {icon:'💡',label:'예상 결과',val:mf.expected},
         {icon:'📋',label:'산출물 기획',val:mf.output},
+        {icon:'🏫',label:'진로 연계',val:mf.career},
+        {icon:'💭',label:'성찰 기록',val:mf.reflection},
       ];
       mfItems.forEach(function(item){
         if(!item.val) return;
@@ -9650,12 +9676,13 @@ window.downloadPortfolioPDF = function(){
     if(rqTopic) rqbody += row('탐구 질문', rqTopic, '#059669');
     if(rqWeeks) rqbody += row('탐구 기간', rqWeeks, '#059669');
     if(rqTypes) rqbody += row('탐구 방식', rqTypes, '#059669');
-    var hasMF = rqMF&&(rqMF.period||rqMF.goal||rqMF.method||rqMF.schedule||rqMF.expected||rqMF.output);
+    var hasMF = rqMF&&(rqMF.period||rqMF.goal||rqMF.method||rqMF.schedule||rqMF.expected||rqMF.output||rqMF.career||rqMF.reflection);
     if(hasMF){
       rqbody += '<div style="margin-bottom:12px;"><div style="font-size:10px;letter-spacing:2px;color:#059669;font-weight:700;margin-bottom:8px;">🔬 탐구 방법 재구성</div>';
       [{icon:'⏱',label:'탐구 기간',val:rqMF.period},{icon:'🎯',label:'탐구 목적',val:rqMF.goal},
        {icon:'🔍',label:'탐구 방법',val:rqMF.method},{icon:'📅',label:'탐구 일정',val:rqMF.schedule},
-       {icon:'💡',label:'예상 결과',val:rqMF.expected},{icon:'📋',label:'산출물 기획',val:rqMF.output}
+       {icon:'💡',label:'예상 결과',val:rqMF.expected},{icon:'📋',label:'산출물 기획',val:rqMF.output},
+       {icon:'🏫',label:'진로 연계',val:rqMF.career},{icon:'💭',label:'성찰 기록',val:rqMF.reflection}
       ].forEach(function(item){
         if(!item.val) return;
         rqbody += '<div style="margin-bottom:8px;border-radius:8px;overflow:hidden;border:1.5px solid #05966933;">'
@@ -10904,12 +10931,13 @@ window._openAiPortfolioCore = function(){
     if(rqTopic) rqb+=row('탐구 질문',rqTopic,'#059669');
     if(rqWeeks) rqb+=row('탐구 기간',rqWeeks,'#059669');
     if(rqTypes) rqb+=row('탐구 방식',rqTypes,'#059669');
-    var hasMF=rqMF&&(rqMF.period||rqMF.goal||rqMF.method||rqMF.schedule||rqMF.expected||rqMF.output);
+    var hasMF=rqMF&&(rqMF.period||rqMF.goal||rqMF.method||rqMF.schedule||rqMF.expected||rqMF.output||rqMF.career||rqMF.reflection);
     if(hasMF){
       rqb+='<div style="margin-bottom:10px;"><div style="font-size:10px;letter-spacing:2px;color:#059669;font-weight:700;margin-bottom:7px;">🔬 탐구 방법 재구성</div>';
       [{icon:'⏱',label:'탐구 기간',val:rqMF.period},{icon:'🎯',label:'탐구 목적',val:rqMF.goal},
        {icon:'🔍',label:'탐구 방법',val:rqMF.method},{icon:'📅',label:'탐구 일정',val:rqMF.schedule},
-       {icon:'💡',label:'예상 결과',val:rqMF.expected},{icon:'📋',label:'산출물 기획',val:rqMF.output}
+       {icon:'💡',label:'예상 결과',val:rqMF.expected},{icon:'📋',label:'산출물 기획',val:rqMF.output},
+       {icon:'🏫',label:'진로 연계',val:rqMF.career},{icon:'💭',label:'성찰 기록',val:rqMF.reflection}
       ].forEach(function(item){
         if(!item.val) return;
         rqb+='<div style="margin-bottom:7px;border-radius:7px;overflow:hidden;border:1.5px solid #05966933;">'
