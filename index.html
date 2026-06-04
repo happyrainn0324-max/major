@@ -5135,7 +5135,7 @@ async function generateSgReco(){
   document.getElementById('sg-error').style.display='none';
 
   // ── localStorage 캐시 확인 (7일) ──
-  var cacheKey = 'sg_reco_v3_' + major + '_' + (univ||'');
+  var cacheKey = 'sg_reco_v4_' + major + '_' + (univ||'');
   try {
     var cached = localStorage.getItem(cacheKey);
     if(cached){
@@ -5186,10 +5186,13 @@ async function generateSgReco(){
     '- general: 3~4개 (일반선택에서)\n' +
     '- fusion: 2~3개 (융합선택에서)\n' +
     '- career: 3~5개 (진로선택에서)\n' +
+    '- desc에서 학과명을 언급할 때는 입력된 학과명 전체를 그대로 사용 (예: "생명공학과", "컴퓨터공학과" — 절대 줄여서 쓰지 말 것)\n' +
     '- 각 desc: 세특 활용법·전공연결 1~2문장\n' +
     '- reason: 과목 조합 전략·세특 스토리라인·입시 연계 3문장\n' +
     '- admissionTags: 입시 핵심 포인트 3~4개\n' +
-    '- importance: 수학(math)/과학(science)/인문사회(social)/예체능(art) 각 0~100';
+    '- importance: 수학(math)/과학(science)/인문사회(social)/예체능(art) 각 0~100\n\n' +
+    '■ 절대 사용 금지 (구 교육과정 과목명)\n' +
+    '수학Ⅰ, 수학Ⅱ, 미적분(단독), 물리학Ⅰ, 물리학Ⅱ, 화학Ⅰ, 화학Ⅱ, 생명과학Ⅰ, 생명과학Ⅱ, 지구과학Ⅰ, 지구과학Ⅱ, 사회·문화, 사회문화, 생활과 윤리, 윤리와 사상, 정치와 법, 경제(단독 과목으로), 한국지리(단독), 세계지리, 미디어 리터러시, 정보과학, 심화수학, 고급수학, 고급물리학, 현대세계의 변화';
 
   var userPrompt =
     (univ ? '희망 대학: '+univ+'\n' : '') +
