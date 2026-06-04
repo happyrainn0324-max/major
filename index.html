@@ -3538,49 +3538,77 @@ window.toggleStage = function(n){
             <!-- 안내 배너 -->
             <div id="sg-notice-bar" style="padding:11px 16px;border-radius:12px;background:rgba(168,85,247,.1);border:1px solid rgba(168,85,247,.25);font-size:12.5px;color:rgba(200,160,255,.9);margin-bottom:16px;line-height:1.65;"></div>
 
-            <!-- 과목 카드 3개 -->
-            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:14px;" class="sg-cards-row">
+            <!-- 2022 개정교육과정 과목 구조 안내 -->
+            <div style="background:rgba(99,102,241,.07);border:1px solid rgba(99,102,241,.22);border-radius:14px;padding:12px 16px;margin-bottom:14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+              <div style="font-size:12px;font-weight:800;color:#a5b4fc;letter-spacing:1px;white-space:nowrap;">📋 2022 개정교육과정</div>
+              <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
+                <span style="font-size:11px;padding:3px 10px;border-radius:999px;background:rgba(96,165,250,.18);border:1px solid rgba(96,165,250,.35);color:#93c5fd;font-weight:700;">공통과목</span>
+                <span style="font-size:11px;color:rgba(240,244,255,.3);">→</span>
+                <span style="font-size:11px;padding:3px 10px;border-radius:999px;background:rgba(52,211,153,.15);border:1px solid rgba(52,211,153,.3);color:#6ee7b7;font-weight:700;">일반선택</span>
+                <span style="font-size:11px;color:rgba(240,244,255,.3);">→</span>
+                <span style="font-size:11px;padding:3px 10px;border-radius:999px;background:rgba(251,191,36,.15);border:1px solid rgba(251,191,36,.3);color:#fde68a;font-weight:700;">융합선택</span>
+                <span style="font-size:11px;color:rgba(240,244,255,.3);">→</span>
+                <span style="font-size:11px;padding:3px 10px;border-radius:999px;background:rgba(251,113,133,.15);border:1px solid rgba(251,113,133,.3);color:#fda4af;font-weight:700;">진로선택</span>
+              </div>
+            </div>
 
-              <!-- 필수 -->
-              <div class="sg-reco-card" style="background:rgba(255,255,255,.03);border:1px solid rgba(96,165,250,.3);border-radius:18px;overflow:hidden;">
-                <div style="padding:14px 14px 12px;background:rgba(96,165,250,.1);border-bottom:1px solid rgba(96,165,250,.2);display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;">
-                  <div style="width:30px;height:30px;border-radius:8px;background:rgba(96,165,250,.2);display:flex;align-items:center;justify-content:center;font-size:15px;">🛡️</div>
-                  <div style="font-size:15px;font-weight:800;color:#93c5fd;">필수 이수</div>
-                  <div style="font-size:11px;color:rgba(147,197,253,.6);">반드시 들어야 해요</div>
+            <!-- 공통과목 (1학년) -->
+            <div class="sg-reco-card" style="background:rgba(255,255,255,.03);border:1px solid rgba(96,165,250,.28);border-radius:18px;overflow:hidden;margin-bottom:12px;">
+              <div style="padding:13px 16px 11px;background:rgba(96,165,250,.09);border-bottom:1px solid rgba(96,165,250,.18);display:flex;align-items:center;gap:10px;">
+                <div style="width:28px;height:28px;border-radius:8px;background:rgba(96,165,250,.2);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">📌</div>
+                <div>
+                  <div style="font-size:14px;font-weight:800;color:#93c5fd;">공통과목 <span style="font-size:11px;font-weight:500;color:rgba(147,197,253,.65);">· 1학년 필수 이수</span></div>
+                  <div style="font-size:11.5px;color:rgba(147,197,253,.55);margin-top:1px;">모든 학생이 이수하는 기초 과목 — 세특 설계의 출발점</div>
                 </div>
-                <div id="sg-required-list" style="padding:12px 14px;display:flex;flex-direction:column;gap:9px;"></div>
+              </div>
+              <div id="sg-common-list" style="padding:12px 16px;display:flex;flex-direction:column;gap:0;"></div>
+            </div>
+
+            <!-- 일반선택 + 융합선택 2단 -->
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;" class="sg-cards-row">
+
+              <!-- 일반선택 -->
+              <div class="sg-reco-card" style="background:rgba(255,255,255,.03);border:1px solid rgba(52,211,153,.28);border-radius:18px;overflow:hidden;">
+                <div style="padding:13px 14px 11px;background:rgba(52,211,153,.09);border-bottom:1px solid rgba(52,211,153,.18);display:flex;flex-direction:column;align-items:center;gap:5px;text-align:center;">
+                  <div style="width:28px;height:28px;border-radius:8px;background:rgba(52,211,153,.2);display:flex;align-items:center;justify-content:center;font-size:14px;">✅</div>
+                  <div style="font-size:14px;font-weight:800;color:#6ee7b7;">일반선택</div>
+                  <div style="font-size:11px;color:rgba(110,231,183,.6);">전공 핵심 역량 과목</div>
+                </div>
+                <div id="sg-general-list" style="padding:12px 14px;display:flex;flex-direction:column;gap:0;"></div>
               </div>
 
-              <!-- 권장 -->
-              <div class="sg-reco-card" style="background:rgba(255,255,255,.03);border:1px solid rgba(52,211,153,.3);border-radius:18px;overflow:hidden;">
-                <div style="padding:14px 14px 12px;background:rgba(52,211,153,.1);border-bottom:1px solid rgba(52,211,153,.2);display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;">
-                  <div style="width:30px;height:30px;border-radius:8px;background:rgba(52,211,153,.2);display:flex;align-items:center;justify-content:center;font-size:15px;">👍</div>
-                  <div style="font-size:15px;font-weight:800;color:#6ee7b7;">강력 권장</div>
-                  <div style="font-size:11px;color:rgba(110,231,183,.6);">들으면 유리해요</div>
+              <!-- 융합선택 -->
+              <div class="sg-reco-card" style="background:rgba(255,255,255,.03);border:1px solid rgba(251,191,36,.28);border-radius:18px;overflow:hidden;">
+                <div style="padding:13px 14px 11px;background:rgba(251,191,36,.07);border-bottom:1px solid rgba(251,191,36,.18);display:flex;flex-direction:column;align-items:center;gap:5px;text-align:center;">
+                  <div style="width:28px;height:28px;border-radius:8px;background:rgba(251,191,36,.22);display:flex;align-items:center;justify-content:center;font-size:14px;">🔀</div>
+                  <div style="font-size:14px;font-weight:800;color:#fcd34d;">융합선택</div>
+                  <div style="font-size:11px;color:rgba(252,211,77,.75);">교과 경계 넘는 심화</div>
                 </div>
-                <div id="sg-recommended-list" style="padding:12px 14px;display:flex;flex-direction:column;gap:9px;"></div>
-              </div>
-
-              <!-- 선택 심화 -->
-              <div class="sg-reco-card" style="background:rgba(255,255,255,.03);border:1px solid rgba(251,191,36,.3);border-radius:18px;overflow:hidden;">
-                <div style="padding:14px 14px 12px;background:rgba(251,191,36,.08);border-bottom:1px solid rgba(251,191,36,.2);display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;">
-                  <div style="width:30px;height:30px;border-radius:8px;background:rgba(251,191,36,.25);display:flex;align-items:center;justify-content:center;font-size:15px;">➕</div>
-                  <div style="font-size:15px;font-weight:800;color:#fcd34d;">선택 심화</div>
-                  <div style="font-size:11px;color:rgba(252,211,77,.85);">관심 있으면 추가</div>
-                </div>
-                <div id="sg-optional-list" style="padding:12px 14px;display:flex;flex-direction:column;gap:9px;"></div>
+                <div id="sg-fusion-list" style="padding:12px 14px;display:flex;flex-direction:column;gap:0;"></div>
               </div>
 
             </div>
 
-            <!-- 하단 2칸: 추천 이유 + 입시 요약 -->
+            <!-- 진로선택 (전체 폭) -->
+            <div class="sg-reco-card" style="background:rgba(255,255,255,.03);border:1px solid rgba(251,113,133,.28);border-radius:18px;overflow:hidden;margin-bottom:12px;">
+              <div style="padding:13px 16px 11px;background:rgba(251,113,133,.08);border-bottom:1px solid rgba(251,113,133,.18);display:flex;align-items:center;gap:10px;">
+                <div style="width:28px;height:28px;border-radius:8px;background:rgba(251,113,133,.2);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">🚀</div>
+                <div>
+                  <div style="font-size:14px;font-weight:800;color:#fda4af;">진로선택 <span style="font-size:11px;font-weight:500;color:rgba(253,164,175,.6);">· 전공 특화 심화과목</span></div>
+                  <div style="font-size:11.5px;color:rgba(253,164,175,.5);margin-top:1px;">전공 적합성을 가장 강하게 보여주는 과목 — 세특·소논문 연계 핵심</div>
+                </div>
+              </div>
+              <div id="sg-career-list" style="padding:12px 16px;display:flex;flex-wrap:wrap;gap:8px;"></div>
+            </div>
+
+            <!-- 하단: AI 추천 이유 + 전략 -->
             <div style="display:grid;grid-template-columns:3fr 2fr;gap:12px;margin-bottom:14px;" class="sg-bottom-row">
               <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:16px 18px;">
-                <div style="font-size:11px;letter-spacing:2px;color:rgba(240,244,255,.4);font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:6px;">💡 AI 추천 이유</div>
+                <div style="font-size:11px;letter-spacing:2px;color:rgba(240,244,255,.4);font-weight:700;margin-bottom:10px;">💡 AI 과목 추천 전략</div>
                 <div id="sg-reason-text" style="font-size:13.5px;color:rgba(240,244,255,.85);line-height:1.9;word-break:keep-all;"></div>
               </div>
               <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:16px 18px;">
-                <div style="font-size:11px;letter-spacing:2px;color:rgba(240,244,255,.4);font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:6px;">🏫 입시 포인트</div>
+                <div style="font-size:11px;letter-spacing:2px;color:rgba(240,244,255,.4);font-weight:700;margin-bottom:10px;">📊 교과 역량 비중</div>
                 <div id="sg-univ-tags" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;"></div>
                 <div id="sg-progress-bars" style="display:flex;flex-direction:column;gap:7px;"></div>
               </div>
@@ -5107,12 +5135,12 @@ async function generateSgReco(){
   document.getElementById('sg-error').style.display='none';
 
   // ── localStorage 캐시 확인 (7일) ──
-  var cacheKey = 'sg_reco_v2_' + major + '_' + (univ||'');
+  var cacheKey = 'sg_reco_v3_' + major + '_' + (univ||'');
   try {
     var cached = localStorage.getItem(cacheKey);
     if(cached){
       var cp = JSON.parse(cached);
-      if(Date.now() - cp.ts < 7*24*60*60*1000 && cp.data && cp.data.required){
+      if(Date.now() - cp.ts < 7*24*60*60*1000 && cp.data && cp.data.common){
         sgRecoData = {major:major, univ:univ, data:cp.data};
         renderSgResult(major, univ, cp.data);
         document.getElementById('sg-loading').style.display='none';
@@ -5123,20 +5151,28 @@ async function generateSgReco(){
     }
   } catch(e){}
 
-  // ── 경량화된 프롬프트 ──
+  // ── 2022 개정교육과정 기반 프롬프트 ──
   var systemPrompt =
-    '2022 개정교육과정 진학 전문가. 순수 JSON만 반환. 마크다운·코드블록 금지.\n' +
-    'required(필수 3~4개): 전공 기초·입시 필수 과목\n' +
-    'recommended(권장 3~4개): 이수 시 입시·전공 이해에 유리한 과목\n' +
-    'optional(심화 2~3개): 심화 관심 학생 추가 추천\n' +
-    '각 desc: 전공연결·세특활용·실제활용 포함 2문장 이내.\n' +
-    'reason: 학과 핵심역량·과목 조합 이유·입시 전략 2~3문장.\n' +
-    'admissionTags: 입시 포인트 태그 3개. importance: 수학/과학/인문사회/예체능 0~100.';
+    '당신은 2022 개정교육과정 고교학점제 전문 진학 컨설턴트입니다. 순수 JSON만 반환하세요. 마크다운·코드블록 절대 금지.\n\n' +
+    '2022 개정교육과정 과목 분류:\n' +
+    '- common(공통과목): 1학년 필수 이수. 국어·수학·영어·통합사회·통합과학·한국사 등 모든 학생 공통\n' +
+    '- general(일반선택): 교과별 기본 학습 과목. 2~3학년 선택. 예) 문학, 수학Ⅰ, 수학Ⅱ, 영어Ⅰ, 영어Ⅱ, 물리학, 화학, 생명과학, 지구과학, 사회·문화, 경제, 정치와 법, 윤리와 사상 등\n' +
+    '- fusion(융합선택): 교과 간 융합·실생활 연계 과목. 예) 수학과 문화, 기후변화와 지속가능한 세계, 역사로 탐구하는 현대세계, 과학의 역사와 문화, 윤리문제 탐구, 미디어 리터러시 등\n' +
+    '- career(진로선택): 전공 특화 심화과목. 예) 미적분, 확률과 통계, 기하, 심화수학, 물리학Ⅱ, 화학Ⅱ, 생명과학Ⅱ, 지구과학Ⅱ, 경제수학, 고급수학, 고급물리학, 고급화학, 고급생명과학, 스포츠 과학, 창작과 표현, 음악이론, 미술이론, 사회문제탐구, 현대세계의 변화 등\n\n' +
+    '각 필드:\n' +
+    '- common: 2~3개. 학과와 연결하여 세특 설계 방향 제시 (name, desc: 세특 활용법·전공연결 2문장)\n' +
+    '- general: 3~4개 (name, desc)\n' +
+    '- fusion: 2~3개 (name, desc)\n' +
+    '- career: 3~5개 (name, desc: 전공 적합성·심화 탐구 연계 1~2문장)\n' +
+    '- reason: 학과 핵심역량 기반 과목 조합 전략·세특 설계 방향·수능/학종 연계 3~4문장\n' +
+    '- admissionTags: 입시 핵심 포인트 태그 3~4개\n' +
+    '- importance: 수학(math)/과학(science)/인문사회(social)/예체능(art) 각 0~100';
 
   var userPrompt =
     (univ ? '희망 대학: '+univ+'\n' : '') +
-    '희망 학과: '+major+'\n' +
-    '{"required":[{"name":"","desc":""}],"recommended":[{"name":"","desc":""}],"optional":[{"name":"","desc":""}],"reason":"","admissionTags":[],"importance":{"math":0,"science":0,"social":0,"art":0}}';
+    '희망 학과: '+major+'\n\n' +
+    'JSON 형식으로만 출력:\n' +
+    '{"common":[{"name":"","desc":""}],"general":[{"name":"","desc":""}],"fusion":[{"name":"","desc":""}],"career":[{"name":"","desc":""}],"reason":"","admissionTags":[],"importance":{"math":0,"science":0,"social":0,"art":0}}';
 
   function tryParse(raw){
     try{return JSON.parse(raw);}catch(e){}
@@ -5163,7 +5199,7 @@ async function generateSgReco(){
     var rawText = (data.content||[]).map(function(c){return c.text||'';}).join('');
     if(!rawText) throw new Error('응답이 비어있습니다.');
     var parsed = tryParse(rawText);
-    if(!parsed||!parsed.required) throw new Error('JSON 파싱 실패');
+    if(!parsed||!parsed.common) throw new Error('JSON 파싱 실패');
     // 캐시 저장
     try { localStorage.setItem(cacheKey, JSON.stringify({data:parsed, ts:Date.now()})); } catch(e){}
     sgRecoData = {major:major, univ:univ, data:parsed};
@@ -5186,16 +5222,30 @@ async function generateSgReco(){
 function renderSgResult(major, univ, d){
   var noticeBar = document.getElementById('sg-notice-bar');
   var univLabel = univ ? univ+' ' : '';
-  noticeBar.innerHTML = univLabel+major+' 기준 · 2022 개정교육과정 과목 추천이에요.<br>보다 정확한 정보는 학교별 공식 홈페이지에서 확인해보세요.';
+  noticeBar.innerHTML = '🎓 '+univLabel+major+' 기준 · <b>2022 개정교육과정</b> 고교학점제 과목 추천이에요.<br>학교마다 개설 과목이 다를 수 있으니 학교 교육과정 편제표를 함께 확인하세요.';
 
-  var reqEl = document.getElementById('sg-required-list');
-  reqEl.innerHTML = (d.required||[]).map(function(s){ return sgSubjectItem(s.name, s.desc, '#60a5fa'); }).join('');
+  // 과목 아이템 렌더러 (공통·일반선택·융합선택)
+  function itemRow(s, dotColor){
+    return '<div style="display:flex;align-items:flex-start;gap:9px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.05);">'
+      +'<div style="width:7px;height:7px;border-radius:50%;background:'+dotColor+';flex-shrink:0;margin-top:7px;box-shadow:0 0 5px '+dotColor+'88;"></div>'
+      +'<div style="flex:1;">'
+      +'<div style="font-size:13.5px;color:rgba(240,244,255,.95);font-weight:700;line-height:1.5;margin-bottom:3px;">'+s.name+'</div>'
+      +(s.desc?'<div style="font-size:12px;color:rgba(240,244,255,.6);line-height:1.7;word-break:keep-all;">'+s.desc+'</div>':'')
+      +'</div></div>';
+  }
 
-  var recEl = document.getElementById('sg-recommended-list');
-  recEl.innerHTML = (d.recommended||[]).map(function(s){ return sgSubjectItem(s.name, s.desc, '#34d399'); }).join('');
+  // 진로선택 칩 렌더러
+  function careerChip(s){
+    return '<div style="background:rgba(251,113,133,.1);border:1px solid rgba(251,113,133,.3);border-radius:12px;padding:10px 14px;flex:0 0 auto;max-width:100%;">'
+      +'<div style="font-size:13px;font-weight:800;color:#fda4af;margin-bottom:4px;">'+s.name+'</div>'
+      +(s.desc?'<div style="font-size:11.5px;color:rgba(253,164,175,.65);line-height:1.6;word-break:keep-all;">'+s.desc+'</div>':'')
+      +'</div>';
+  }
 
-  var optEl = document.getElementById('sg-optional-list');
-  optEl.innerHTML = (d.optional||[]).map(function(s){ return sgSubjectItem(s.name, s.desc, '#fbbf24'); }).join('');
+  document.getElementById('sg-common-list').innerHTML = (d.common||[]).map(function(s){ return itemRow(s,'#60a5fa'); }).join('');
+  document.getElementById('sg-general-list').innerHTML = (d.general||[]).map(function(s){ return itemRow(s,'#34d399'); }).join('');
+  document.getElementById('sg-fusion-list').innerHTML  = (d.fusion||[]).map(function(s){ return itemRow(s,'#fbbf24'); }).join('');
+  document.getElementById('sg-career-list').innerHTML  = (d.career||[]).map(function(s){ return careerChip(s); }).join('');
 
   document.getElementById('sg-reason-text').textContent = d.reason||'';
 
@@ -5206,16 +5256,16 @@ function renderSgResult(major, univ, d){
 
   var imp = d.importance||{};
   var bars = [
-    {label:'수학', pct:imp.math||0, color:'#60a5fa'},
-    {label:'과학', pct:imp.science||0, color:'#34d399'},
-    {label:'인문사회', pct:imp.social||0, color:'#a78bfa'},
-    {label:'예체능', pct:imp.art||0, color:'#fbbf24'},
+    {label:'수학',    pct:imp.math||0,    color:'#60a5fa'},
+    {label:'과학',    pct:imp.science||0, color:'#34d399'},
+    {label:'인문사회',pct:imp.social||0,  color:'#a78bfa'},
+    {label:'예체능',  pct:imp.art||0,     color:'#fbbf24'},
   ];
   document.getElementById('sg-progress-bars').innerHTML = bars.map(function(b){
     return sgProgressBar(b.label, b.pct, b.color);
   }).join('');
 
-  // 별점: 탐험 완료 시 10점
+  // 별점
   gzStars.s3 = 10;
   document.getElementById('stage3-badge').textContent = '⭐ 10 / 10';
   updateStarBar();
@@ -5297,65 +5347,93 @@ function sgConfirmPw(){
 
 function sgFallback(major, univ){
   var kw = major.replace(/학과|학부|전공|과$/,'').trim();
-  // 계열별 기본 추천
   var isScience = /공학|컴퓨터|AI|인공지능|기계|전자|화학|물리|생명|의|간호|약|환경|건축|항공|우주|수학/.test(major);
   var isArt = /디자인|미술|음악|체육|미디어|영상|사진|공연|연극|무용/.test(major);
   var isSocial = /경영|경제|법|사회|심리|교육|국제|행정|정치|복지|언론|언어|문학|역사/.test(major);
-  var req, rec, opt, imp;
+
+  var common, general, fusion, career, imp;
+
   if(isScience){
-    req=[
-      {name:'수학Ⅱ',desc:kw+' 전공의 핵심 수학 개념(극한·미분·적분)을 다루며, 1학년 전공 필수 과목의 기초가 됩니다. 수업 중 공학·과학 현상에 적용한 탐구 보고서를 세특에 기록하면 학종에서 유리합니다.'},
-      {name:'물리학Ⅰ 또는 화학Ⅰ',desc:kw+' 전공과 직결되는 자연 현상의 원리를 배웁니다. 수업 실험 결과를 바탕으로 전공 연계 탐구 주제를 설정하면 세특과 탐구 포트폴리오 모두 활용 가능합니다.'},
-      {name:'정보',desc:'알고리즘·프로그래밍 기초를 익혀 '+kw+' 분야의 데이터 처리·자동화 역량을 기릅니다. 코딩 프로젝트를 세특에 담으면 공학 계열 학종에서 차별화 포인트가 됩니다.'}
+    common=[
+      {name:'통합과학',desc:'자연 현상의 통합적 이해로 '+kw+' 전공 기초를 다집니다. 수업 내 탐구 실험을 '+kw+' 관련 주제로 확장해 세특에 기록하세요.'},
+      {name:'수학',desc:'공학·이공계 전공의 수식·알고리즘 이해 기반입니다. 수업 개념을 '+kw+' 현상에 적용한 탐구 보고서를 세특에 남기세요.'},
+      {name:'통합사회',desc:kw+' 기술이 사회에 미치는 영향을 분석하는 소양을 기릅니다. 기술윤리·사회영향 주제로 탐구해 세특을 풍성하게 하세요.'}
     ];
-    rec=[
-      {name:'미적분',desc:'공학·이공계 전공에서 반드시 쓰이는 심화 수학으로, 수능 이공계 선택에서도 필수입니다. '+kw+' 관련 미적분 응용 문제를 자체 탐구하면 세특 소재로 활용할 수 있습니다.'},
-      {name:'확률과 통계',desc:'실험 데이터 분석·연구 결과 해석에 직접 활용됩니다. '+kw+' 관련 통계 자료를 직접 수집·분석한 내용을 세특에 기록하면 연구 역량을 어필할 수 있습니다.'},
-      {name:'영어Ⅱ',desc:'해외 논문·기술 문서 독해 및 국제 학술 커뮤니케이션에 필수입니다. '+kw+' 관련 영어 원서나 논문을 읽고 요약한 내용을 독서 활동으로 연결하면 학종에 유리합니다.'}
+    general=[
+      {name:'수학Ⅰ / 수학Ⅱ',desc:'이공계 전공 필수 수학 개념(함수·극한·미분)을 심화합니다. 전공 관련 수학 응용 탐구로 세특을 강화하세요.'},
+      {name:'물리학 / 화학 / 생명과학',desc:kw+' 전공과 직결되는 자연과학 원리를 체계적으로 익힙니다. 실험 보고서를 전공 탐구와 연계하면 학종에서 유리합니다.'},
+      {name:'영어Ⅰ / 영어Ⅱ',desc:'해외 논문·기술 문서 독해 및 국제 학술 소통에 필수입니다.'},
+      {name:'정보',desc:'알고리즘·프로그래밍 기초로 '+kw+' 분야 데이터 처리 역량을 기릅니다. 코딩 프로젝트를 세특에 담으면 공학 계열 학종에서 차별화됩니다.'}
     ];
-    opt=[
-      {name:'심화수학Ⅰ·Ⅱ',desc:kw+' 상위권 대학 진학 목표라면 수학 역량을 더 높이는 데 효과적입니다. 수학올림피아드 준비나 심화 탐구 프로젝트와 연계하면 세특에 강점을 부여할 수 있습니다.'},
-      {name:'과학Ⅱ 계열 (물리학Ⅱ·화학Ⅱ 등)',desc:kw+' 전공 심화 개념을 미리 접하는 과목으로, 대학 입학 후 전공 적응력을 높입니다. 고난도 실험 보고서를 세특에 기록하면 전공 열의를 명확히 보여줄 수 있습니다.'}
+    fusion=[
+      {name:'과학의 역사와 문화',desc:kw+' 분야 과학사를 통해 전공의 맥락을 이해하고 세특 소재를 확보합니다.'},
+      {name:'기후변화와 지속가능한 세계',desc:kw+' 기술의 환경 연계성을 탐구해 전공 적합성을 어필할 수 있습니다.'},
+      {name:'수학과 문화',desc:'수학의 실생활 적용 사례를 탐구하며 공학적 사고력을 확장합니다.'}
     ];
-    imp={math:85,science:80,social:25,art:10};
+    career=[
+      {name:'미적분',desc:'공학·이공계 전공에서 핵심적으로 쓰이며 수능 이공계 선택에서도 필수입니다. '+kw+' 응용 탐구로 세특을 강화하세요.'},
+      {name:'확률과 통계',desc:'실험·연구 데이터 분석의 기초. '+kw+' 관련 통계 탐구를 세특에 기록하면 연구 역량을 어필할 수 있습니다.'},
+      {name:'물리학Ⅱ / 화학Ⅱ / 생명과학Ⅱ',desc:kw+' 전공 심화 개념을 미리 접해 대학 전공 적응력을 높입니다. 고난도 실험 보고서를 세특에 남기세요.'},
+      {name:'기하',desc:'공간 기하 개념은 공학·건축·AI 전공에서 빈번히 활용됩니다.'},
+      {name:'정보과학 / 인공지능 수학',desc:kw+' 분야 AI·데이터 역량을 심화하는 전공 특화 진로 과목입니다.'}
+    ];
+    imp={math:85,science:82,social:22,art:8};
   } else if(isArt){
-    req=[
-      {name:'미술·음악 (전공 실기 관련)',desc:kw+' 전공의 핵심 실기 역량을 쌓는 과목으로, 포트폴리오 작품 제작과 직접 연결됩니다. 수업 중 제작한 작품 과정을 기록한 과정 포트폴리오를 세특에 담으면 실기 역량을 입증할 수 있습니다.'},
-      {name:'화법과 언어',desc:kw+' 분야의 기획안 작성·발표·비평 능력을 기릅니다. 전공 관련 작품 기획안을 발표한 경험을 세특에 기록하면 창의적 사고력과 소통 능력을 어필할 수 있습니다.'},
-      {name:'정보',desc:'디지털 디자인 툴·미디어 편집 소프트웨어 활용의 기초가 됩니다. '+kw+' 관련 디지털 작업물을 세특 프로젝트로 연결하면 현대 예술 역량을 보여줄 수 있습니다.'}
+    common=[
+      {name:'국어',desc:'기획안·비평문 작성의 기본기를 다집니다. '+kw+' 관련 작품 분석 보고서를 세특에 담으세요.'},
+      {name:'통합사회',desc:'예술의 사회·문화적 맥락 이해로 작품 기획력을 높입니다.'},
+      {name:'통합과학',desc:'디지털 미디어·재료 과학의 기초 소양을 기릅니다.'}
     ];
-    rec=[
-      {name:'사회문화',desc:'사회 트렌드·문화 현상을 분석하는 시각을 길러 '+kw+' 작품의 사회적 맥락 이해를 돕습니다. 트렌드 분석 보고서를 세특에 기록하면 기획력을 어필할 수 있습니다.'},
-      {name:'영어Ⅱ',desc:'글로벌 예술·디자인 트렌드와 해외 작품을 원어로 접하는 데 필요합니다. 해외 작가 작품을 분석한 영어 감상문을 독서 활동으로 연결하면 국제적 안목을 보여줄 수 있습니다.'},
-      {name:'문학',desc:'스토리텔링·서사 구성 능력을 길러 '+kw+' 작품에 깊이를 더합니다. 문학 작품을 시각·음악적으로 재해석한 탐구 활동을 세특에 담으면 융합 역량을 어필할 수 있습니다.'}
+    general=[
+      {name:'문학',desc:'스토리텔링·서사 구성 능력을 길러 '+kw+' 작품에 깊이를 더합니다.'},
+      {name:'화법과 언어',desc:kw+' 기획안 작성·발표·비평 능력을 기릅니다. 작품 발표 경험을 세특에 기록하세요.'},
+      {name:'영어Ⅰ / 영어Ⅱ',desc:'글로벌 예술·디자인 트렌드와 해외 작품 원어 접근에 필요합니다.'},
+      {name:'정보',desc:'디지털 디자인 툴·미디어 편집 소프트웨어 활용의 기초가 됩니다.'}
     ];
-    opt=[
-      {name:'기하',desc:'공간 감각과 도형 원리를 익혀 건축·입체 디자인 계열에 도움이 됩니다. 기하 개념을 작품에 적용한 탐구를 세특에 기록하면 수학적 사고력을 추가로 어필할 수 있습니다.'},
-      {name:'진로선택 실기 심화 과목',desc:kw+' 관련 심화 실기 역량을 집중적으로 쌓는 과목입니다. 심화 작품 제작 과정을 기록하면 전공 적합성을 더욱 명확히 보여줄 수 있습니다.'}
+    fusion=[
+      {name:'미디어 리터러시',desc:'디지털 미디어 환경을 비판적으로 이해하고 '+kw+' 콘텐츠 제작 역량을 강화합니다.'},
+      {name:'역사로 탐구하는 현대세계',desc:'예술사·문화사 맥락을 탐구해 창작 작품의 배경을 풍성하게 합니다.'},
+      {name:'윤리문제 탐구',desc:'예술 윤리·저작권·사회적 메시지를 탐구해 작품의 깊이를 더합니다.'}
     ];
-    imp={math:25,science:20,social:50,art:90};
+    career=[
+      {name:'미술이론 / 음악이론',desc:kw+' 전공 이론 기반을 심화합니다. 작품 제작 과정 포트폴리오를 세특에 연계하세요.'},
+      {name:'창작과 표현',desc:'전공 실기 역량을 심화하며 포트폴리오 작품과 직접 연결됩니다.'},
+      {name:'사회문제 탐구',desc:'예술로 사회 문제를 다루는 역량을 길러 작품의 메시지를 강화합니다.'},
+      {name:'기하',desc:'공간 감각·도형 원리를 익혀 건축·입체 디자인 계열에 도움이 됩니다.'}
+    ];
+    imp={math:22,science:18,social:52,art:90};
   } else {
-    req=[
-      {name:'사회문화',desc:kw+' 전공의 핵심인 사회 현상·제도·문화를 체계적으로 분석하는 능력을 기릅니다. 시사 이슈를 전공과 연결한 보고서를 세특에 기록하면 전공 적합성을 강하게 어필할 수 있습니다.'},
-      {name:'화법과 언어',desc:'논리적 말하기·글쓰기 역량을 길러 '+kw+' 분야의 보고서 작성·발표·토론에 직접 활용됩니다. 주제 토론·발표 활동을 세특에 상세히 기록하면 의사소통 능력을 입증할 수 있습니다.'},
-      {name:'영어Ⅱ',desc:'국제 자료 독해·글로벌 이슈 분석에 필수이며, '+kw+' 관련 해외 사례를 영어로 조사하면 세특 소재로 활용 가능합니다. 영어권 학술 자료를 활용한 탐구는 학종에서 차별화 요소가 됩니다.'}
+    common=[
+      {name:'통합사회',desc:kw+' 전공의 핵심인 사회 현상·제도를 체계적으로 분석하는 기초를 쌓습니다. 시사 이슈를 전공과 연결한 탐구를 세특에 기록하세요.'},
+      {name:'국어',desc:'논리적 글쓰기·발표 역량의 기본기입니다. 주제 토론·발표 활동을 세특에 상세히 기록하세요.'},
+      {name:'한국사',desc:'한국 사회·제도의 역사적 맥락을 이해해 '+kw+' 전공 배경지식을 풍부하게 합니다.'}
     ];
-    rec=[
-      {name:'확률과 통계',desc:'여론조사·사회 데이터 분석에 필수적이며, '+kw+' 분야 연구의 기초가 됩니다. 사회 현상을 통계로 분석한 탐구 보고서를 세특에 기록하면 데이터 기반 사고력을 어필할 수 있습니다.'},
-      {name:'생활과 윤리',desc:kw+' 분야에서 다루는 사회 윤리·가치 판단 역량을 기릅니다. 전공 관련 사회 윤리 이슈를 심층 탐구한 내용을 세특에 담으면 비판적 사고력을 보여줄 수 있습니다.'},
-      {name:'정치와 법',desc:'사회 제도·법·정책에 대한 이해를 높여 '+kw+' 전공 학습의 배경 지식을 풍부하게 합니다. 시사 법률·정책 이슈 분석을 세특에 기록하면 전공 연계 탐구 역량을 어필할 수 있습니다.'}
+    general=[
+      {name:'사회·문화',desc:kw+' 전공 핵심인 사회 현상·문화를 분석하는 심화 역량을 기릅니다.'},
+      {name:'화법과 언어',desc:'보고서 작성·발표·토론 등 '+kw+' 분야 소통 역량의 직접적 기반입니다.'},
+      {name:'영어Ⅰ / 영어Ⅱ',desc:'국제 자료 독해·글로벌 이슈 분석에 필수이며, 해외 사례 탐구 세특 소재를 확보합니다.'},
+      {name:'확률과 통계',desc:'사회 데이터·여론조사 분석 역량의 기초. 통계 탐구 보고서로 세특을 강화하세요.'}
     ];
-    opt=[
-      {name:'경제',desc:'시장 원리·경제 현상 이해로 경영·사회 계열 전공의 실용 지식을 보완합니다. 경제 현상을 전공과 연결한 탐구를 세특에 기록하면 융합적 사고를 보여줄 수 있습니다.'},
-      {name:'심화 영어 독해와 작문',desc:'영어 학술 자료 심화 독해 역량을 길러 '+kw+' 관련 해외 연구를 폭넓게 접하는 데 유리합니다. 영어 원서 탐구 활동을 세특에 담으면 자기주도 학습력을 어필할 수 있습니다.'}
+    fusion=[
+      {name:'역사로 탐구하는 현대세계',desc:kw+' 분야 현대 이슈의 역사적 배경을 탐구해 전공 맥락 이해를 깊게 합니다.'},
+      {name:'기후변화와 지속가능한 세계',desc:'사회·경제 분야와 환경 이슈를 융합해 탐구 주제의 폭을 넓힙니다.'},
+      {name:'윤리문제 탐구',desc:kw+' 분야 사회 윤리·가치 판단 역량을 기르고 비판적 사고를 세특에 담습니다.'}
     ];
-    imp={math:40,science:25,social:88,art:22};
+    career=[
+      {name:'경제',desc:'시장 원리·경제 현상 이해로 '+kw+' 전공의 실용 지식을 보완합니다.'},
+      {name:'정치와 법',desc:'사회 제도·법·정책 이해로 '+kw+' 전공 학습 배경을 풍부하게 합니다.'},
+      {name:'사회문제 탐구',desc:kw+' 분야 사회 현안을 깊이 탐구하는 전공 특화 진로 과목입니다. 소논문·탐구 보고서 연계에 최적입니다.'},
+      {name:'현대세계의 변화',desc:'글로벌 사회 변화 트렌드를 분석해 '+kw+' 관련 국제적 시각을 키웁니다.'},
+      {name:'심화 영어 독해와 작문',desc:'영어 학술 자료 심화 독해 역량으로 '+kw+' 관련 해외 연구를 폭넓게 접합니다.'}
+    ];
+    imp={math:38,science:22,social:88,art:20};
   }
+
   var univNote = univ ? univ+'의 '+major : major;
   return {
-    required:req, recommended:rec, optional:opt,
-    reason: univNote+'를 목표로 한다면, '+kw+' 분야의 핵심 역량을 직접적으로 키우는 과목부터 우선 이수해야 합니다. 필수 과목에서 쌓은 개념을 바탕으로 전공 연계 탐구 주제를 설정하고, 그 과정을 세특에 기록하는 것이 학종 전략의 핵심입니다. 학과 특성에 맞게 수학·과학·인문사회 중 어느 영역에 비중을 둘지 먼저 파악한 뒤, 해당 영역 과목을 중심으로 선택과목을 구성하고 각 과목에서의 탐구 활동이 유기적으로 연결되도록 계획하세요.',
-    admissionTags:['전공 연계 세특 필수','탐구 보고서 소재 확보','학종 전략 과목 구성','수능 선택과목 연계'],
+    common:common, general:general, fusion:fusion, career:career,
+    reason: univNote+'를 목표로 한다면, 1학년 공통과목 세특에서부터 '+kw+' 전공과의 연결고리를 만드는 것이 중요합니다. 일반선택 과목에서는 전공 핵심 역량을 쌓고, 융합선택으로 교과 간 통합적 사고력을 보여주세요. 진로선택 과목은 전공 적합성을 가장 강하게 드러내는 과목이므로 소논문·탐구 보고서와 반드시 연계하세요. 각 과목의 세특이 '+kw+' 전공을 향해 일관된 스토리라인을 형성하도록 계획적으로 설계하는 것이 학종 합격의 핵심 전략입니다.',
+    admissionTags:['세특 스토리라인 설계','진로선택 소논문 연계','공통과목 전공연결 세특','학종 전공 적합성 어필'],
     importance:imp
   };
 }
@@ -9226,17 +9304,21 @@ window.openPortfolioPopup = function(){
       var label = (entry.univ ? entry.univ+' · ' : '') + entry.major;
       s3Html += '<div style="margin-bottom:14px;padding:13px 15px;background:rgba(168,85,247,.07);border:1px solid rgba(168,85,247,.2);border-radius:13px;">';
       s3Html += '<div style="font-size:12px;font-weight:800;color:#c084fc;margin-bottom:10px;">🎓 '+label+'</div>';
-      if(d.required&&d.required.length){
-        s3Html += '<div style="font-size:11px;letter-spacing:1px;color:rgba(96,165,250,.8);font-weight:700;margin-bottom:5px;">🛡️ 필수 이수</div>';
-        s3Html += '<div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px;">'+d.required.map(function(s){return tag(s.name,'rgba(96,165,250,.12)','rgba(96,165,250,.35)');}).join('')+'</div>';
+      if(d.common&&d.common.length){
+        s3Html += '<div style="font-size:11px;letter-spacing:1px;color:rgba(96,165,250,.8);font-weight:700;margin-bottom:5px;">📌 공통과목</div>';
+        s3Html += '<div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px;">'+d.common.map(function(s){return tag(s.name,'rgba(96,165,250,.12)','rgba(96,165,250,.35)');}).join('')+'</div>';
       }
-      if(d.recommended&&d.recommended.length){
-        s3Html += '<div style="font-size:11px;letter-spacing:1px;color:rgba(52,211,153,.8);font-weight:700;margin-bottom:5px;">👍 강력 권장</div>';
-        s3Html += '<div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px;">'+d.recommended.map(function(s){return tag(s.name,'rgba(52,211,153,.1)','rgba(52,211,153,.3)');}).join('')+'</div>';
+      if(d.general&&d.general.length){
+        s3Html += '<div style="font-size:11px;letter-spacing:1px;color:rgba(52,211,153,.8);font-weight:700;margin-bottom:5px;">✅ 일반선택</div>';
+        s3Html += '<div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px;">'+d.general.map(function(s){return tag(s.name,'rgba(52,211,153,.1)','rgba(52,211,153,.3)');}).join('')+'</div>';
       }
-      if(d.optional&&d.optional.length){
-        s3Html += '<div style="font-size:11px;letter-spacing:1px;color:rgba(251,191,36,.8);font-weight:700;margin-bottom:5px;">➕ 선택 심화</div>';
-        s3Html += '<div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:6px;">'+d.optional.map(function(s){return tag(s.name,'rgba(251,191,36,.1)','rgba(251,191,36,.3)');}).join('')+'</div>';
+      if(d.fusion&&d.fusion.length){
+        s3Html += '<div style="font-size:11px;letter-spacing:1px;color:rgba(251,191,36,.8);font-weight:700;margin-bottom:5px;">🔀 융합선택</div>';
+        s3Html += '<div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px;">'+d.fusion.map(function(s){return tag(s.name,'rgba(251,191,36,.1)','rgba(251,191,36,.3)');}).join('')+'</div>';
+      }
+      if(d.career&&d.career.length){
+        s3Html += '<div style="font-size:11px;letter-spacing:1px;color:rgba(251,113,133,.8);font-weight:700;margin-bottom:5px;">🚀 진로선택</div>';
+        s3Html += '<div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:6px;">'+d.career.map(function(s){return tag(s.name,'rgba(251,113,133,.1)','rgba(251,113,133,.3)');}).join('')+'</div>';
       }
       if(d.reason) s3Html += '<div style="font-size:12px;color:rgba(240,244,255,.55);line-height:1.65;margin-top:4px;">'+d.reason+'</div>';
       s3Html += '</div>';
@@ -9571,17 +9653,21 @@ window.downloadPortfolioPDF = function(){
       var inner = '<div style="margin-bottom:12px;border-radius:10px;overflow:hidden;border:1.5px solid #a855f733;">'
         +'<div style="padding:8px 14px;background:#a855f714;font-size:12px;font-weight:900;color:#7c3aed;">🎓 '+label+'</div>'
         +'<div style="padding:10px 14px;">';
-      if(sd.required&&sd.required.length){
-        inner += '<div style="font-size:10px;letter-spacing:1.5px;color:#2563eb;font-weight:700;margin-bottom:4px;">🛡️ 필수 이수</div>';
-        inner += '<div style="margin-bottom:8px;">'+sd.required.map(function(s){return tagEl(s.name,'#3b82f6');}).join('')+'</div>';
+      if(sd.common&&sd.common.length){
+        inner += '<div style="font-size:10px;letter-spacing:1.5px;color:#2563eb;font-weight:700;margin-bottom:4px;">📌 공통과목</div>';
+        inner += '<div style="margin-bottom:8px;">'+sd.common.map(function(s){return tagEl(s.name,'#3b82f6');}).join('')+'</div>';
       }
-      if(sd.recommended&&sd.recommended.length){
-        inner += '<div style="font-size:10px;letter-spacing:1.5px;color:#059669;font-weight:700;margin-bottom:4px;">👍 강력 권장</div>';
-        inner += '<div style="margin-bottom:8px;">'+sd.recommended.map(function(s){return tagEl(s.name,'#10b981');}).join('')+'</div>';
+      if(sd.general&&sd.general.length){
+        inner += '<div style="font-size:10px;letter-spacing:1.5px;color:#059669;font-weight:700;margin-bottom:4px;">✅ 일반선택</div>';
+        inner += '<div style="margin-bottom:8px;">'+sd.general.map(function(s){return tagEl(s.name,'#10b981');}).join('')+'</div>';
       }
-      if(sd.optional&&sd.optional.length){
-        inner += '<div style="font-size:10px;letter-spacing:1.5px;color:#b45309;font-weight:700;margin-bottom:4px;">➕ 선택 심화</div>';
-        inner += '<div style="margin-bottom:6px;">'+sd.optional.map(function(s){return tagEl(s.name,'#f59e0b');}).join('')+'</div>';
+      if(sd.fusion&&sd.fusion.length){
+        inner += '<div style="font-size:10px;letter-spacing:1.5px;color:#b45309;font-weight:700;margin-bottom:4px;">🔀 융합선택</div>';
+        inner += '<div style="margin-bottom:8px;">'+sd.fusion.map(function(s){return tagEl(s.name,'#f59e0b');}).join('')+'</div>';
+      }
+      if(sd.career&&sd.career.length){
+        inner += '<div style="font-size:10px;letter-spacing:1.5px;color:#be185d;font-weight:700;margin-bottom:4px;">🚀 진로선택</div>';
+        inner += '<div style="margin-bottom:6px;">'+sd.career.map(function(s){return tagEl(s.name,'#f43f5e');}).join('')+'</div>';
       }
       if(sd.reason) inner += '<div style="font-size:11px;color:#6b7280;line-height:1.65;margin-top:6px;padding-top:6px;border-top:1px solid #e5e7eb;">'+sd.reason+'</div>';
       inner += '</div></div>';
@@ -9887,8 +9973,9 @@ window.openSaenggibuPopup = function(){
   var subjectList = [];
   sgHistory.forEach(function(e){
     var d = e.data || {};
-    (d.required    || []).forEach(function(s){ subjectList.push(s.name); });
-    (d.recommended || []).forEach(function(s){ subjectList.push(s.name); });
+    (d.common    || []).forEach(function(s){ subjectList.push(s.name); });
+    (d.general   || []).forEach(function(s){ subjectList.push(s.name); });
+    (d.career    || []).forEach(function(s){ subjectList.push(s.name); });
   });
   subjectList = subjectList.filter(function(v,i,a){ return a.indexOf(v)===i; }).slice(0,8);
 
@@ -10865,9 +10952,10 @@ window._openAiPortfolioCore = function(){
       var inner='<div style="margin-bottom:12px;border-radius:10px;overflow:hidden;border:1.5px solid #a855f733;">'
         +'<div style="padding:7px 14px;background:#a855f714;font-size:12px;font-weight:900;color:#7c3aed;">🎓 '+esc(label)+'</div>'
         +'<div style="padding:10px 14px;">';
-      if(sd.required&&sd.required.length){ inner+='<div style="font-size:10px;color:#2563eb;font-weight:700;margin-bottom:4px;">🛡️ 필수 이수</div><div style="margin-bottom:7px;">'+sd.required.map(function(s){return tagEl(s.name,'#3b82f6');}).join('')+'</div>'; }
-      if(sd.recommended&&sd.recommended.length){ inner+='<div style="font-size:10px;color:#059669;font-weight:700;margin-bottom:4px;">👍 강력 권장</div><div style="margin-bottom:7px;">'+sd.recommended.map(function(s){return tagEl(s.name,'#10b981');}).join('')+'</div>'; }
-      if(sd.optional&&sd.optional.length){ inner+='<div style="font-size:10px;color:#b45309;font-weight:700;margin-bottom:4px;">➕ 선택 심화</div><div style="margin-bottom:6px;">'+sd.optional.map(function(s){return tagEl(s.name,'#f59e0b');}).join('')+'</div>'; }
+      if(sd.common&&sd.common.length){ inner+='<div style="font-size:10px;color:#2563eb;font-weight:700;margin-bottom:4px;">📌 공통과목</div><div style="margin-bottom:7px;">'+sd.common.map(function(s){return tagEl(s.name,'#3b82f6');}).join('')+'</div>'; }
+      if(sd.general&&sd.general.length){ inner+='<div style="font-size:10px;color:#059669;font-weight:700;margin-bottom:4px;">✅ 일반선택</div><div style="margin-bottom:7px;">'+sd.general.map(function(s){return tagEl(s.name,'#10b981');}).join('')+'</div>'; }
+      if(sd.fusion&&sd.fusion.length){ inner+='<div style="font-size:10px;color:#b45309;font-weight:700;margin-bottom:4px;">🔀 융합선택</div><div style="margin-bottom:7px;">'+sd.fusion.map(function(s){return tagEl(s.name,'#f59e0b');}).join('')+'</div>'; }
+      if(sd.career&&sd.career.length){ inner+='<div style="font-size:10px;color:#be185d;font-weight:700;margin-bottom:4px;">🚀 진로선택</div><div style="margin-bottom:6px;">'+sd.career.map(function(s){return tagEl(s.name,'#f43f5e');}).join('')+'</div>'; }
       if(sd.reason) inner+='<div style="font-size:11px;color:#6b7280;line-height:1.65;margin-top:5px;padding-top:5px;border-top:1px solid #e5e7eb;">'+esc(sd.reason)+'</div>';
       inner+='</div></div>';
       return inner;
