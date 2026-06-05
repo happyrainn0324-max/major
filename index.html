@@ -13302,90 +13302,203 @@ window.downloadIqbotPDF = async function() {
   var btn = document.getElementById('iqbotPdfBtn');
   if (btn) { btn.textContent = '⏳ 생성 중...'; btn.disabled = true; }
 
-  var STYLES = [
-    { emoji:'📌', label:'탐구 주제',   key:'subject',  hue:'330', tc:'#be185d' },
-    { emoji:'🎯', label:'탐구 목표',   key:'goal',     hue:'220', tc:'#1d4ed8' },
-    { emoji:'🔬', label:'탐구 방법',   key:'method',   hue:'160', tc:'#047857' },
-    { emoji:'📅', label:'탐구 일정',   key:'schedule', hue:'40',  tc:'#b45309' },
-    { emoji:'🧰', label:'필요한 자료', key:'material', hue:'20',  tc:'#c2410c' },
-    { emoji:'💡', label:'예상 결과',   key:'expected', hue:'270', tc:'#6d28d9' },
-    { emoji:'📝', label:'결과 정리',   key:'summary',  hue:'190', tc:'#0e7490' },
-  ];
-
-  var q      = plan.q || '';
-  var type   = plan.type || '';
-  var period = plan.period || '';
-  var parsed = plan.plan;
-  var info   = window.explorerInfo || {};
-  var name   = info.name || '탐험가';
-  var school = info.school || '';
-  var dateStr = new Date().toLocaleDateString('ko-KR', {year:'numeric',month:'long',day:'numeric'});
-
-  // 섹션 HTML 생성
-  function buildSection(s) {
-    var raw = (parsed[s.key] || '').trim();
-    var lines = raw.split(/\n/).filter(function(l){ return l.trim(); });
-    var items = lines.map(function(line){
-      var txt = line.trim().replace(/\*\*(.+?)\*\*/g,'<b>$1</b>');
-      txt = txt.replace(/^([①②③④⑤⑥⑦⑧⑨\d]+[.·\)]?\s*)/, '<span style="font-weight:800;color:'+s.tc+';margin-right:4px;">$1</span>');
-      return '<div style="padding:6px 18px;font-size:13px;color:#1e293b;line-height:1.8;">'+txt+'</div>';
-    }).join('');
-    return '<div style="margin-bottom:14px;border-radius:12px;overflow:hidden;border:1.5px solid hsla('+s.hue+',60%,50%,.3);background:hsla('+s.hue+',60%,97%,1);">'
-      +'<div style="padding:9px 18px;text-align:center;font-size:13px;font-weight:900;color:'+s.tc+';background:hsla('+s.hue+',65%,92%,1);border-bottom:1px solid hsla('+s.hue+',60%,80%,.5);">'+s.emoji+' '+s.label+'</div>'
-      +items
-      +'</div>';
-  }
-
-  var sectionsHtml = STYLES.map(buildSection).join('');
-
-  var pdfHtml = '<div style="font-family:\'Apple SD Gothic Neo\',\'Malgun Gothic\',\'Noto Sans KR\',sans-serif;background:#fff;padding:32px 28px;max-width:720px;margin:0 auto;">'
-    // 커버
-    +'<div style="text-align:center;margin-bottom:28px;padding:20px 24px 18px;background:linear-gradient(135deg,#f0fdf4,#ecfdf5);border:1.5px solid #6ee7b7;border-radius:16px;">'
-    +'<div style="font-size:11px;letter-spacing:4px;color:#059669;font-weight:700;margin-bottom:8px;">전지적 전공시점 · IQ-BOT 탐구 설계</div>'
-    +'<div style="font-size:22px;font-weight:900;color:#065f46;letter-spacing:-0.5px;margin-bottom:6px;">📋 AI 탐구 설계 계획서</div>'
-    +(name !== '탐험가' ? '<div style="font-size:14px;font-weight:700;color:#047857;margin-bottom:4px;">'+name+(school?' · '+school:'')+'</div>' : '')
-    +'<div style="font-size:12px;color:#6b7280;margin-top:4px;">'+dateStr+'</div>'
-    +'</div>'
-    // 탐구 질문 박스
-    +'<div style="margin-bottom:20px;padding:14px 18px;background:#f0fdf4;border:1.5px solid #6ee7b7;border-radius:12px;">'
-    +'<div style="font-size:11px;font-weight:700;color:#059669;letter-spacing:2px;margin-bottom:6px;">❓ 탐구 질문</div>'
-    +'<div style="font-size:14px;font-weight:700;color:#1e293b;line-height:1.7;">'+q+'</div>'
-    +(type||period ? '<div style="margin-top:8px;font-size:11px;color:#6b7280;">탐구 방법: '+type+'&nbsp;&nbsp;|&nbsp;&nbsp;탐구 기간: '+period+'</div>' : '')
-    +'</div>'
-    // 섹션들
-    +sectionsHtml
-    +'</div>';
-
-  // html2pdf로 다운로드
   try {
-    if (!window.html2pdf) {
+    // jsPDF 로드
+    if (!window.jspdf) {
       await new Promise(function(res, rej){
         var s = document.createElement('script');
-        s.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js';
+        s.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
         s.onload = res; s.onerror = rej;
         document.head.appendChild(s);
       });
     }
-    var el = document.createElement('div');
-    el.innerHTML = pdfHtml;
-    el.style.position = 'absolute';
-    el.style.left = '-9999px';
-    document.body.appendChild(el);
 
-    var safeName = name !== '탐험가' ? name : '탐구설계';
+    var { jsPDF } = window.jspdf;
+    var doc = new jsPDF({ orientation:'portrait', unit:'mm', format:'a4' });
+
+    // ── 한글 폰트(NanumGothic) 로드 및 등록 ──
+    if (!window._iqbotFontB64) {
+      var fontResp = await fetch('https://fonts.gstatic.com/s/nanumgothic/v23/PN_3Rfi-oW3hYwmKDpxS7F_LQv37zlEn14YEUQ.woff2');
+      var fontBuf  = await fontResp.arrayBuffer();
+      var uint8    = new Uint8Array(fontBuf);
+      var binary   = '';
+      for (var fi = 0; fi < uint8.length; fi++) binary += String.fromCharCode(uint8[fi]);
+      window._iqbotFontB64 = btoa(binary);
+    }
+    doc.addFileToVFS('NanumGothic.woff2', window._iqbotFontB64);
+    doc.addFont('NanumGothic.woff2', 'NanumGothic', 'normal');
+    doc.addFont('NanumGothic.woff2', 'NanumGothic', 'bold');
+    doc.setFont('NanumGothic', 'normal');
+
+    var pw = 210, ph = 297;
+    var ml = 16, mr = 16, mt = 16;
+    var cw = pw - ml - mr;
+    var cy = mt;
+
+    var info   = window.explorerInfo || {};
+    var name   = (info.name && info.name !== '탐험가') ? info.name : '';
+    var school = info.school || '';
+    var q      = plan.q || '';
+    var type   = plan.type || '';
+    var period = plan.period || '';
+    var parsed = plan.plan;
+    var dateStr = new Date().toLocaleDateString('ko-KR', {year:'numeric',month:'long',day:'numeric'});
+
+    var SECTIONS = [
+      { emoji:'📌', label:'탐구 주제',   key:'subject',  r:190, g:24,  b:93  },
+      { emoji:'🎯', label:'탐구 목표',   key:'goal',     r:29,  g:78,  b:216 },
+      { emoji:'🔬', label:'탐구 방법',   key:'method',   r:4,   g:120, b:87  },
+      { emoji:'📅', label:'탐구 일정',   key:'schedule', r:180, g:83,  b:9   },
+      { emoji:'🧰', label:'필요한 자료', key:'material', r:194, g:65,  b:12  },
+      { emoji:'💡', label:'예상 결과',   key:'expected', r:109, g:40,  b:217 },
+      { emoji:'📝', label:'결과 정리',   key:'summary',  r:14,  g:116, b:144 },
+    ];
+
+    // ── 유틸 ──
+    function checkPage(needY) {
+      if (cy + needY > ph - 14) {
+        doc.addPage();
+        cy = mt;
+      }
+    }
+
+    function wrapText(text, maxW, fontSize) {
+      doc.setFont('NanumGothic', 'normal');
+      doc.setFontSize(fontSize);
+      // 원문자 → 숫자 변환
+      var clean = (text || '').replace(/[①②③④⑤⑥⑦⑧⑨]/g, function(c){
+        return ['1.','2.','3.','4.','5.','6.','7.','8.','9.'][['①','②','③','④','⑤','⑥','⑦','⑧','⑨'].indexOf(c)];
+      }).replace(/[\u2460-\u2468]/g, function(c){ return (c.charCodeAt(0)-0x245F)+'.'; });
+      return doc.splitTextToSize(clean, maxW);
+    }
+
+    function cleanText(text) {
+      return (text || '')
+        .replace(/[①②③④⑤⑥⑦⑧⑨]/g, function(c){
+          return ['1.','2.','3.','4.','5.','6.','7.','8.','9.'][['①','②','③','④','⑤','⑥','⑦','⑧','⑨'].indexOf(c)] + ' ';
+        })
+        .replace(/\*\*(.+?)\*\*/g, '$1')
+        .replace(/[\u2460-\u2468]/g, function(c){ return (c.charCodeAt(0)-0x245F)+'. '; })
+        .trim();
+    }
+
+    // ── 커버 박스 ──
+    doc.setFillColor(236, 253, 245);
+    doc.setDrawColor(110, 231, 183);
+    doc.setLineWidth(0.5);
+    doc.roundedRect(ml, cy, cw, 36, 3, 3, 'FD');
+
+    doc.setFont('NanumGothic','bold');
+    doc.setFontSize(8);
+    doc.setTextColor(5, 150, 105);
+    doc.text('AI 탐구 설계 계획서 · 전지적 전공시점', pw/2, cy+9, {align:'center'});
+
+    doc.setFontSize(16);
+    doc.setTextColor(6, 95, 70);
+    doc.text('AI 탐구 설계 계획서', pw/2, cy+19, {align:'center'});
+
+    doc.setFontSize(9);
+    doc.setTextColor(100, 100, 100);
+    var subLine = (name ? name + (school ? ' · '+school : '') + '  |  ' : '') + dateStr;
+    doc.text(subLine, pw/2, cy+28, {align:'center'});
+
+    cy += 42;
+
+    // ── 탐구 질문 박스 ──
+    var qLines = wrapText(q, cw-12, 11);
+    var qBoxH = 8 + qLines.length*6 + (type||period ? 8 : 0) + 4;
+    checkPage(qBoxH);
+
+    doc.setFillColor(240, 253, 244);
+    doc.setDrawColor(110, 231, 183);
+    doc.setLineWidth(0.5);
+    doc.roundedRect(ml, cy, cw, qBoxH, 2, 2, 'FD');
+
+    doc.setFont('NanumGothic','bold');
+    doc.setFontSize(8);
+    doc.setTextColor(5, 150, 105);
+    doc.text('탐구 질문', ml+6, cy+6);
+
+    doc.setFont('NanumGothic','normal');
+    doc.setFontSize(11);
+    doc.setTextColor(30, 41, 59);
+    qLines.forEach(function(line, i){
+      doc.text(line, ml+6, cy+13+i*6);
+    });
+
+    if (type || period) {
+      doc.setFontSize(8);
+      doc.setTextColor(120, 120, 120);
+      doc.text('탐구 방법: ' + type + '   |   탐구 기간: ' + period, ml+6, cy+qBoxH-4);
+    }
+
+    cy += qBoxH + 5;
+
+    // ── 섹션들 ──
+    SECTIONS.forEach(function(sec) {
+      var raw = (parsed[sec.key] || '').trim();
+      if (!raw) return;
+
+      // 줄 분리 + 원문자 처리
+      var rawLines = raw.split(/\n/).filter(function(l){ return l.trim(); });
+      var allWrapped = [];
+      rawLines.forEach(function(line) {
+        var clean = cleanText(line.trim());
+        var wrapped = wrapText(clean, cw-14, 10);
+        allWrapped.push({ lines: wrapped, isFirst: true });
+      });
+
+      var totalLines = allWrapped.reduce(function(acc,g){ return acc+g.lines.length; }, 0);
+      var boxH = 10 + totalLines*5.8 + rawLines.length*2 + 4;
+      checkPage(boxH + 6);
+
+      // 섹션 헤더
+      doc.setFillColor(sec.r, sec.g, sec.b);
+      doc.roundedRect(ml, cy, cw, 8, 1.5, 1.5, 'F');
+      doc.setFont('NanumGothic','bold');
+      doc.setFontSize(9.5);
+      doc.setTextColor(255, 255, 255);
+      doc.text(sec.label, pw/2, cy+5.5, {align:'center'});
+
+      // 섹션 본문 배경
+      var bodyH = boxH - 8;
+      doc.setFillColor(250, 252, 255);
+      doc.setDrawColor(sec.r, sec.g, sec.b);
+      doc.setLineWidth(0.4);
+      doc.rect(ml, cy+8, cw, bodyH, 'FD');
+
+      // 본문 텍스트
+      var ty = cy + 14;
+      allWrapped.forEach(function(group) {
+        group.lines.forEach(function(line, li) {
+          doc.setFont('NanumGothic', li===0 ? 'bold' : 'normal');
+          doc.setFontSize(10);
+          doc.setTextColor(30, 41, 59);
+          doc.text(line, ml+7, ty);
+          ty += 5.8;
+        });
+        ty += 1.5;
+      });
+
+      cy += boxH + 4;
+    });
+
+    // ── 푸터 ──
+    var pageCount = doc.internal.getNumberOfPages();
+    for (var i=1; i<=pageCount; i++) {
+      doc.setPage(i);
+      doc.setFontSize(7);
+      doc.setTextColor(180,180,180);
+      doc.text('전지적 전공시점 · IQ-BOT 탐구 설계   |   ' + i + ' / ' + pageCount, pw/2, ph-6, {align:'center'});
+    }
+
+    var safeName = name || '탐구설계';
     var filename = 'IQBot_탐구설계_' + safeName + '_' + new Date().toISOString().slice(0,10) + '.pdf';
+    doc.save(filename);
 
-    await window.html2pdf().set({
-      margin: [8, 8, 8, 8],
-      filename: filename,
-      html2canvas: { scale: 2, useCORS: true, logging: false },
-      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-      pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
-    }).from(el).save();
-
-    document.body.removeChild(el);
   } catch(e) {
-    alert('PDF 생성 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+    console.error('IQBot PDF 오류:', e);
+    alert('PDF 생성 중 오류가 발생했습니다.\n' + e.message);
   } finally {
     if (btn) { btn.textContent = '📄 PDF 저장'; btn.disabled = false; }
   }
