@@ -5121,15 +5121,12 @@ async function generateSgReco(){
   var univ  = ((document.getElementById('sg-univ-input')||{}).value||'').trim();
   if(!major){ alert('희망 학과를 입력해주세요!'); return; }
 
-  // 매번 localStorage에서 직접 읽어서 정확한 횟수 체크
-  var currentCount = 0;
-  try { currentCount = parseInt(localStorage.getItem(SG_RECO_KEY) || '0', 10); } catch(e){}
-  if(currentCount >= SG_FREE_LIMIT && !_sgUnlocked){
+  // 세션 변수로 횟수 체크 (새로고침 시 초기화 → 항상 1회 무료)
+  if(sgRecoUseCount >= SG_FREE_LIMIT && !_sgUnlocked){
     sgShowPwModal('reco');
     return;
   }
-  try { localStorage.setItem(SG_RECO_KEY, currentCount + 1); } catch(e){}
-  sgRecoUseCount = currentCount + 1;
+  sgRecoUseCount++;
 
   var btn = document.getElementById('sg-gen-btn');
   if(btn){ btn.disabled=true; btn.textContent='⏳ AI 분석 중...'; btn.style.opacity='.6'; }
@@ -5320,9 +5317,8 @@ var SG_FREE_LIMIT = 1;  // 무료 사용 횟수 (1회 무료, 2회부터 비번)
 var SG_PASSWORD = 'ai2026'; // ← 비밀번호 변경 시 여기 수정
 var _sgUnlocked = false; // 비번 인증 여부
 
-// localStorage 기반 사용 횟수 (새로고침해도 유지, 매번 직접 읽어서 사용)
-var SG_RECO_KEY = 'sg_reco_use_count';
-var sgRecoUseCount = 0; // 실제값은 generateSgReco()에서 localStorage로부터 직접 읽음
+// 세션 변수 (새로고침 시 초기화 → 항상 1회 무료)
+var sgRecoUseCount = 0;
 
 function sgReset(){
   if(sgExploreCount >= 1 && !_sgUnlocked){
@@ -13080,21 +13076,18 @@ function closeIqbotModal() {
   overlay.style.display = 'none';
   document.body.style.overflow = '';
 }
-var IQBOT_USE_KEY = 'iqbot_use_count';
 var IQBOT_FREE_LIMIT = 1; // 1회 무료, 2회부터 비번
+var iqbotUseCount = 0; // 세션 변수 (새로고침 시 초기화 → 항상 1회 무료)
 
 async function generateIqbot() {
-  // 탐구 계획 설계하기: 1회 무료, 이후 비번 (localStorage로 유지)
-  var iqbotUsed = 0;
-  try { iqbotUsed = parseInt(localStorage.getItem(IQBOT_USE_KEY) || '0', 10); } catch(e){}
-  if(iqbotUsed >= IQBOT_FREE_LIMIT && localStorage.getItem('admin_auth_expire') !== '1'){
+  // 탐구 계획 설계하기: 1회 무료, 이후 비번 (세션 변수)
+  if(iqbotUseCount >= IQBOT_FREE_LIMIT && localStorage.getItem('admin_auth_expire') !== '1'){
     window._requireAdminAuthStrict(function(){ generateIqbot(); });
     return;
   }
   var q        = document.getElementById('iqbotQuestion').value.trim();
   if (!q) { alert('탐구 질문을 입력해주세요!'); document.getElementById('iqbotQuestion').focus(); return; }
-  // 사용 횟수 증가 (인증 통과 후)
-  try { localStorage.setItem(IQBOT_USE_KEY, iqbotUsed + 1); } catch(e){}
+  iqbotUseCount++;
   var typeText = document.getElementById('iqbotType').value;
   var period   = document.getElementById('iqbotPeriod').value;
 
