@@ -13629,49 +13629,94 @@ function generateIqbotFallback(q, typeText, period) {
 }
 
 function downloadIqbotPdf() {
-  var q    = document.getElementById('iqbotQuestion').value.trim();
-  var box  = document.getElementById('iqbotContent');
-  var date = new Date().toLocaleDateString('ko-KR');
+  var plan = window._iqbotPlan;
+  if (!plan || !plan.plan) { alert('먼저 탐구 설계를 생성해주세요!'); return; }
 
-  var pdfColors = {
-    '📌': '#be185d', '🎯': '#1d4ed8', '🔬': '#047857',
-    '📅': '#b45309', '🧰': '#c2410c', '💡': '#6d28d9',
-    '📝': '#0e7490', '⚠️': '#b91c1c'
-  };
+  var q      = plan.q || '';
+  var type   = plan.type || '';
+  var period = plan.period || '';
+  var parsed = plan.plan;
+  var date   = new Date().toLocaleDateString('ko-KR');
+  var info   = window.explorerInfo || {};
+  var name   = (info.name && info.name !== '탐험가') ? info.name : '';
+  var school = info.school || '';
 
-  var cards = box.querySelectorAll('div[style*="border-radius:14px"]');
-  var sectionsHtml = '';
-  cards.forEach(function(card) {
-    var titleEl = card.querySelector('div[style*="font-weight:900"]');
-    var bodyEls = card.querySelectorAll('div[style*="font-size:14px"]');
-    if (!titleEl) return;
-    var titleTxt = titleEl.textContent.trim();
-    var emoji = titleTxt.match(/[📌🎯🔬📅🧰💡📝⚠️]/);
-    var color = emoji ? (pdfColors[emoji[0]] || '#1a6cf5') : '#1a6cf5';
-    var bodyHtml = '';
-    bodyEls.forEach(function(b){ bodyHtml += '<p style="margin:4px 0;font-size:13px;color:#374151;line-height:1.8;">'+b.innerHTML+'</p>'; });
-    sectionsHtml += '<div style="margin-bottom:14px;border-radius:10px;overflow:hidden;border:1.5px solid '+color+'44;">'
-      + '<div style="padding:10px 16px;background:'+color+'18;border-bottom:1.5px solid '+color+'44;font-size:14px;font-weight:900;color:'+color+';">'+titleTxt+'</div>'
-      + '<div style="padding:10px 16px;">'+bodyHtml+'</div>'
+  var SECTIONS = [
+    { emoji:'📌', label:'탐구 주제',   key:'subject',  tc:'#be185d', bg:'#fff0f6', bc:'#fda4af' },
+    { emoji:'🎯', label:'탐구 목표',   key:'goal',     tc:'#1d4ed8', bg:'#eff6ff', bc:'#93c5fd' },
+    { emoji:'🔬', label:'탐구 방법',   key:'method',   tc:'#047857', bg:'#f0fdf4', bc:'#6ee7b7' },
+    { emoji:'📅', label:'탐구 일정',   key:'schedule', tc:'#b45309', bg:'#fffbeb', bc:'#fcd34d' },
+    { emoji:'🧰', label:'필요한 자료', key:'material', tc:'#c2410c', bg:'#fff7ed', bc:'#fdba74' },
+    { emoji:'💡', label:'예상 결과',   key:'expected', tc:'#6d28d9', bg:'#f5f3ff', bc:'#c4b5fd' },
+    { emoji:'📝', label:'결과 정리',   key:'summary',  tc:'#0e7490', bg:'#ecfeff', bc:'#67e8f9' },
+  ];
+
+  function escHtml(s) {
+    return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  var sectionsHtml = SECTIONS.map(function(sec) {
+    var raw = (parsed[sec.key] || '').trim();
+    if (!raw) return '';
+    var lines = raw.split(/\n/).filter(function(l){ return l.trim(); });
+    var bodyHtml = lines.map(function(line) {
+      var txt = escHtml(line.trim())
+        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+        .replace(/^([①②③④⑤⑥⑦⑧⑨])\s*/, function(m, c) {
+          var n = '①②③④⑤⑥⑦⑧⑨'.indexOf(c) + 1;
+          return '<strong style="color:'+sec.tc+';">' + n + '. </strong>';
+        });
+      return '<p style="margin:0 0 10px 0;font-size:13.5px;color:#1e293b;line-height:1.85;word-break:keep-all;">' + txt + '</p>';
+    }).join('');
+    return '<div style="margin-bottom:16px;border-radius:10px;overflow:hidden;border:1.5px solid '+sec.bc+';page-break-inside:avoid;">'
+      + '<div style="padding:10px 18px;background:'+sec.tc+';text-align:center;font-size:14px;font-weight:900;color:#ffffff;letter-spacing:0.03em;">'
+      + sec.emoji + ' ' + sec.label
+      + '</div>'
+      + '<div style="padding:12px 18px 6px;background:'+sec.bg+';">' + bodyHtml + '</div>'
       + '</div>';
-  });
+  }).join('');
 
   var html = '<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"/>'
-    + '<title>탐구 계획서</title>'
+    + '<title>AI 탐구 설계 계획서</title>'
     + '<style>'
-    + 'body{font-family:"Pretendard","Noto Sans KR",sans-serif;margin:0;padding:32px 40px;color:#111;background:#fff;}'
-    + '.cover{text-align:center;padding:32px 0 24px;border-bottom:2px solid #e5e7eb;margin-bottom:28px;}'
-    + '.cover h1{font-size:22px;font-weight:900;color:#0f172a;margin:0 0 8px;}'
-    + '.cover .q-box{background:#f0fdf4;border:1.5px solid #86efac;border-radius:10px;padding:14px 20px;margin:16px auto;max-width:600px;font-size:14px;font-weight:700;color:#166534;line-height:1.7;}'
-    + '.cover .meta{font-size:12px;color:#6b7280;margin-top:10px;letter-spacing:.5px;}'
-    + '@media print{body{padding:20px 28px;}}'
+    + '*{margin:0;padding:0;box-sizing:border-box;}'
+    + 'body{font-family:"Pretendard","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif;'
+    +      'padding:32px 40px;color:#111;background:#fff;}'
+    + 'h1{font-size:22px;font-weight:900;color:#065f46;margin:0 0 6px;}'
+    + '@page{margin:15mm 15mm;size:A4;}'
+    + '@media print{'
+    +   'body{padding:0;}'
+    +   'div{page-break-inside:avoid;}'
+    + '}'
     + '</style></head><body>'
-    + '<div class="cover">'
-    + '<div style="font-size:12px;letter-spacing:3px;color:#6b7280;margin-bottom:8px;">AI 탐구 설계 계획서</div>'
-    + '<h1>📋 탐구 계획서</h1>'
-    + '<div class="q-box">❓ '+q+'</div>'
-    + '<div class="meta">작성일: '+date+'</div>'
+
+    /* 커버 */
+    + '<div style="text-align:center;padding:24px 20px;margin-bottom:24px;'
+    +   'background:linear-gradient(135deg,#f0fdf4,#ecfdf5);'
+    +   'border:2px solid #6ee7b7;border-radius:14px;">'
+    + '<div style="font-size:11px;letter-spacing:3px;color:#059669;font-weight:700;margin-bottom:8px;">'
+    +   '전지적 전공시점 · IQ-BOT 탐구 설계'
     + '</div>'
+    + '<h1>📋 AI 탐구 설계 계획서</h1>'
+    + (name ? '<div style="font-size:13px;font-weight:700;color:#047857;margin-top:6px;">'
+      + escHtml(name) + (school ? ' · ' + escHtml(school) : '') + '</div>' : '')
+    + '<div style="font-size:11px;color:#6b7280;margin-top:6px;">작성일: ' + date + '</div>'
+    + '</div>'
+
+    /* 탐구 질문 */
+    + '<div style="margin-bottom:20px;padding:14px 18px;background:#f0fdf4;'
+    +   'border:1.5px solid #6ee7b7;border-radius:10px;page-break-inside:avoid;">'
+    + '<div style="font-size:10px;font-weight:800;color:#059669;letter-spacing:2px;margin-bottom:6px;">탐구 질문</div>'
+    + '<div style="font-size:14px;font-weight:700;color:#1e293b;line-height:1.75;word-break:keep-all;">'
+    +   escHtml(q)
+    + '</div>'
+    + (type || period
+      ? '<div style="margin-top:8px;font-size:11px;color:#6b7280;">탐구 방법: ' + escHtml(type)
+        + '&nbsp;&nbsp;|&nbsp;&nbsp;탐구 기간: ' + escHtml(period) + '</div>'
+      : '')
+    + '</div>'
+
+    /* 섹션 */
     + sectionsHtml
     + '</body></html>';
 
