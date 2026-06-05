@@ -4504,6 +4504,7 @@ const IV_CHIPS_BY_PERSONA = {
 function selectPersona(el){
   document.querySelectorAll('.iv-persona-card').forEach(c=>c.classList.remove('selected'));
   el.classList.add('selected');
+  window._ivPrevPersona = ivPersona; // 이전 persona 보존
   ivPersona = el.dataset.persona;
 }
 window.selectPersona = selectPersona;
@@ -4514,6 +4515,7 @@ function startInterview(){
   if(!ivPersona){ alert('인터뷰 대상을 선택해주세요! 👆'); return; }
 
   // 이전 세션 내용이 있으면 누적 배열에 저장
+  // ※ 저장 시점에서 ivMajor/ivUniv/ivPersona는 아직 이전 세션 값
   if(ivHistory.length > 1){
     var prevPairs = [];
     for(var hi=0;hi<ivHistory.length-1;hi++){
@@ -4522,10 +4524,12 @@ function startInterview(){
       }
     }
     if(prevPairs.length){
+      // selectPersona()가 먼저 ivPersona를 새 값으로 바꾸므로
+      // 이전 대상은 _ivPrevPersona에 보존해둔 값을 사용
       window._ivAllSessions.push({
         major: ivMajor,
         univ: ivUniv,
-        persona: ivPersona,
+        persona: (window._ivPrevPersona !== undefined ? window._ivPrevPersona : ivPersona),
         pairs: prevPairs
       });
     }
@@ -4829,6 +4833,24 @@ function appendDateSep(){
 }
 
 function resetInterview(){
+  // 현재까지의 대화 내용을 누적 배열에 저장
+  if(ivHistory.length > 1){
+    var prevPairs = [];
+    for(var hi=0;hi<ivHistory.length-1;hi++){
+      if(ivHistory[hi].role==='user' && ivHistory[hi+1] && ivHistory[hi+1].role==='assistant'){
+        prevPairs.push({q:ivHistory[hi].content, a:ivHistory[hi+1].content}); hi++;
+      }
+    }
+    if(prevPairs.length){
+      window._ivAllSessions.push({
+        major: ivMajor,
+        univ: ivUniv,
+        persona: ivPersona,
+        pairs: prevPairs
+      });
+      ivHistory = []; // 이미 저장했으므로 초기화
+    }
+  }
   const chatWrap = document.getElementById('iv-chat-wrap');
   chatWrap.style.opacity = '0';
   chatWrap.style.transform = 'translateY(20px)';
@@ -4837,6 +4859,7 @@ function resetInterview(){
     document.getElementById('iv-setup-card').style.display = 'block';
     document.getElementById('iv-setup-card').style.opacity = '1';
   }, 400);
+  window._ivPrevPersona = ivPersona; // 되돌아가기 후 새 선택 전까지 보존
   ivPersona = null;
   document.querySelectorAll('.iv-persona-card').forEach(c=>c.classList.remove('selected'));
   resetIvLimit();
@@ -9337,14 +9360,29 @@ window.openPortfolioPopup = function(){
     if(!top3Dna.length && topDnaId) top3Dna = [topDnaId];
 
     if(top3Dna.length){
-      s2Html += '<div style="margin-bottom:16px;">';
-      s2Html += '<div style="font-size:11px;letter-spacing:2px;color:rgba(251,191,36,.7);font-weight:700;margin-bottom:10px;">🧬 나의 DNA 유형 (상위 3개)</div>';
+      s2Html += '<div style="margin-bottom:4px;">';
+      s2Html += '<div style="font-size:11px;letter-spacing:2px;color:rgba(251,191,36,.7);font-weight:700;margin-bottom:10px;">🧬 나의 DNA 유형 & 추천 학과</div>';
       top3Dna.forEach(function(dnaId, rank){
         var c  = dnaColors3[dnaId] || '#fbbf24';
         var ic = dnaIcons3[dnaId]  || '✦';
         var lb = dnaLabels3[dnaId] || dnaId;
         var rankBadge = ['1위','2위','3위'][rank] || '';
-        s2Html += '<span style="display:inline-flex;align-items:center;gap:5px;padding:5px 13px;border-radius:999px;background:rgba(255,255,255,.05);border:1.5px solid '+c+'55;font-size:12px;font-weight:700;color:'+c+';margin:3px 4px 3px 0;">'+ic+' '+lb+' <span style="font-size:10px;font-weight:700;color:'+c+'88;padding:0 4px;border:1px solid '+c+'33;border-radius:999px;">'+rankBadge+'</span></span>';
+        var majorsForDna = (window._dnaGroupedMajors && window._dnaGroupedMajors[dnaId]) ? window._dnaGroupedMajors[dnaId] : [];
+        s2Html += '<div style="margin-bottom:14px;">';
+        // 유형 배지
+        s2Html += '<div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;">';
+        s2Html += '<span style="display:inline-flex;align-items:center;gap:5px;padding:5px 14px;border-radius:999px;background:'+c+'22;border:1.5px solid '+c+'66;font-size:12px;font-weight:800;color:'+c+';">'+ic+' '+lb+'</span>';
+        s2Html += '<span style="font-size:10px;font-weight:700;color:'+c+'99;padding:2px 8px;border:1px solid '+c+'44;border-radius:999px;">'+rankBadge+'</span>';
+        s2Html += '</div>';
+        // 같은 색 추천 학과 태그
+        if(majorsForDna.length){
+          s2Html += '<div style="display:flex;flex-wrap:wrap;gap:5px;">';
+          majorsForDna.forEach(function(m){
+            s2Html += '<span style="display:inline-block;padding:4px 12px;border-radius:999px;background:'+c+'18;border:1px solid '+c+'55;font-size:12px;font-weight:600;color:'+c+';">'+m+'</span>';
+          });
+          s2Html += '</div>';
+        }
+        s2Html += '</div>';
       });
       s2Html += '</div>';
     }
@@ -9360,28 +9398,7 @@ window.openPortfolioPopup = function(){
       if(orbLabels.length) s2Html += '<div style="margin-bottom:13px;"><div style="font-size:11px;letter-spacing:2px;color:rgba(251,191,36,.7);font-weight:700;margin-bottom:8px;">선택한 활동 오브</div>'+orbLabels.map(function(l){return tag(l,'rgba(251,191,36,.1)','rgba(251,191,36,.3)');}).join('')+'</div>';
     }
 
-    // DNA 유형별 추천 학과 (3개 유형 모두 표시)
-    if(top3Dna.length && typeof window._dnaGroupedMajors !== 'undefined' && window._dnaGroupedMajors){
-      s2Html += '<div style="margin-bottom:4px;">';
-      s2Html += '<div style="font-size:11px;letter-spacing:2px;color:rgba(251,191,36,.7);font-weight:700;margin-bottom:10px;">🧬 DNA 별자리 추천 학과</div>';
-      top3Dna.forEach(function(dnaId, rank){
-        var c  = dnaColors3[dnaId] || '#fbbf24';
-        var ic = dnaIcons3[dnaId]  || '✦';
-        var lb = dnaLabels3[dnaId] || dnaId;
-        var rankBadge = ['1위','2위','3위'][rank] || '';
-        var majorsForDna = window._dnaGroupedMajors[dnaId] || [];
-        if(!majorsForDna.length) return;
-        s2Html += '<div style="margin-bottom:12px;">';
-        s2Html += '<div style="display:flex;align-items:center;gap:5px;margin-bottom:6px;">';
-        s2Html += '<span style="font-size:12px;">'+ic+'</span>';
-        s2Html += '<span style="font-size:11px;font-weight:800;color:'+c+';letter-spacing:.5px;">'+lb+' 에너지 추천 학과</span>';
-        s2Html += '<span style="font-size:10px;font-weight:700;color:'+c+'88;padding:1px 6px;border:1px solid '+c+'44;border-radius:999px;">'+rankBadge+'</span>';
-        s2Html += '</div>';
-        s2Html += '<div style="display:flex;flex-wrap:wrap;gap:5px;">'+majorsForDna.map(function(m){return tag(m,'rgba(255,255,255,.04)',''+c+'44');}).join('')+'</div>';
-        s2Html += '</div>';
-      });
-      s2Html += '</div>';
-    } else if(dnaMajors.length){
+    if(false && dnaMajors.length){
       // fallback: 전체 목록
       s2Html += '<div style="margin-bottom:13px;"><div style="font-size:11px;letter-spacing:2px;color:rgba(251,191,36,.7);font-weight:700;margin-bottom:8px;">🧬 DNA 별자리 추천 학과</div>'+dnaMajors.map(function(m){return tag(m,'rgba(251,191,36,.1)','rgba(251,191,36,.3)');}).join('')+'</div>';
     }
@@ -9651,7 +9668,9 @@ window.openPortfolioPopup = function(){
   body.innerHTML = html;
 
   window._pfData = {name,school,sid,badge,totalStars,dateStr,gz,ivStar,rqStar,
-    dnaLabel,selectedOrbs,dnaMajors,aiMajors,sgHistory,
+    dnaLabel,dnaScoreObj,selectedOrbs,dnaMajors,aiMajors,
+    dnaGroupedMajors: window._dnaGroupedMajors || null,
+    sgHistory,
     nepPickMajor,nepMajors,tlLabels,tlValues,
     ivMajorVal: (typeof ivMajor !== 'undefined') ? ivMajor : '',
     ivUnivVal: (typeof ivUniv !== 'undefined') ? ivUniv : '',
@@ -9738,7 +9757,8 @@ window.downloadPortfolioPDF = function(){
          : emptyRow('아직 전공 퀴즈를 진행하지 않았어요.'));
 
   // ── 2. 전공 적합성 ──
-  var dnaLabel   = d.dnaLabel||'';
+  var dnaScoreObjPdf = d.dnaScoreObj || {};
+  var dnaGroupedMajorsPdf = d.dnaGroupedMajors || window._dnaGroupedMajors || null;
   var orbLabels  = [];
   if(typeof FIELD_ORBS!=='undefined' && d.selectedOrbs){
     d.selectedOrbs.forEach(function(key){
@@ -9746,13 +9766,55 @@ window.downloadPortfolioPDF = function(){
       if(o) orbLabels.push(o.emoji+' '+o.label);
     });
   }
-  var dnaMajors = d.dnaMajors||[];
   var aiMajors  = d.aiMajors||[];
   var s2body = '';
-  if(dnaLabel||orbLabels.length||dnaMajors.length||aiMajors.length){
-    if(dnaLabel) s2body += row('나의 DNA 유형', dnaLabel, '#b45309');
+
+  // DNA 상위 3개 유형 계산
+  var pdfDnaColors = {explore:'#0284c7',create:'#7c3aed',connect:'#be185d',build:'#15803d',nature:'#a16207',lead:'#c2410c'};
+  var pdfDnaIcons  = {explore:'🔭',create:'🎨',connect:'🤝',build:'⚙️',nature:'🌿',lead:'👑'};
+  var pdfDnaLabels = {explore:'탐구형',create:'창작형',connect:'소통형',build:'기술형',nature:'자연형',lead:'리더형'};
+  var pdfScoreEntries = Object.entries(dnaScoreObjPdf).sort(function(a,b){return b[1]-a[1];});
+  var pdfTop3Dna = pdfScoreEntries.filter(function(e){return e[1]>0;}).slice(0,3).map(function(e){return e[0];});
+  // fallback: dnaLabel 1개라도 있으면 사용
+  if(!pdfTop3Dna.length && (d.dnaLabel||'')){
+    var fallbackId = Object.keys(pdfDnaLabels).find(function(k){ return (d.dnaLabel||'').indexOf(pdfDnaLabels[k]) !== -1; });
+    if(fallbackId) pdfTop3Dna = [fallbackId];
+  }
+
+  var hasS2 = pdfTop3Dna.length || orbLabels.length || aiMajors.length || (d.dnaMajors||[]).length;
+  if(hasS2){
+    // DNA 유형 + 추천학과 통합 (유형별로 같은 색)
+    if(pdfTop3Dna.length){
+      s2body += '<div style="margin-bottom:10px;"><div style="font-size:10px;letter-spacing:2px;color:#b45309;font-weight:700;margin-bottom:10px;">🧬 나의 DNA 유형 & 추천 학과</div>';
+      pdfTop3Dna.forEach(function(dnaId, rank){
+        var c  = pdfDnaColors[dnaId] || '#b45309';
+        var ic = pdfDnaIcons[dnaId]  || '✦';
+        var lb = pdfDnaLabels[dnaId] || dnaId;
+        var rb = ['1위','2위','3위'][rank] || '';
+        var majorsForDna = (dnaGroupedMajorsPdf && dnaGroupedMajorsPdf[dnaId]) ? dnaGroupedMajorsPdf[dnaId] : [];
+        s2body += '<div style="margin-bottom:10px;">';
+        // 유형 배지
+        s2body += '<div style="display:flex;align-items:center;gap:5px;margin-bottom:6px;">';
+        s2body += '<span style="display:inline-flex;align-items:center;gap:4px;padding:3px 11px;border-radius:999px;background:'+c+'20;border:1.5px solid '+c+'66;font-size:10px;font-weight:800;color:'+c+';">'+ic+' '+lb+'</span>';
+        s2body += '<span style="font-size:9px;font-weight:700;color:'+c+'99;padding:1px 6px;border:1px solid '+c+'44;border-radius:999px;">'+rb+'</span>';
+        s2body += '</div>';
+        // 같은 색 추천학과 태그
+        if(majorsForDna.length){
+          s2body += '<div style="display:flex;flex-wrap:wrap;gap:4px;">';
+          majorsForDna.forEach(function(m){
+            s2body += '<span style="display:inline-block;padding:2px 10px;border-radius:999px;background:'+c+'15;border:1px solid '+c+'55;font-size:10px;font-weight:600;color:'+c+';">'+m+'</span>';
+          });
+          s2body += '</div>';
+        }
+        s2body += '</div>';
+      });
+      s2body += '</div>';
+    }
+    // 활동 오브
     if(orbLabels.length) s2body += '<div style="margin-bottom:10px;"><div style="font-size:10px;letter-spacing:2px;color:#b45309;font-weight:700;margin-bottom:6px;">선택한 활동 오브</div>'+orbLabels.map(function(l){return tagEl(l,'#f59e0b');}).join('')+'</div>';
-    if(dnaMajors.length) s2body += '<div style="margin-bottom:10px;"><div style="font-size:10px;letter-spacing:2px;color:#b45309;font-weight:700;margin-bottom:6px;">DNA 별자리 추천 학과</div>'+dnaMajors.slice(0,5).map(function(m){return tagEl(m,'#f59e0b');}).join('')+'</div>';
+    if(!pdfTop3Dna.length && (d.dnaMajors||[]).length){
+      s2body += '<div style="margin-bottom:10px;"><div style="font-size:10px;letter-spacing:2px;color:#b45309;font-weight:700;margin-bottom:6px;">DNA 별자리 추천 학과</div>'+(d.dnaMajors||[]).slice(0,5).map(function(m){return tagEl(m,'#f59e0b');}).join('')+'</div>';
+    }
     if(aiMajors.length) s2body += '<div style="margin-bottom:4px;"><div style="font-size:10px;letter-spacing:2px;color:#b45309;font-weight:700;margin-bottom:6px;">AI 추천 전공</div>'+aiMajors.map(function(m){return tagEl(m,'#a855f7');}).join('')+'</div>';
   } else { s2body = emptyRow('아직 전공 적합성 탐험을 진행하지 않았어요.'); }
   html += sec('#fbbf24','🟡','전공 적합성 탐험', gz.s2||0, 20, s2body);
@@ -10969,12 +11031,14 @@ window._openAiPortfolioCore = function(){
   // DNA / 적합성
   var aptData = window._aptData || {};
   var topDnaId = aptData.topDna || '';
+  var dnaScoreObjAi = aptData.dnaScore || {};
   var dnaLabel = '';
   if(typeof DNA_TYPES!=='undefined' && topDnaId){ var dt=DNA_TYPES.find(function(d){return d.id===topDnaId;}); if(dt) dnaLabel=dt.emoji+' '+dt.label; }
   var selectedOrbs = aptData.selected || [];
   var orbLabels = [];
   if(typeof ACTIVITY_ORBS!=='undefined'){ selectedOrbs.forEach(function(key){ var o=ACTIVITY_ORBS.find(function(x){return x.emoji+x.label===key||x.label===key;}); if(o) orbLabels.push(o.emoji+' '+o.label); }); }
   var dnaMajors = window._dnaRecommendedMajors || [];
+  var dnaGroupedMajorsAi = window._dnaGroupedMajors || null;
   var aiMajors = [];
   document.querySelectorAll('.ob-report-major-tag').forEach(function(el){ aiMajors.push(el.textContent.trim()); });
 
@@ -11069,10 +11133,43 @@ window._openAiPortfolioCore = function(){
 
   // ── 2. 전공 적합성 ──
   var s2b='';
-  if(dnaLabel||orbLabels.length||dnaMajors.length||aiMajors.length){
-    if(dnaLabel) s2b+=row('나의 DNA 유형',dnaLabel,'#b45309');
+  // DNA 상위 3개 유형 계산
+  var aiDnaColors = {explore:'#0284c7',create:'#7c3aed',connect:'#be185d',build:'#15803d',nature:'#a16207',lead:'#c2410c'};
+  var aiDnaIcons  = {explore:'🔭',create:'🎨',connect:'🤝',build:'⚙️',nature:'🌿',lead:'👑'};
+  var aiDnaLabels = {explore:'탐구형',create:'창작형',connect:'소통형',build:'기술형',nature:'자연형',lead:'리더형'};
+  var aiScoreEntries = Object.entries(dnaScoreObjAi).sort(function(a,b){return b[1]-a[1];});
+  var aiTop3Dna = aiScoreEntries.filter(function(e){return e[1]>0;}).slice(0,3).map(function(e){return e[0];});
+  if(!aiTop3Dna.length && topDnaId) aiTop3Dna = [topDnaId];
+
+  var hasS2ai = aiTop3Dna.length || orbLabels.length || aiMajors.length || dnaMajors.length;
+  if(hasS2ai){
+    if(aiTop3Dna.length){
+      s2b+='<div style="margin-bottom:10px;"><div style="font-size:10px;letter-spacing:2px;color:#b45309;font-weight:700;margin-bottom:10px;">🧬 나의 DNA 유형 & 추천 학과</div>';
+      aiTop3Dna.forEach(function(dnaId,rank){
+        var c=aiDnaColors[dnaId]||'#b45309', ic=aiDnaIcons[dnaId]||'✦', lb=aiDnaLabels[dnaId]||dnaId, rb=['1위','2위','3위'][rank]||'';
+        var majorsForDna = (dnaGroupedMajorsAi&&dnaGroupedMajorsAi[dnaId]) ? dnaGroupedMajorsAi[dnaId] : [];
+        s2b+='<div style="margin-bottom:10px;">';
+        // 유형 배지
+        s2b+='<div style="display:flex;align-items:center;gap:5px;margin-bottom:6px;">';
+        s2b+='<span style="display:inline-flex;align-items:center;gap:4px;padding:3px 11px;border-radius:999px;background:'+c+'20;border:1.5px solid '+c+'66;font-size:10px;font-weight:800;color:'+c+';">'+ic+' '+lb+'</span>';
+        s2b+='<span style="font-size:9px;font-weight:700;color:'+c+'99;padding:1px 6px;border:1px solid '+c+'44;border-radius:999px;">'+rb+'</span>';
+        s2b+='</div>';
+        // 같은 색 추천학과 태그
+        if(majorsForDna.length){
+          s2b+='<div style="display:flex;flex-wrap:wrap;gap:4px;">';
+          majorsForDna.forEach(function(m){
+            s2b+='<span style="display:inline-block;padding:2px 10px;border-radius:999px;background:'+c+'15;border:1px solid '+c+'55;font-size:10px;font-weight:600;color:'+c+';">'+m+'</span>';
+          });
+          s2b+='</div>';
+        }
+        s2b+='</div>';
+      });
+      s2b+='</div>';
+    }
     if(orbLabels.length) s2b+='<div style="margin-bottom:10px;"><div style="font-size:10px;letter-spacing:2px;color:#b45309;font-weight:700;margin-bottom:5px;">선택한 활동 오브</div>'+orbLabels.map(function(l){return tagEl(l,'#f59e0b');}).join('')+'</div>';
-    if(dnaMajors.length) s2b+='<div style="margin-bottom:10px;"><div style="font-size:10px;letter-spacing:2px;color:#b45309;font-weight:700;margin-bottom:5px;">DNA 별자리 추천 학과</div>'+dnaMajors.slice(0,5).map(function(m){return tagEl(m,'#f59e0b');}).join('')+'</div>';
+    if(!aiTop3Dna.length && dnaMajors.length){
+      s2b+='<div style="margin-bottom:10px;"><div style="font-size:10px;letter-spacing:2px;color:#b45309;font-weight:700;margin-bottom:5px;">DNA 별자리 추천 학과</div>'+dnaMajors.slice(0,5).map(function(m){return tagEl(m,'#f59e0b');}).join('')+'</div>';
+    }
     if(aiMajors.length) s2b+='<div style="margin-bottom:4px;"><div style="font-size:10px;letter-spacing:2px;color:#b45309;font-weight:700;margin-bottom:5px;">AI 추천 전공</div>'+aiMajors.map(function(m){return tagEl(m,'#a855f7');}).join('')+'</div>';
   } else { s2b=empty('아직 전공 적합성 탐험을 진행하지 않았어요.'); }
   html += sec('#fbbf24','🟡','전공 적합성 탐험',gz.s2||0,20,s2b);
@@ -13068,7 +13165,7 @@ var introSlide = 0;
   .iqbot-gen-btn:disabled { opacity:.6; cursor:not-allowed; }
   .iqbot-result { display:none; margin-top:20px; background:rgba(52,211,153,.04); border:1.5px solid rgba(52,211,153,.22); border-radius:16px; padding:20px; }
   .iqbot-result.show { display:block; }
-  .iqbot-result-hd { display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:14px; padding-bottom:12px; border-bottom:1.5px solid rgba(52,211,153,.2); flex-wrap:wrap; }
+  .iqbot-result-hd { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:14px; padding-bottom:12px; border-bottom:1.5px solid rgba(52,211,153,.2); flex-wrap:wrap; }
   .iqbot-result-hd strong { font-size:15px; font-weight:800; color:#34d399; font-family:'Pretendard','Noto Sans KR',sans-serif; text-align:center; }
   .iqbot-result-actions { margin-left:auto; display:flex; gap:6px; }
   .iqbot-result-actions button { padding:5px 13px; border-radius:10px; font-size:13px; font-weight:700; cursor:pointer; font-family:'Pretendard','Noto Sans KR',sans-serif; }
@@ -13118,6 +13215,18 @@ var introSlide = 0;
       <div class="iqbot-result" id="iqbotResult">
         <div class="iqbot-result-hd">
           <strong>📋 AI 탐구 설계 결과</strong>
+          <button id="iqbotPdfBtn" onclick="downloadIqbotPDF()" style="
+            display:inline-flex;align-items:center;gap:6px;
+            padding:6px 16px;border-radius:999px;
+            background:linear-gradient(135deg,rgba(52,211,153,.2),rgba(16,185,129,.15));
+            border:1.5px solid rgba(52,211,153,.5);
+            color:#34d399;font-size:12px;font-weight:800;cursor:pointer;
+            font-family:'Pretendard','Noto Sans KR',sans-serif;
+            transition:.2s;letter-spacing:.5px;white-space:nowrap;"
+            onmouseover="this.style.background='rgba(52,211,153,.3)';this.style.borderColor='rgba(52,211,153,.8)'"
+            onmouseout="this.style.background='linear-gradient(135deg,rgba(52,211,153,.2),rgba(16,185,129,.15))';this.style.borderColor='rgba(52,211,153,.5)'">
+            📄 PDF 저장
+          </button>
         </div>
         <div class="iqbot-content" id="iqbotContent"></div>
 
@@ -13185,6 +13294,102 @@ function closeIqbotModal() {
   overlay.style.display = 'none';
   document.body.style.overflow = '';
 }
+
+window.downloadIqbotPDF = async function() {
+  var plan = window._iqbotPlan;
+  if (!plan || !plan.plan) { alert('먼저 탐구 설계를 생성해주세요!'); return; }
+
+  var btn = document.getElementById('iqbotPdfBtn');
+  if (btn) { btn.textContent = '⏳ 생성 중...'; btn.disabled = true; }
+
+  var STYLES = [
+    { emoji:'📌', label:'탐구 주제',   key:'subject',  hue:'330', tc:'#be185d' },
+    { emoji:'🎯', label:'탐구 목표',   key:'goal',     hue:'220', tc:'#1d4ed8' },
+    { emoji:'🔬', label:'탐구 방법',   key:'method',   hue:'160', tc:'#047857' },
+    { emoji:'📅', label:'탐구 일정',   key:'schedule', hue:'40',  tc:'#b45309' },
+    { emoji:'🧰', label:'필요한 자료', key:'material', hue:'20',  tc:'#c2410c' },
+    { emoji:'💡', label:'예상 결과',   key:'expected', hue:'270', tc:'#6d28d9' },
+    { emoji:'📝', label:'결과 정리',   key:'summary',  hue:'190', tc:'#0e7490' },
+  ];
+
+  var q      = plan.q || '';
+  var type   = plan.type || '';
+  var period = plan.period || '';
+  var parsed = plan.plan;
+  var info   = window.explorerInfo || {};
+  var name   = info.name || '탐험가';
+  var school = info.school || '';
+  var dateStr = new Date().toLocaleDateString('ko-KR', {year:'numeric',month:'long',day:'numeric'});
+
+  // 섹션 HTML 생성
+  function buildSection(s) {
+    var raw = (parsed[s.key] || '').trim();
+    var lines = raw.split(/\n/).filter(function(l){ return l.trim(); });
+    var items = lines.map(function(line){
+      var txt = line.trim().replace(/\*\*(.+?)\*\*/g,'<b>$1</b>');
+      txt = txt.replace(/^([①②③④⑤⑥⑦⑧⑨\d]+[.·\)]?\s*)/, '<span style="font-weight:800;color:'+s.tc+';margin-right:4px;">$1</span>');
+      return '<div style="padding:6px 18px;font-size:13px;color:#1e293b;line-height:1.8;">'+txt+'</div>';
+    }).join('');
+    return '<div style="margin-bottom:14px;border-radius:12px;overflow:hidden;border:1.5px solid hsla('+s.hue+',60%,50%,.3);background:hsla('+s.hue+',60%,97%,1);">'
+      +'<div style="padding:9px 18px;text-align:center;font-size:13px;font-weight:900;color:'+s.tc+';background:hsla('+s.hue+',65%,92%,1);border-bottom:1px solid hsla('+s.hue+',60%,80%,.5);">'+s.emoji+' '+s.label+'</div>'
+      +items
+      +'</div>';
+  }
+
+  var sectionsHtml = STYLES.map(buildSection).join('');
+
+  var pdfHtml = '<div style="font-family:\'Apple SD Gothic Neo\',\'Malgun Gothic\',\'Noto Sans KR\',sans-serif;background:#fff;padding:32px 28px;max-width:720px;margin:0 auto;">'
+    // 커버
+    +'<div style="text-align:center;margin-bottom:28px;padding:20px 24px 18px;background:linear-gradient(135deg,#f0fdf4,#ecfdf5);border:1.5px solid #6ee7b7;border-radius:16px;">'
+    +'<div style="font-size:11px;letter-spacing:4px;color:#059669;font-weight:700;margin-bottom:8px;">전지적 전공시점 · IQ-BOT 탐구 설계</div>'
+    +'<div style="font-size:22px;font-weight:900;color:#065f46;letter-spacing:-0.5px;margin-bottom:6px;">📋 AI 탐구 설계 계획서</div>'
+    +(name !== '탐험가' ? '<div style="font-size:14px;font-weight:700;color:#047857;margin-bottom:4px;">'+name+(school?' · '+school:'')+'</div>' : '')
+    +'<div style="font-size:12px;color:#6b7280;margin-top:4px;">'+dateStr+'</div>'
+    +'</div>'
+    // 탐구 질문 박스
+    +'<div style="margin-bottom:20px;padding:14px 18px;background:#f0fdf4;border:1.5px solid #6ee7b7;border-radius:12px;">'
+    +'<div style="font-size:11px;font-weight:700;color:#059669;letter-spacing:2px;margin-bottom:6px;">❓ 탐구 질문</div>'
+    +'<div style="font-size:14px;font-weight:700;color:#1e293b;line-height:1.7;">'+q+'</div>'
+    +(type||period ? '<div style="margin-top:8px;font-size:11px;color:#6b7280;">탐구 방법: '+type+'&nbsp;&nbsp;|&nbsp;&nbsp;탐구 기간: '+period+'</div>' : '')
+    +'</div>'
+    // 섹션들
+    +sectionsHtml
+    +'</div>';
+
+  // html2pdf로 다운로드
+  try {
+    if (!window.html2pdf) {
+      await new Promise(function(res, rej){
+        var s = document.createElement('script');
+        s.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js';
+        s.onload = res; s.onerror = rej;
+        document.head.appendChild(s);
+      });
+    }
+    var el = document.createElement('div');
+    el.innerHTML = pdfHtml;
+    el.style.position = 'absolute';
+    el.style.left = '-9999px';
+    document.body.appendChild(el);
+
+    var safeName = name !== '탐험가' ? name : '탐구설계';
+    var filename = 'IQBot_탐구설계_' + safeName + '_' + new Date().toISOString().slice(0,10) + '.pdf';
+
+    await window.html2pdf().set({
+      margin: [8, 8, 8, 8],
+      filename: filename,
+      html2canvas: { scale: 2, useCORS: true, logging: false },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+      pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+    }).from(el).save();
+
+    document.body.removeChild(el);
+  } catch(e) {
+    alert('PDF 생성 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+  } finally {
+    if (btn) { btn.textContent = '📄 PDF 저장'; btn.disabled = false; }
+  }
+};
 var IQBOT_FREE_LIMIT = 1; // 1회 무료, 2회부터 비번
 var iqbotUseCount = 0; // 세션 변수 (새로고침 시 초기화 → 항상 1회 무료)
 
