@@ -6459,23 +6459,7 @@ window._nepUnlockCard = function(name, i, retryCount){
 
 function loadNepCardInfo(name, i, retryCount){
   var _isMobNep = /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)||window.innerWidth<=768;
-  var _authed = localStorage.getItem('admin_auth_expire') === '1';
-  // 카드 0번: 모바일·데스크탑 모두 비번 없이 공개
-  // 카드 1,2번: 데스크탑은 원래대로 비번 필요, 모바일도 비번 필요
-  if(i === 0){
-    // 첫 번째 카드: 모바일·데스크탑 모두 비번 체크
-    if(!_authed){
-      window._requireAdminAuthStrict(function(){ loadNepCardInfo(name, i, retryCount); });
-      return;
-    }
-  } else {
-    // 두 번째·세 번째 카드: 모바일 포함 항상 비번 필요
-    if(!_authed){
-      // 비번 없으면 잠금 카드 UI 표시 후 return
-      _showNepCardLocked(name, i, retryCount);
-      return;
-    }
-  }
+  // startNepRecommend()에서 이미 1회 무료 or 비번 통과 후 호출되므로 추가 체크 없이 바로 로드
   retryCount = retryCount || 0;
   const bodyEl = document.getElementById('nep-rcard-body-'+i);
   if(!bodyEl) return;
@@ -6651,11 +6635,15 @@ window.retryNepCard = function(name, i){
 };
 
 
+var nepRecoUseCount = 0; // 세션 변수 (새로고침 시 초기화 → 항상 1회 무료)
+var NEP_FREE_LIMIT = 1;
+
 function startNepRecommend(){
-  if(localStorage.getItem('admin_auth_expire') !== '1'){
+  if(nepRecoUseCount >= NEP_FREE_LIMIT && localStorage.getItem('admin_auth_expire') !== '1'){
     window._requireAdminAuthStrict(function(){ startNepRecommend(); });
     return;
   }
+  nepRecoUseCount++;
   var job1 = (document.getElementById('job-wish-1')||{}).value||'';
   var major1 = (document.getElementById('major-wish-1')||{}).value||'';
   if(!job1.trim() && !major1.trim()){
@@ -6673,11 +6661,7 @@ function startNepRecommend(){
 }
 
 function initNepMajorCards(){
-  if(localStorage.getItem('admin_auth_expire') === '1'){
-    _initNepMajorCardsCore();
-  } else {
-    window._requireAdminAuthStrict(function(){ _initNepMajorCardsCore(); });
-  }
+  _initNepMajorCardsCore();
 }
 function _initNepMajorCardsCore(){
   // 로딩 표시
