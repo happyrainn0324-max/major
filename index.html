@@ -9881,8 +9881,16 @@ window.downloadPortfolioPDF = function(){
         }
         if(info.midActs&&info.midActs.length){
           s4body += '<div style="font-size:10px;color:#059669;font-weight:700;margin-bottom:4px;">✅ 추천 활동</div>';
-          info.midActs.slice(0,3).forEach(function(a,ai){
+          info.midActs.slice(0,5).forEach(function(a,ai){
             s4body += '<div style="font-size:11px;color:#374151;line-height:1.6;padding:2px 0 2px 8px;border-left:2px solid #34d39944;">'+(ai+1)+'. '+a+'</div>';
+          });
+          s4body += '<div style="margin-bottom:6px;"></div>';
+        }
+        if(info.researchTopics&&info.researchTopics.length){
+          s4body += '<div style="font-size:10px;color:#b45309;font-weight:700;margin-bottom:4px;">🔭 주제 탐구 아이디어</div>';
+          info.researchTopics.slice(0,5).forEach(function(t,ti){
+            var trimHadaPdf=function(s){return (s||'').replace(/하다\.?$/,'').replace(/하다$/,'');};
+            s4body += '<div style="font-size:11px;color:#374151;line-height:1.6;padding:2px 0 2px 8px;border-left:2px solid #fbbf2444;">'+(ti+1)+'. '+trimHadaPdf(t)+'</div>';
           });
         }
         s4body += '</div></div>';
@@ -11209,7 +11217,8 @@ window._openAiPortfolioCore = function(){
         if(info.overview) s4b+='<div style="font-size:11px;color:#374151;line-height:1.7;margin-bottom:6px;">'+esc(info.overview)+'</div>';
         if(info.jobs&&info.jobs.length){ s4b+='<div style="font-size:10px;color:#1d4ed8;font-weight:700;margin-bottom:3px;">💼 관련 직업</div><div style="margin-bottom:6px;">'+info.jobs.slice(0,4).map(function(j){return tagEl(j,'#3b82f6');}).join('')+'</div>'; }
         if(info.subjects&&info.subjects.length){ s4b+='<div style="font-size:10px;color:#7c3aed;font-weight:700;margin-bottom:3px;">📚 선택과목</div><div style="margin-bottom:6px;">'+info.subjects.slice(0,4).map(function(s){return tagEl(s,'#7c3aed');}).join('')+'</div>'; }
-        if(info.midActs&&info.midActs.length){ s4b+='<div style="font-size:10px;color:#059669;font-weight:700;margin-bottom:3px;">✅ 추천 활동</div>'; info.midActs.slice(0,3).forEach(function(a,ai){ s4b+='<div style="font-size:11px;color:#374151;line-height:1.6;padding:2px 0 2px 8px;border-left:2px solid #34d39944;">'+(ai+1)+'. '+esc(a)+'</div>'; }); }
+        if(info.midActs&&info.midActs.length){ s4b+='<div style="font-size:10px;color:#059669;font-weight:700;margin-bottom:3px;">✅ 추천 활동</div>'; info.midActs.slice(0,5).forEach(function(a,ai){ s4b+='<div style="font-size:11px;color:#374151;line-height:1.6;padding:2px 0 2px 8px;border-left:2px solid #34d39944;">'+(ai+1)+'. '+esc(a)+'</div>'; }); s4b+='<div style="margin-bottom:5px;"></div>'; }
+        if(info.researchTopics&&info.researchTopics.length){ s4b+='<div style="font-size:10px;color:#b45309;font-weight:700;margin-bottom:3px;">🔭 주제 탐구 아이디어</div>'; info.researchTopics.slice(0,5).forEach(function(t,ti){ var thp=function(s){return (s||'').replace(/하다\.?$/,'').replace(/하다$/,'');}; s4b+='<div style="font-size:11px;color:#374151;line-height:1.6;padding:2px 0 2px 8px;border-left:2px solid #fbbf2444;">'+(ti+1)+'. '+thp(esc(t))+'</div>'; }); }
         s4b+='</div></div>';
       });
     }
