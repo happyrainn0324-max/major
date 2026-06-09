@@ -7470,7 +7470,13 @@ function confirmMajorPickFromConstellation(){
     </div>
 
       <!-- ── 사이트 통계 배너 ── -->
-      <div id="site-stats-banner" style="display:flex;gap:12px;margin-top:90px;">
+      <div style="position:relative;text-align:center;margin-top:90px;margin-bottom:16px;padding:20px 0;">
+        <div class="star-canvas" id="stats-star-canvas" style="position:absolute;inset:0;pointer-events:none;z-index:0;overflow:hidden;border-radius:12px;"></div>
+        <span style="position:relative;z-index:1;display:inline-block;font-size:15px;color:#e2d9f3;letter-spacing:3px;font-weight:700;border:1.5px solid rgba(168,85,247,.5);border-radius:999px;padding:8px 24px;">
+          <span style="color:#fbbf24;margin-right:8px;animation:starTwinkle 2s ease-in-out infinite;">★</span>함께한 전공탐험<span style="color:#fbbf24;margin-left:8px;animation:starTwinkle 2.4s 0.5s ease-in-out infinite;">★</span>
+        </span>
+      </div>
+      <div id="site-stats-banner" style="display:flex;gap:12px;margin-top:0;">
         <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:20px 16px;background:rgba(251,191,36,.08);border:1.5px solid rgba(251,191,36,.45);border-radius:14px;">
           <span style="font-size:22px;">🧭</span>
           <span style="font-size:12px;color:rgba(240,244,255,.8);letter-spacing:1px;font-weight:600;">전공탐험가</span>
@@ -12674,6 +12680,7 @@ initStarCanvas('research-star-canvas', 130);
 initStarCanvas('footer-star-canvas', 80);
 initStarCanvas('roadmap-star-canvas', 110);
 initStarCanvas('rqblock2-star-canvas', 90);
+initStarCanvas('stats-star-canvas', 60);
 (function(){
   const canvas = document.getElementById('poster-star-canvas');
   if(!canvas) return;
