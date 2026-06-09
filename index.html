@@ -13794,56 +13794,62 @@ function downloadIqbotPdf() {
 
 <script>
 (function(){
-  var NS = 'majordream';
-  var VISIT_KEY = 'visitor-count';
-  var EXPLORE_KEY = 'explorer-count';
-  var COUNTED_SESSION = 'mjd_visited';
-  var STAR_SESSION = 'mjd_star_counted';
-  var VISIT_OFFSET = 153;
-  var EXPLORE_OFFSET = 94;
+  var SUPA_URL = 'https://hjhaljnujvqqenyxbdui.supabase.co/rest/v1';
+  var SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhqaGFsam51anZxcWVueXhiZHVpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEwMDM1ODQsImV4cCI6MjA5NjU3OTU4NH0.pV96jgdGx1sW21s1i6psK8wZ0b4ThNSZw6J8d-vEcZs';
+  var VISITED = 'mjd_visited';
+  var STAR_COUNTED = 'mjd_star_counted';
 
-  function fmt(n, offset){
-    if(isNaN(n)||n===null) return '—';
-    return Number(n + offset).toLocaleString('ko-KR');
+  var headers = {
+    'apikey': SUPA_KEY,
+    'Authorization': 'Bearer ' + SUPA_KEY,
+    'Content-Type': 'application/json'
+  };
+
+  function fmt(n){
+    if(n === null || n === undefined || isNaN(n)) return '—';
+    return Number(n).toLocaleString('ko-KR');
   }
 
-  function setNum(id, n, offset){
+  function setNum(id, n){
     var el = document.getElementById(id);
-    if(el) el.textContent = fmt(n, offset);
+    if(el) el.textContent = fmt(n);
+  }
+
+  function getCount(key, callback){
+    fetch(SUPA_URL + '/counters?key=eq.' + key + '&select=value', { headers: headers })
+      .then(function(r){ return r.json(); })
+      .then(function(d){ callback(d && d[0] ? d[0].value : null); })
+      .catch(function(){ callback(null); });
+  }
+
+  function increment(key, callback){
+    fetch(SUPA_URL + '/rpc/increment_counter', {
+      method: 'POST',
+      headers: headers,
+      body: JSON.stringify({ counter_key: key })
+    })
+      .then(function(r){ return r.json(); })
+      .then(function(d){ callback(d); })
+      .catch(function(){ callback(null); });
   }
 
   function loadCounts(){
-    fetch('https://api.countapi.xyz/get/'+NS+'/'+VISIT_KEY)
-      .then(function(r){return r.json();})
-      .then(function(d){setNum('stat-visitor-num', d.value, VISIT_OFFSET);})
-      .catch(function(){setNum('stat-visitor-num', 0, VISIT_OFFSET);});
-
-    fetch('https://api.countapi.xyz/get/'+NS+'/'+EXPLORE_KEY)
-      .then(function(r){return r.json();})
-      .then(function(d){setNum('stat-explorer-num', d.value, EXPLORE_OFFSET);})
-      .catch(function(){setNum('stat-explorer-num', 0, EXPLORE_OFFSET);});
+    getCount('visitor', function(v){ setNum('stat-visitor-num', v); });
+    getCount('explorer', function(v){ setNum('stat-explorer-num', v); });
   }
 
   function countVisit(){
-    if(sessionStorage.getItem(COUNTED_SESSION)) return;
-    fetch('https://api.countapi.xyz/hit/'+NS+'/'+VISIT_KEY)
-      .then(function(r){return r.json();})
-      .then(function(d){
-        sessionStorage.setItem(COUNTED_SESSION,'1');
-        setNum('stat-visitor-num', d.value, VISIT_OFFSET);
-      })
-      .catch(function(){});
+    if(sessionStorage.getItem(VISITED)) return;
+    increment('visitor', function(v){
+      if(v !== null){ sessionStorage.setItem(VISITED, '1'); setNum('stat-visitor-num', v); }
+    });
   }
 
   window._statCountExplorer = function(){
-    if(sessionStorage.getItem(STAR_SESSION)) return;
-    fetch('https://api.countapi.xyz/hit/'+NS+'/'+EXPLORE_KEY)
-      .then(function(r){return r.json();})
-      .then(function(d){
-        sessionStorage.setItem(STAR_SESSION,'1');
-        setNum('stat-explorer-num', d.value, EXPLORE_OFFSET);
-      })
-      .catch(function(){});
+    if(sessionStorage.getItem(STAR_COUNTED)) return;
+    increment('explorer', function(v){
+      if(v !== null){ sessionStorage.setItem(STAR_COUNTED, '1'); setNum('stat-explorer-num', v); }
+    });
   };
 
   loadCounts();
