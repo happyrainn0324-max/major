@@ -4953,7 +4953,10 @@ function updateStarBar(){
   document.getElementById('gz-star-num').textContent = total;
   const pct = Math.min(100, Math.round(total / GZ_MAX * 100));
   document.getElementById('gz-star-fill').style.width = pct + '%';
-  if(total > 0) showFinal();
+  if(total > 0){
+    showFinal();
+    if(typeof window._statCountExplorer === 'function') window._statCountExplorer();
+  }
 }
 
 function showFinal(){ /* 우주탐험 완료 팝업 제거됨 */ }
@@ -8450,7 +8453,6 @@ function rqGradeLabel(n){
 
 function rqRenderStars(n){
   rqStars = n;
-  if(n >= 1 && typeof window._statCountExplorer === 'function') window._statCountExplorer();
   var pips = document.getElementById('rq-star-pips');
   if(pips){
     var html = '';
