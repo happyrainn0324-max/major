@@ -1880,6 +1880,17 @@ footer::before{
   .rq-mf-input,.rq-mf-textarea{ font-size:14px; padding:7px 12px 9px; }
 }
 @media(max-width:620px){
+  #site-stats-banner{
+    gap:8px!important;
+  }
+  #site-stats-banner>div{
+    padding:16px 12px!important;
+  }
+  #site-stats-banner span[id]{
+    font-size:28px!important;
+  }
+}
+@media(max-width:620px){
   #rq-setup-card{padding:24px 14px!important;}
   #rq-setup-card>div:first-child{grid-template-columns:1fr!important;}
   /* 탐구 방법 입력 칸 모바일 최적화 */
@@ -7454,6 +7465,28 @@ function confirmMajorPickFromConstellation(){
       </div>
 
       <!-- 탐구 설계하기 버튼은 팝업 모달에서 제공됩니다 -->
+
+      <!-- ── 사이트 통계 배너 ── -->
+      <div id="site-stats-banner" style="display:flex;gap:12px;margin-top:18px;">
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:20px 16px;background:rgba(251,191,36,.08);border:1.5px solid rgba(251,191,36,.45);border-radius:14px;">
+          <span style="font-size:22px;">🧭</span>
+          <span style="font-size:12px;color:rgba(240,244,255,.8);letter-spacing:1px;font-weight:600;">전공탐험가</span>
+          <div style="display:flex;align-items:baseline;gap:4px;">
+            <span id="stat-visitor-num" style="font-size:34px;font-weight:900;color:#fbbf24;line-height:1;">—</span>
+            <span style="font-size:14px;color:rgba(251,191,36,.6);">명</span>
+          </div>
+        </div>
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:20px 16px;background:rgba(34,211,153,.08);border:1.5px solid rgba(34,211,153,.45);border-radius:14px;">
+          <span style="font-size:22px;">🔬</span>
+          <span style="font-size:12px;color:rgba(240,244,255,.8);letter-spacing:1px;font-weight:600;">탐구 질문</span>
+          <div style="display:flex;align-items:baseline;gap:4px;">
+            <span id="stat-explorer-num" style="font-size:34px;font-weight:900;color:#22d3ee;line-height:1;">—</span>
+            <span style="font-size:14px;color:rgba(34,211,153,.7);">회</span>
+          </div>
+        </div>
+      </div>
+      <!-- ── /사이트 통계 배너 ── -->
+
       </div><!-- /z-index:1 inner wrap -->
     </div>
 
@@ -8411,6 +8444,7 @@ function rqGradeLabel(n){
 
 function rqRenderStars(n){
   rqStars = n;
+  if(n >= 1 && typeof window._statCountExplorer === 'function') window._statCountExplorer();
   var pips = document.getElementById('rq-star-pips');
   if(pips){
     var html = '';
@@ -13756,6 +13790,66 @@ function downloadIqbotPdf() {
     </div>
   </div>
 </div>
+
+
+<script>
+(function(){
+  var NS = 'majordream';
+  var VISIT_KEY = 'visitor-count';
+  var EXPLORE_KEY = 'explorer-count';
+  var COUNTED_SESSION = 'mjd_visited';
+  var STAR_SESSION = 'mjd_star_counted';
+  var VISIT_OFFSET = 153;
+  var EXPLORE_OFFSET = 94;
+
+  function fmt(n, offset){
+    if(isNaN(n)||n===null) return '—';
+    return Number(n + offset).toLocaleString('ko-KR');
+  }
+
+  function setNum(id, n, offset){
+    var el = document.getElementById(id);
+    if(el) el.textContent = fmt(n, offset);
+  }
+
+  function loadCounts(){
+    fetch('https://api.countapi.xyz/get/'+NS+'/'+VISIT_KEY)
+      .then(function(r){return r.json();})
+      .then(function(d){setNum('stat-visitor-num', d.value, VISIT_OFFSET);})
+      .catch(function(){setNum('stat-visitor-num', 0, VISIT_OFFSET);});
+
+    fetch('https://api.countapi.xyz/get/'+NS+'/'+EXPLORE_KEY)
+      .then(function(r){return r.json();})
+      .then(function(d){setNum('stat-explorer-num', d.value, EXPLORE_OFFSET);})
+      .catch(function(){setNum('stat-explorer-num', 0, EXPLORE_OFFSET);});
+  }
+
+  function countVisit(){
+    if(sessionStorage.getItem(COUNTED_SESSION)) return;
+    fetch('https://api.countapi.xyz/hit/'+NS+'/'+VISIT_KEY)
+      .then(function(r){return r.json();})
+      .then(function(d){
+        sessionStorage.setItem(COUNTED_SESSION,'1');
+        setNum('stat-visitor-num', d.value, VISIT_OFFSET);
+      })
+      .catch(function(){});
+  }
+
+  window._statCountExplorer = function(){
+    if(sessionStorage.getItem(STAR_SESSION)) return;
+    fetch('https://api.countapi.xyz/hit/'+NS+'/'+EXPLORE_KEY)
+      .then(function(r){return r.json();})
+      .then(function(d){
+        sessionStorage.setItem(STAR_SESSION,'1');
+        setNum('stat-explorer-num', d.value, EXPLORE_OFFSET);
+      })
+      .catch(function(){});
+  };
+
+  loadCounts();
+  countVisit();
+})();
+</script>
 
 </body>
 </html>
