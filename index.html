@@ -7404,6 +7404,33 @@ function confirmMajorPickFromConstellation(){
         </div>
       </div>
 
+      <!-- ── 사이트 통계 배너 ── -->
+      <div style="position:relative;text-align:center;margin-top:32px;margin-bottom:16px;padding:20px 0;">
+        <div class="star-canvas" id="stats-star-canvas" style="position:absolute;inset:0;pointer-events:none;z-index:0;overflow:hidden;border-radius:12px;"></div>
+        <span style="position:relative;z-index:1;display:inline-block;font-size:15px;color:#e2d9f3;letter-spacing:3px;font-weight:700;border:1.5px solid rgba(168,85,247,.5);border-radius:999px;padding:8px 24px;">
+          <span style="color:#fbbf24;margin-right:8px;animation:starTwinkle 2s ease-in-out infinite;">★</span>함께한 전공탐험<span style="color:#fbbf24;margin-left:8px;animation:starTwinkle 2.4s 0.5s ease-in-out infinite;">★</span>
+        </span>
+      </div>
+      <div id="site-stats-banner" style="display:flex;gap:12px;margin-top:0;margin-bottom:24px;">
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:20px 16px;background:rgba(251,191,36,.08);border:1.5px solid rgba(251,191,36,.45);border-radius:14px;">
+          <span style="font-size:22px;">🧭</span>
+          <span style="font-size:12px;color:rgba(240,244,255,.8);letter-spacing:1px;font-weight:600;white-space:nowrap;">전공탐험가</span>
+          <div style="display:flex;align-items:baseline;gap:4px;">
+            <span id="stat-visitor-num" style="font-size:clamp(24px,5vw,34px);font-weight:900;color:#fbbf24;line-height:1;">—</span>
+            <span style="font-size:14px;color:rgba(251,191,36,.6);">명</span>
+          </div>
+        </div>
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:20px 16px;background:rgba(34,211,153,.08);border:1.5px solid rgba(34,211,153,.45);border-radius:14px;">
+          <span style="font-size:22px;">🔬</span>
+          <span style="font-size:12px;color:rgba(240,244,255,.8);letter-spacing:1px;font-weight:600;white-space:nowrap;">질문중심 전공탐구</span>
+          <div style="display:flex;align-items:baseline;gap:4px;">
+            <span id="stat-explorer-num" style="font-size:clamp(24px,5vw,34px);font-weight:900;color:#22d3ee;line-height:1;">—</span>
+            <span style="font-size:14px;color:rgba(34,211,153,.7);">회</span>
+          </div>
+        </div>
+      </div>
+      <!-- ── /사이트 통계 배너 ── -->
+
       <!-- 탐구 설계하기 버튼은 팝업 모달에서 제공됩니다 -->
       </div><!-- /z-index:1 inner wrap -->
     </div>
@@ -12409,6 +12436,7 @@ initStarCanvas('research-star-canvas', 130);
 initStarCanvas('footer-star-canvas', 80);
 initStarCanvas('roadmap-star-canvas', 110);
 initStarCanvas('rqblock2-star-canvas', 90);
+initStarCanvas('stats-star-canvas', 60);
 (function(){
   const canvas = document.getElementById('poster-star-canvas');
   if(!canvas) return;
@@ -13467,5 +13495,68 @@ function downloadIqbotPdf() {
   </div>
 </div>
 
+<!-- 함께한 전공탐험 카운터 -->
+<script>
+(function(){
+  var SUPA_URL = 'https://hjhaljnujvqqenyxbdui.supabase.co';
+  var KEY_A = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9';
+  var KEY_B = '.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhqaGFsam51anZxcWVueXhiZHVpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEwMDM1ODQsImV4cCI6MjA5NjU3OTU4NH0';
+  var KEY_C = '.pV96jgdGx1sW21s1i6psK8wZ0b4ThNSZw6J8d-vEcZs';
+  var SUPA_KEY = KEY_A + KEY_B + KEY_C;
+  var VISITED = 'sv_visited';
+  var STAR_COUNTED = 'sv_star';
+  var headers = {
+    'Content-Type': 'application/json',
+    'apikey': SUPA_KEY,
+    'Authorization': 'Bearer ' + SUPA_KEY
+  };
+
+  function setNum(id, val){
+    var el = document.getElementById(id);
+    if(!el) return;
+    el.textContent = (val !== null && val !== undefined) ? Number(val).toLocaleString() : '—';
+  }
+
+  function getCount(key, callback){
+    fetch(SUPA_URL + '/rest/v1/counters?key=eq.' + key + '&select=value', { headers: headers })
+      .then(function(r){ return r.json(); })
+      .then(function(d){ callback(d && d[0] ? d[0].value : null); })
+      .catch(function(){ callback(null); });
+  }
+
+  function increment(key, callback){
+    fetch(SUPA_URL + '/rpc/increment_counter', {
+      method: 'POST',
+      headers: headers,
+      body: JSON.stringify({ counter_key: key })
+    })
+      .then(function(r){ return r.json(); })
+      .then(function(d){ callback(d); })
+      .catch(function(){ callback(null); });
+  }
+
+  function loadCounts(){
+    getCount('visitor', function(v){ setNum('stat-visitor-num', v); });
+    getCount('explorer', function(v){ setNum('stat-explorer-num', v); });
+  }
+
+  function countVisit(){
+    if(sessionStorage.getItem(VISITED)) return;
+    increment('visitor', function(v){
+      if(v !== null){ sessionStorage.setItem(VISITED, '1'); setNum('stat-visitor-num', v); }
+    });
+  }
+
+  window._statCountExplorer = function(){
+    if(sessionStorage.getItem(STAR_COUNTED)) return;
+    increment('explorer', function(v){
+      if(v !== null){ sessionStorage.setItem(STAR_COUNTED, '1'); setNum('stat-explorer-num', v); }
+    });
+  };
+
+  loadCounts();
+  countVisit();
+})();
+</script>
 </body>
 </html>
