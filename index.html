@@ -4900,6 +4900,7 @@ function updateStarBar(){
   const pct = Math.min(100, Math.round(total / GZ_MAX * 100));
   document.getElementById('gz-star-fill').style.width = pct + '%';
   if(total > 0) showFinal();
+  if(total >= 1 && typeof window._statCountExplorer === 'function') window._statCountExplorer();
 }
 
 function showFinal(){ /* 우주탐험 완료 팝업 제거됨 */ }
@@ -13503,8 +13504,8 @@ function downloadIqbotPdf() {
   var KEY_B = '.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhqaGFsam51anZxcWVueXhiZHVpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEwMDM1ODQsImV4cCI6MjA5NjU3OTU4NH0';
   var KEY_C = '.pV96jgdGx1sW21s1i6psK8wZ0b4ThNSZw6J8d-vEcZs';
   var SUPA_KEY = KEY_A + KEY_B + KEY_C;
-  var VISITED = 'sv_visited';
-  var STAR_COUNTED = 'sv_star';
+  var VISITED = 'sv_visited_v2';
+  var STAR_COUNTED = 'sv_star_v2';
   var headers = {
     'Content-Type': 'application/json',
     'apikey': SUPA_KEY,
@@ -13541,16 +13542,16 @@ function downloadIqbotPdf() {
   }
 
   function countVisit(){
-    if(sessionStorage.getItem(VISITED)) return;
     increment('visitor', function(v){
-      if(v !== null){ sessionStorage.setItem(VISITED, '1'); setNum('stat-visitor-num', v); }
+      if(v !== null){ setNum('stat-visitor-num', v); }
     });
   }
 
   window._statCountExplorer = function(){
-    if(sessionStorage.getItem(STAR_COUNTED)) return;
+    if(window._explorerCounted) return;
+    window._explorerCounted = true;
     increment('explorer', function(v){
-      if(v !== null){ sessionStorage.setItem(STAR_COUNTED, '1'); setNum('stat-explorer-num', v); }
+      if(v !== null){ setNum('stat-explorer-num', v); }
     });
   };
 
