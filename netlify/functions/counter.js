@@ -1,19 +1,20 @@
 // netlify/functions/counter.js
 const https = require('https');
 
-const SUPA_URL = 'hjhaljnujvqqenyxbdui.supabase.co';
+const SUPA_HOST = 'hjhaljnujvqqenyxbdui.supabase.co';
 
-function supabaseRequest(path, method, body) {
+function supabaseRequest(path, method, body, extraHeaders) {
   return new Promise((resolve, reject) => {
     const data = body ? JSON.stringify(body) : null;
     const options = {
-      hostname: SUPA_URL,
+      hostname: SUPA_HOST,
       path: path,
       method: method,
       headers: {
         'Content-Type': 'application/json',
         'apikey': process.env.SUPABASE_KEY,
         'Authorization': 'Bearer ' + process.env.SUPABASE_KEY,
+        ...extraHeaders,
       },
     };
     if (data) options.headers['Content-Length'] = Buffer.byteLength(data);
@@ -22,12 +23,11 @@ function supabaseRequest(path, method, body) {
       let responseData = '';
       res.on('data', (chunk) => { responseData += chunk; });
       res.on('end', () => {
-        console.log('Supabase response status:', res.statusCode);
-        console.log('Supabase response body:', responseData);
+        console.log('path:', path, 'status:', res.statusCode, 'body:', responseData.substring(0, 200));
         try {
-          resolve(JSON.parse(responseData));
+          resolve({ status: res.statusCode, data: JSON.parse(responseData) });
         } catch (e) {
-          reject(new Error('파싱 실패: ' + responseData));
+          resolve({ status: res.statusCode, data: responseData });
         }
       });
     });
@@ -56,27 +56,26 @@ exports.handler = async (event) => {
   }
 
   const { action, key } = body;
-  console.log('action:', action, 'key:', key);
-  console.log('SUPABASE_KEY exists:', !!process.env.SUPABASE_KEY);
 
   try {
     if (action === 'get') {
-      const result = await supabaseRequest(
+      const res = await supabaseRequest(
         '/rest/v1/counters?key=eq.' + key + '&select=value',
         'GET'
       );
-      const value = result && result[0] ? result[0].value : null;
+      const value = res.data && res.data[0] ? res.data[0].value : null;
       return { statusCode: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' }, body: JSON.stringify({ value }) };
 
     } else if (action === 'increment') {
-      const result = await supabaseRequest(
-        '/rpc/increment_counter',
+      // SQL로 직접 increment
+      const res = await supabaseRequest(
+        '/rest/v1/rpc/increment_counter',
         'POST',
         { counter_key: key }
       );
-      const value = typeof result === 'number' ? result : (result && result.value ? result.value : null);
-      console.log('increment result:', result, 'value:', value);
-      return { statusCode: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' }, body: JSON.stringify({ value: value }) };
+      console.log('rpc result:', JSON.stringify(res));
+      const value = typeof res.data === 'number' ? res.data : null;
+      return { statusCode: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' }, body: JSON.stringify({ value }) };
 
     } else {
       return { statusCode: 400, headers: corsHeaders, body: JSON.stringify({ error: '알 수 없는 action' }) };
