@@ -22,6 +22,8 @@ function supabaseRequest(path, method, body) {
       let responseData = '';
       res.on('data', (chunk) => { responseData += chunk; });
       res.on('end', () => {
+        console.log('Supabase response status:', res.statusCode);
+        console.log('Supabase response body:', responseData);
         try {
           resolve(JSON.parse(responseData));
         } catch (e) {
@@ -54,6 +56,8 @@ exports.handler = async (event) => {
   }
 
   const { action, key } = body;
+  console.log('action:', action, 'key:', key);
+  console.log('SUPABASE_KEY exists:', !!process.env.SUPABASE_KEY);
 
   try {
     if (action === 'get') {
@@ -70,14 +74,15 @@ exports.handler = async (event) => {
         'POST',
         { counter_key: key }
       );
-      // result is a plain number
       const value = typeof result === 'number' ? result : (result && result.value ? result.value : null);
+      console.log('increment result:', result, 'value:', value);
       return { statusCode: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' }, body: JSON.stringify({ value: value }) };
 
     } else {
       return { statusCode: 400, headers: corsHeaders, body: JSON.stringify({ error: '알 수 없는 action' }) };
     }
   } catch (err) {
+    console.log('Error:', err.message);
     return { statusCode: 502, headers: corsHeaders, body: JSON.stringify({ error: err.message }) };
   }
 };
