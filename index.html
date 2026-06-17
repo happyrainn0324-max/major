@@ -13530,8 +13530,6 @@ function downloadIqbotPdf() {
   }
 
   window._statCountExplorer = function(){
-    if(window._explorerCounted) return;
-    window._explorerCounted = true;
     call('increment', 'explorer', function(v){
       if(v !== null){ setNum('stat-explorer-num', v); }
     });
