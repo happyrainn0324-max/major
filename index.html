@@ -13518,24 +13518,21 @@ function downloadIqbotPdf() {
       .catch(function(){ callback(null); });
   }
 
-  function loadCounts(){
-    call('get', 'visitor', function(v){ setNum('stat-visitor-num', v); });
-    call('get', 'explorer', function(v){ setNum('stat-explorer-num', v); });
-  }
-
   function countVisit(){
     call('increment', 'visitor', function(v){
       if(v !== null){ setNum('stat-visitor-num', v); }
+      else { call('get', 'visitor', function(v2){ setNum('stat-visitor-num', v2); }); }
     });
   }
 
   window._statCountExplorer = function(){
     call('increment', 'explorer', function(v){
       if(v !== null){ setNum('stat-explorer-num', v); }
+      else { call('get', 'explorer', function(v2){ setNum('stat-explorer-num', v2); }); }
     });
   };
 
-  loadCounts();
+  call('get', 'explorer', function(v){ setNum('stat-explorer-num', v); });
   countVisit();
 })();
 </script>
