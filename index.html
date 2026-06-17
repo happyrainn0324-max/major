@@ -13537,13 +13537,13 @@ function downloadIqbotPdf() {
   }
 
   function loadCounts(){
+    getCount('visitor', function(v){ setNum('stat-visitor-num', v); });
     getCount('explorer', function(v){ setNum('stat-explorer-num', v); });
   }
 
   function countVisit(){
     increment('visitor', function(v){
       if(v !== null){ setNum('stat-visitor-num', v); }
-      else { getCount('visitor', function(v2){ setNum('stat-visitor-num', v2); }); }
     });
   }
 
@@ -13552,7 +13552,6 @@ function downloadIqbotPdf() {
     window._explorerCounted = true;
     increment('explorer', function(v){
       if(v !== null){ setNum('stat-explorer-num', v); }
-      else { getCount('explorer', function(v2){ setNum('stat-explorer-num', v2); }); }
     });
   };
 
