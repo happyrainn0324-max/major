@@ -13499,18 +13499,7 @@ function downloadIqbotPdf() {
 <!-- 함께한 전공탐험 카운터 -->
 <script>
 (function(){
-  var SUPA_URL = 'https://hjhaljnujvqqenyxbdui.supabase.co';
-  var KEY_A = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9';
-  var KEY_B = '.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhqaGFsam51anZxcWVueXhiZHVpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEwMDM1ODQsImV4cCI6MjA5NjU3OTU4NH0';
-  var KEY_C = '.pV96jgdGx1sW21s1i6psK8wZ0b4ThNSZw6J8d-vEcZs';
-  var SUPA_KEY = KEY_A + KEY_B + KEY_C;
-  var VISITED = 'sv_visited_v2';
-  var STAR_COUNTED = 'sv_star_v2';
-  var headers = {
-    'Content-Type': 'application/json',
-    'apikey': SUPA_KEY,
-    'Authorization': 'Bearer ' + SUPA_KEY
-  };
+  var API = '/.netlify/functions/counter';
 
   function setNum(id, val){
     var el = document.getElementById(id);
@@ -13518,31 +13507,24 @@ function downloadIqbotPdf() {
     el.textContent = (val !== null && val !== undefined) ? Number(val).toLocaleString() : '—';
   }
 
-  function getCount(key, callback){
-    fetch(SUPA_URL + '/rest/v1/counters?key=eq.' + key + '&select=value', { headers: headers })
-      .then(function(r){ return r.json(); })
-      .then(function(d){ callback(d && d[0] ? d[0].value : null); })
-      .catch(function(){ callback(null); });
-  }
-
-  function increment(key, callback){
-    fetch(SUPA_URL + '/rpc/increment_counter', {
+  function call(action, key, callback){
+    fetch(API, {
       method: 'POST',
-      headers: headers,
-      body: JSON.stringify({ counter_key: key })
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: action, key: key })
     })
       .then(function(r){ return r.json(); })
-      .then(function(d){ callback(d); })
+      .then(function(d){ callback(d && d.value !== undefined ? d.value : null); })
       .catch(function(){ callback(null); });
   }
 
   function loadCounts(){
-    getCount('visitor', function(v){ setNum('stat-visitor-num', v); });
-    getCount('explorer', function(v){ setNum('stat-explorer-num', v); });
+    call('get', 'visitor', function(v){ setNum('stat-visitor-num', v); });
+    call('get', 'explorer', function(v){ setNum('stat-explorer-num', v); });
   }
 
   function countVisit(){
-    increment('visitor', function(v){
+    call('increment', 'visitor', function(v){
       if(v !== null){ setNum('stat-visitor-num', v); }
     });
   }
@@ -13550,7 +13532,7 @@ function downloadIqbotPdf() {
   window._statCountExplorer = function(){
     if(window._explorerCounted) return;
     window._explorerCounted = true;
-    increment('explorer', function(v){
+    call('increment', 'explorer', function(v){
       if(v !== null){ setNum('stat-explorer-num', v); }
     });
   };
