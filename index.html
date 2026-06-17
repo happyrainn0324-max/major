@@ -8403,6 +8403,7 @@ function rqRenderStars(n){
   if(fillEl) fillEl.style.width = (n / RQ_MAX_STARS * 100) + '%';
   if(gradeEl){ gradeEl.textContent = rqGradeLabel(n); gradeEl.style.display = n > 0 ? 'inline-flex' : 'none'; }
   if(typeof gzStars !== 'undefined'){ gzStars.rq = n; if(typeof updateStarBar === 'function') updateStarBar(); }
+  if(n >= 1 && typeof window._statCountExplorer === 'function') window._statCountExplorer();
 }
 
 function rqShowStarToast(n){
