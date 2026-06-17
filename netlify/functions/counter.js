@@ -70,7 +70,9 @@ exports.handler = async (event) => {
         'POST',
         { counter_key: key }
       );
-      return { statusCode: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' }, body: JSON.stringify({ value: result }) };
+      // result is a plain number
+      const value = typeof result === 'number' ? result : (result && result.value ? result.value : null);
+      return { statusCode: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' }, body: JSON.stringify({ value: value }) };
 
     } else {
       return { statusCode: 400, headers: corsHeaders, body: JSON.stringify({ error: '알 수 없는 action' }) };
